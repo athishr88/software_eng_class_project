@@ -18,5 +18,5 @@ This repository is maintained by the CABS project group. It documents group memb
 
 - **Stella Luttrell**  
   NetID: scl276  
-  Role: To Be Determined  
+  Role: Frontend / Backend Developer
 
