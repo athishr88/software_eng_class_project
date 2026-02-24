@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1"/>
+    <title>Pass-It-On Books - Login</title>
+    <style>
+        :root{
+            --bg: #f6f7fb;
+            --card: #fff;
+            --text: #121826;
+            --muted: #6b7280;
+            --border: #d1d5db;
+            --primary: #2563eb;
+            --primaryHover: #1d52d8;
+            --radius: 14px;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .page{
+            width: 100%;
+            max-width: 900px;
+            min-height: 520px;
+            background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
+            border-radius: 18px;
+            padding: 48px 28px;
+            display: grid;
+            align-content: start;
+            gap: 28px;
+            position: relative;
+        }
+
+        .title{
+            text-align: left;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .title h1{
+            margin: 0 0 10px;
+            font-size: clamp(28px, 4vw, 44px);
+            font-weight: 800;
+        }
+        .title p{
+            margin: 0;
+            color: var(--muted);
+            font-size: 16px;
+        }
+
+        .login-wrap{
+            display: grid;
+            place-items: center;
+            padding-top: 8px;
+        }
+        
+        .login-card{
+            width: 100%;
+            max-width: 420px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: 0 10px 24px rgba(18,24,38,0.08)
+        }
+
+        .login-card h2{
+            margin: 0 0 14px;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            text-align: left;
+        }
+
+        form{
+            display: grid;
+            gap: 12px;
+        }
+
+        label{
+            display: grid;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        input{
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 15px;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus{
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25);
+        }
+
+        .actions{
+            display: grid;
+            gap: 10px;
+            margin-top: 6px;
+        }
+
+        button{
+            width: 120px;
+            justify-self: end;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 700;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover{
+            background: var(--primaryHover);
+        }
+
+        .links{
+            display: grid;
+            gap: 6px;
+            margin-top: 8px;
+            font-size: 14px;
+        }
+
+        .links a{
+            color: var(--primary);
+            text-decoration: none;
+            width: fit-content;
+        }
+
+        .links a:hover{
+            text-decoration: underline;
+        }
+
+        @media (min-width: 700px){
+            .title, .login-wrap{ margin-left: 120px;}
+        }
+    </style>
+</head>
+<body>
+    <main class="page">
+        <header class="title" aria-label="Welcome Section">
+            <h1>Welcome to<br/>PASS IT ON BOOKS</h1>
+        <header>
+        <section class="login-wrap" aria-label="Login Section">
+            <div class="login-card">
+                <h2>Login to Continue</h2>
+
+                <form action="#" method="post">
+                    <label for="username">
+                        Username / Email
+                        <input id="username" name="username" type="text" autocomplete="username" required/>
+                    </label>
+
+                    <label for="password">
+                        Password
+                        <input id="password" name="password" type="password" autocomplete="current-password" required/>
+                    <label>
+                        <div class="actions">
+                            <button type="submit">Login</button>
+                
+
+                            <div class="links">
+                                <a href="#" aria-label="Forgot Password link">Forgot password?</a>
+                                <a href="#" aria-label="Create account link">Create Account</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </body>
+</html>
+
+    
+
+
+
