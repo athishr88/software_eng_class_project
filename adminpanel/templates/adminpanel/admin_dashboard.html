@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PassItOn Books Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/adminpanel/admin_dashboard.css" />
+  </head>
+
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="logo-box" aria-label="Logo placeholder"></div>
+          <div class="brand">
+            <div class="brand-title">PassItOn Books</div>
+            <div class="brand-subtitle">Admin Panel</div>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a class="nav-item active" href="#">
+            <span class="nav-dot"></span>
+            Dashboard
+          </a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Users</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Books</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Inventory</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Orders</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Cart</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Returns</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Payments</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Notifications</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Reports & Flags</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Audit Logs</a>
+          <a class="nav-item" href="#"><span class="nav-dot"></span>Settings</a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="tip-card">
+            <div class="tip-title">Quick Tip</div>
+            <div class="tip-text">
+              Review flagged activity daily. Every action taken should be logged for traceability.
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title">
+            <h1>PassItOn Books</h1>
+            <p class="subtitle">Admin dashboard overview</p>
+          </div>
+
+          <div class="topbar-right">
+            <div class="admin-chip" title="Admin account">
+              <div class="avatar-circle">A</div>
+              <div class="admin-meta">
+                <div class="admin-name">{{ admin_name }}</div>
+                <div class="admin-role">Staff</div>
+              </div>
+            </div>
+
+            <a class="logout-btn" href="#" title="Logout">Logout</a>
+          </div>
+        </header>
+
+        <section class="content">
+          <section class="cards">
+            <div class="card">
+              <div class="card-label">Total Users</div>
+              <div class="card-value">{{ metrics.total_users }}</div>
+              <div class="card-foot">{{ metrics.total_users_note }}</div>
+            </div>
+
+            <div class="card">
+              <div class="card-label">Active Users (30d)</div>
+              <div class="card-value">{{ metrics.active_users_30d }}</div>
+              <div class="card-foot">{{ metrics.active_users_note }}</div>
+            </div>
+
+            <div class="card">
+              <div class="card-label">Books Listed</div>
+              <div class="card-value">{{ metrics.books_listed }}</div>
+              <div class="card-foot">{{ metrics.books_listed_note }}</div>
+            </div>
+
+            <div class="card">
+              <div class="card-label">Books Available</div>
+              <div class="card-value">{{ metrics.books_available }}</div>
+              <div class="card-foot">{{ metrics.books_available_note }}</div>
+            </div>
+
+            <div class="card">
+              <div class="card-label">Orders (This Month)</div>
+              <div class="card-value">{{ metrics.orders_month }}</div>
+              <div class="card-foot">{{ metrics.orders_month_note }}</div>
+            </div>
+
+            <div class="card">
+              <div class="card-label">Returns (This Month)</div>
+              <div class="card-value">{{ metrics.returns_month }}</div>
+              <div class="card-foot">{{ metrics.returns_month_note }}</div>
+            </div>
+
+            <div class="card">
+              <div class="card-label">Open Flags</div>
+              <div class="card-value danger">{{ metrics.open_flags }}</div>
+              <div class="card-foot">{{ metrics.open_flags_note }}</div>
+            </div>
+
+            <div class="card">
+              <div class="card-label">Revenue (This Month)</div>
+              <div class="card-value">{{ metrics.revenue_month }}</div>
+              <div class="card-foot">{{ metrics.revenue_month_note }}</div>
+            </div>
+          </section>
+
+          <section class="grid">
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Recent flagged accounts for steward system abuse</h2>
+                <button class="panel-action" type="button">View all</button>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Reason</th>
+                      <th>Severity</th>
+                      <th>Status</th>
+                      <th>Flagged</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for flag in steward_flags %}
+                      <tr>
+                        <td>
+                          <div class="row-strong">{{ flag.username }}</div>
+                          <div class="row-muted">User ID {{ flag.user_id }}</div>
+                        </td>
+                        <td>{{ flag.reason }}</td>
+
+                        <td>
+                          <span class="pill
+                            {% if flag.severity == 'High' %}high{% elif flag.severity == 'Medium' %}medium{% else %}low{% endif %}
+                          ">
+                            {{ flag.severity }}
+                          </span>
+                        </td>
+
+                        <td>
+                          <span class="pill
+                            {% if flag.status == 'Resolved' %}resolved{% elif flag.status == 'Triage' %}triage{% else %}open{% endif %}
+                          ">
+                            {{ flag.status }}
+                          </span>
+                        </td>
+
+                        <td>{{ flag.flagged_date }}</td>
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="5" class="empty-row">No flagged accounts</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head">
+                <h2>Recent flagged accounts for abnormal payment behavior</h2>
+                <button class="panel-action" type="button">View all</button>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Signal</th>
+                      <th>Severity</th>
+                      <th>Status</th>
+                      <th>Flagged</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for flag in payment_flags %}
+                      <tr>
+                        <td>
+                          <div class="row-strong">{{ flag.username }}</div>
+                          <div class="row-muted">User ID {{ flag.user_id }}</div>
+                        </td>
+                        <td>{{ flag.signal }}</td>
+
+                        <td>
+                          <span class="pill
+                            {% if flag.severity == 'High' %}high{% elif flag.severity == 'Medium' %}medium{% else %}low{% endif %}
+                          ">
+                            {{ flag.severity }}
+                          </span>
+                        </td>
+
+                        <td>
+                          <span class="pill
+                            {% if flag.status == 'Resolved' %}resolved{% elif flag.status == 'Triage' %}triage{% else %}open{% endif %}
+                          ">
+                            {{ flag.status }}
+                          </span>
+                        </td>
+
+                        <td>{{ flag.flagged_date }}</td>
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="5" class="empty-row">No flagged accounts</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel full">
+              <div class="panel-head">
+                <h2>Recent new listings</h2>
+                <button class="panel-action" type="button">View all</button>
+              </div>
+
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Listing</th>
+                      <th>Seller</th>
+                      <th>Condition</th>
+                      <th>Status</th>
+                      <th>Created</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in recent_listings %}
+                      <tr>
+                        <td>
+                          <div class="row-strong">{{ item.title }}</div>
+                          <div class="row-muted">Book ID {{ item.book_id }}</div>
+                        </td>
+                        <td>{{ item.seller }}</td>
+                        <td>{{ item.condition }}</td>
+
+                        <td>
+                          <span class="pill
+                            {% if item.status == 'Hidden' %}resolved{% elif item.status == 'Pending Review' %}triage{% else %}open{% endif %}
+                          ">
+                            {{ item.status }}
+                          </span>
+                        </td>
+
+                        <td>{{ item.created_date }}</td>
+                      </tr>
+                    {% empty %}
+                      <tr>
+                        <td colspan="5" class="empty-row">No new listings</td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          </section>
+
+          <footer class="footer">
+            <div class="footer-left">PassItOn Books Admin</div>
+            <div class="footer-right">Theme color: rgb(93, 23, 37)</div>
+          </footer>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
