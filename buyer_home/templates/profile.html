@@ -1,0 +1,57 @@
+{% extends "base_buyer.html" %}
+{% block title %}Profile | My Account{% endblock %}
+{% block content %}
+  <h1>Profile Settings</h1>
+
+  <section style="border:1px solid #ddd; padding:16px; max-width:700px;">
+    <h2>Update Email</h2>
+    <p style="margin-top:0;">
+      For security, email changes requires varification via a link sent to the new email.
+    </p>
+
+    <form method="post" action="{% url 'account_update_email' %}" style="display:grid; gap:10px;">
+      {% csrf_token %}
+      <label>
+        New Email
+        <input type="email" name="new_email" required>
+      </label>
+
+      {% if email_error %}
+        <div style="border:1px solid #b00; padding:10px; color:#b00;">
+          {{ email_error }}
+        </div>
+      {% endif %}
+
+      <button type="border:1px solid #ddd; padding:16px; max-width:700px; margin-top:16px;">
+    </form>
+  </section>
+
+  <section style="border:1px solid #ddd; padding:16px; max-width:700px; margin-top:16px;">
+    <h2>Change Password</h2>
+    <form method="post" action="{% url 'account_change_password' %}" style="display:grid; gap:10px;">
+      {% csrf_token %}
+      <label>
+        Current Password
+        <input type="password" name="current_password" required>
+      </label>
+
+      <label>
+        New Password
+        <input type="password" name="new_password" required>
+      </label>
+
+      <label>
+        Confirm New Password
+        <input type="password" name="confirm_new_password" required>
+      </label>
+
+      {% if password_error %}
+        <div style="border:1px solid#b00; padding:10px; color:#b00;">
+          {{ password_error }}
+        </div>
+      {% endif %}
+
+      <button type="submit">Update Password</button>
+    </form>
+  </section>
+{% endblock %}
