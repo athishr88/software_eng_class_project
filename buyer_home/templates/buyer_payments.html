@@ -1,0 +1,84 @@
+{% extends "base_buyer.html" %}
+{% block title %}Payment Methods | My Account{% endblock %}
+{% block content %}
+  <h1>Payment Methods</h1>
+
+  <section style="border:1px solid #ddd; padding:16px; max-width:800px;">
+    <h2>Add Payment Method</h2>
+    <p style="margin-top:0;">
+      Payment details should be handeded with payment processor. Store only token and non-sensitive data
+    </p>
+
+    <form method="post" action="{% url 'account_add_payment' %}" style="display:grip; gap:10px; max-width:420px;">
+      {% csrf_token %}
+      <label>
+        Payment Token (from processor)
+        <input type="text" name="payment_token" placeholder="tok_..." required>
+      </label>
+      <label>
+        Brand
+        <input type="text" name="brand" placeholder="Visa" required>
+      </label>
+      <label>
+        Last 4
+        <input type="text" name="last4" minlength="4" maxlength="4" required>
+      </label>
+      <div style="display:flex; gap:10px;">
+        <label style="flex:1;">
+          Exp Month
+          <input type="number" name="exp_month" min="1" max="12" required>
+        </label>
+        <label style="flex:1;">
+          Exp Year
+          <input type="number" name="exp_year" min="2026" required>
+        </label>
+      </div>
+
+      {% if payment_error %}
+        <div style="border:1px solid #b00; padding:10px; color#b00;">
+          {{ payment_error }}
+        </div>
+      {% endif %}
+
+      <button type="submit">Save Payment Method</button>
+    </form>
+  </section>
+
+  <section style="margin-top:24px;">
+    <h2>Saved Methods</h2>
+
+    {% if payment_methods %}
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="border-bottom:1px solid #ddd; text-align:left; padding:8px;">Brand</th>
+            <th style="border-bottom:1px solid #ddd; text-align:left; padding:8px;">Last 4</th>
+            <th style="border-bottom:1px solid #ddd; text-align:left; padding:8px;">Expires</th>
+            <th style="border-bottom:1px solid #ddd; padding:8px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for pm in payment_methods %}
+            <tr>
+              <td style="border-bottom:1px solid #eee; padding:8px;">{{ pm.brand }}</td>
+              <td style="border-bottom:1px solid #eee; padding:8px;">**** {{ pm.last4 }}</td>
+              <td style="border-bottom:1px solid #eee; padding:8px;">{{ pm.exp_month }}/{{ pm.exp_year }}</td>
+              <td style="border-bottom:1px solid #eee; padding:8px; text-align:right;">
+                <form method="post" action="{% url 'account_delete_payment' pm.id %}" style="display:inline;">
+                  {% csrf_token %}
+                  <button type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No Saved Payment Methods.</p>
+    {% endif %}
+  </section>
+{% endblock %}
+
+
+
+  
