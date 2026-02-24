@@ -1,0 +1,79 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% Pass It On Books} My Account | Online Bookstore{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+  <header style="padding:16px; border-bottom:1px solid #ddd;">
+    <nav style="display:flex; gap:12px; align-itmes:center;">
+      <a href="{% url 'home' %}">Home</a>
+      <a href="{% url 'catolog' %}">Browse</a>
+      <a href="{% url 'cart' %}">Cart</a>
+
+      <span style="flex:1;"></span>
+
+      <a href="{% url 'account_dashboard' %}">Account</a>
+
+      <form method="post" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token}
+        <button type="submit">Logout</button>
+      </form>
+    </nav>
+  </header>
+
+  <main style="max-width:1100px; margin:0 auto; padding:24px; display:grid; grid-template-columns:240px 1fr; gap:24px;">
+    <aside style="border:1px solid #ddd; padding:16px; height:fit-content;">
+      <h3 style="margin-top:0;">Buyer Menu</h3>
+      <ul style="list-style:none; padding-left:0; display:grid; gap:8px;">
+        <li><a href="{% url 'account_dashboard' %}">Dashboard</a></li>
+        <li><a href="{% url 'account_profile' %}">Profile</a></li>
+        <li><a href="{% url 'account_payment' %}">Payment Method</a></li>
+        <li><a href="{% url 'account_addresses' %}">Shipping Addresses</a></li>
+        <li><a href="{% url 'account_orders' %}">Orders</a></li>
+      </ul>
+
+      <hr>
+
+      <p style="margin:0;">
+        <strong>Credits:</strong>
+        {{ credit_balance|default:"0" }}
+      </p>
+
+      {% if is_steward %}
+        <p style="margin:6px 0 0;">
+          <strong>Status:</strong> Steward
+          (<a href="{% url 'steward_dashboard' %}"> Steward Dashboard</a>)
+        </p>
+      {% else %}
+        <p style="margin:6px 0 0 0;">
+          <a href="{% url 'steward_info' %}"> Learn about Steward</a>
+        </p>
+      {% endif %}
+    </aside>
+
+    <section>
+      {% if messages %}
+        <div style="margin-bottom:16px;">
+          {% for message in messages %}
+            <div style="padding:10px; border:1px solid #ccc; margin-bottom:8px;">
+              {{ message }}
+            </div>
+          {% endif %}
+        </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </section>
+  </main>
+
+  <footer style="padding:16px; border-top:1px; solid #ddd; text-align:center;">
+    <small>&copy; {% now "Y" %} Online Bookstore</small>
+  </footer>
+</body>
+</html>
+
+
+
