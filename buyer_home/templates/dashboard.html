@@ -1,0 +1,64 @@
+{% extend "base_buyer.html" %}
+{% block title %}Dashboard | My Account{% endblock %}
+{% block content %}
+  <h1>Account Dashboard</h1>
+
+  <section style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:16px;">
+    <div style="boarder:1px solid #ddd; padding:12px;">
+      <h3 style="margin-top:0;">Orders</h3>
+      <p style="margin:0;">Total: {{ stats.total_orders|default:"0" }}</p>
+      <p style="margin:0;">Open: {{ stats.open_orders|default:"0" }}</p>
+      <a href="{% url 'account_orders' %}">View Orders</a>
+    </div>
+
+    <div style="border:1px solid #ddd; padding:12px;">
+      <h3 style="margin-top:0;">Credits</h3>
+      <p style="margin:0;">Balance: {{ credit_balance|default:"0" }}</p>
+      {% if is_steward %}
+        <a href="{% url 'steward_wallet' %}">View Wallet</a>
+      {% else %}
+        <a href="{% url 'steward_info' %}">Become a Steward</a>
+      {% endif %}
+    </div>
+
+    <div style="border:1px solid #ddd; padding:12px;">
+      <h3 style="margin-top:0;">Account</h3>
+      <p style="margin:0;">Email: {{ user.email }}</p>
+      <a href="{% url 'account_profile' %}">Edit Profile</a>
+    </div>
+  </section>
+
+  <section style="margin-top:24px;">
+    <h2>Recent Orders</h2>
+    {% if recent_orders %}
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="border-bottom:1px solid #ddd; text-align:left; padding:8px;">Order</th>
+            <th style="border-bottom:1px solid #ddd; text-align:left; padding:8px;">Status</th>
+            <th style="border-bottom:1px solid #ddd; text-align:left; padding:8px;">Total</th>
+            <th style="border-bottom:1px solid #ddd; text-align:left; padding:8px;">Placed</th>
+            <th style="border-bottom:1px solid #ddd; padding:8px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in recent_orders %}
+            <tr>
+              <td style="border-bottom:1px solid #eee; padding:8px;">#{{ order.id }}</td>
+              <td style="border-bottom:1px solid #eee; padding:8px;">#{{ order.status }}</td>
+              <td style="border-bottom:1px solid #eee; padding:8px;">#{{ order.total_amount }}</td>
+              <td style="border-bottom:1px solid #eee; padding:8px;">#{{ order.created_at }}</td>
+              <td style="border-bottom:1px solid #eee; padding:8px;">
+                <a href="{% url 'order_detail" order.id %}">View</a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>No Recent Orders.</p>
+    {% endif %}
+  </section>
+{% endblock %}
+
+     
