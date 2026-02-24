@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reports & Flags</title>
+    <link rel="stylesheet" href="/static/adminpanel/admin_dashboard.css" />
+  </head>
+
+  <body>
+    <div class="app">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="logo-box"></div>
+          <div class="brand">
+            <div class="brand-title">PassItOn Books</div>
+            <div class="brand-subtitle">Admin Panel</div>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a class="nav-item" href="/staff/dashboard/">
+            <span class="nav-dot"></span>
+            Dashboard
+          </a>
+
+          <a class="nav-item active" href="#">
+            <span class="nav-dot"></span>
+            Reports & Flags
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Main -->
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title">
+            <h1>Reports & Flags</h1>
+            <p class="subtitle">Review and manage flagged activity</p>
+          </div>
+
+          <div class="topbar-right">
+            <div class="admin-chip">
+              <div class="avatar-circle">A</div>
+              <div class="admin-meta">
+                <div class="admin-name">{{ admin_name }}</div>
+                <div class="admin-role">Staff</div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="content">
+
+          <!-- Filter bar (UI only) -->
+          <div class="panel" style="margin-bottom: 16px;">
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <select class="panel-action">
+                <option>All Types</option>
+                <option>Steward Abuse</option>
+                <option>Payment Abuse</option>
+                <option>Listing Abuse</option>
+                <option>User Report</option>
+              </select>
+
+              <select class="panel-action">
+                <option>All Severity</option>
+                <option>High</option>
+                <option>Medium</option>
+                <option>Low</option>
+              </select>
+
+              <select class="panel-action">
+                <option>All Status</option>
+                <option>Open</option>
+                <option>Triage</option>
+                <option>Resolved</option>
+              </select>
+
+              <input type="text" placeholder="Search..." class="panel-action" />
+
+              <button class="panel-action">Reset</button>
+            </div>
+          </div>
+
+          <!-- Main table -->
+          <div class="panel full">
+            <div class="panel-head">
+              <h2>All Flags</h2>
+            </div>
+
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Flag ID</th>
+                    <th>Type</th>
+                    <th>Target</th>
+                    <th>Reason</th>
+                    <th>Severity</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {% for flag in all_flags %}
+                  <tr>
+                    <td>{{ flag.flag_id }}</td>
+                    <td>{{ flag.type }}</td>
+                    <td>{{ flag.target }}</td>
+                    <td>{{ flag.reason }}</td>
+
+                    <td>
+                      <span class="pill
+                        {% if flag.severity == 'High' %}high
+                        {% elif flag.severity == 'Medium' %}medium
+                        {% else %}low{% endif %}">
+                        {{ flag.severity }}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span class="pill
+                        {% if flag.status == 'Resolved' %}resolved
+                        {% elif flag.status == 'Triage' %}triage
+                        {% else %}open{% endif %}">
+                        {{ flag.status }}
+                      </span>
+                    </td>
+
+                    <td>{{ flag.date }}</td>
+
+                    <td>
+                      <button class="panel-action">View</button>
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="8" class="empty-row">
+                      No flags found
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

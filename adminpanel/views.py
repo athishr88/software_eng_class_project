@@ -139,3 +139,50 @@ def admin_dashboard(request):
         },
     }
     return render(request, "adminpanel/admin_dashboard.html", context)
+
+def reports_flags(request):
+    all_flags = [
+        {
+            "flag_id": "F1021",
+            "type": "Steward Abuse",
+            "target": "erica_92",
+            "reason": "Unusual free book claim frequency",
+            "severity": "High",
+            "status": "Open",
+            "date": "Feb 21, 2026",
+        },
+        {
+            "flag_id": "F1022",
+            "type": "Payment Abuse",
+            "target": "matt_gh",
+            "reason": "Multiple failed attempts then success",
+            "severity": "High",
+            "status": "Triage",
+            "date": "Feb 22, 2026",
+        },
+        {
+            "flag_id": "F1023",
+            "type": "Listing Abuse",
+            "target": "Book ID B44210",
+            "reason": "Misleading condition description",
+            "severity": "Medium",
+            "status": "Open",
+            "date": "Feb 20, 2026",
+        },
+        {
+            "flag_id": "F1024",
+            "type": "User Report",
+            "target": "ben_reads",
+            "reason": "Inappropriate listing language",
+            "severity": "Low",
+            "status": "Resolved",
+            "date": "Feb 18, 2026",
+        },
+    ]
+
+    context = {
+        "admin_name": "Admin",
+        "all_flags": all_flags,
+    }
+
+    return render(request, "adminpanel/reports_flags.html", context)
