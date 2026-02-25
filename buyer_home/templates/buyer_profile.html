@@ -1,57 +1,118 @@
+
 {% extends "base_buyer.html" %}
 {% block title %}Profile | My Account{% endblock %}
 {% block content %}
-  <h1>Profile Settings</h1>
+    <header style="margin-bottom:16px;">
+        <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+            Profile Settings
+        </h1>
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Manage your personal information and account details.
+        </p>
+    </header>
 
-  <section style="border:1px solid #ddd; padding:16px; max-width:700px;">
-    <h2>Update Email</h2>
-    <p style="margin-top:0;">
-      For security, email changes requires varification via a link sent to the new email.
-    </p>
+    <section class="card" style="box-shadow:none; max-width:900px;">
+        <h2 style="margin:0 0 6px; font-size: 16px; font-weight:800;">Update Email</h2>
+        <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
+            Email changes require varification via a link sent to your new email address.
+        </p>
 
-    <form method="post" action="{% url 'account_update_email' %}" style="display:grid; gap:10px;">
-      {% csrf_token %}
-      <label>
-        New Email
-        <input type="email" name="new_email" required>
-      </label>
+        <form method="post" action="{% url 'account_update_email' %}" style="display:grid; gap:12px; max-width:520px;">
+            {% csrf_token %}
 
-      {% if email_error %}
-        <div style="border:1px solid #b00; padding:10px; color:#b00;">
-          {{ email_error }}
-        </div>
-      {% endif %}
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                New Email
+                <input
+                    type="email"
+                    name="new_email"
+                    required
+                    autocomplete="email"
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;"
+                />
+            </label>
 
-      <button type="border:1px solid #ddd; padding:16px; max-width:700px; margin-top:16px;">
-    </form>
-  </section>
+            {% if email_error %}
+                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ email_error }}
+                </div>
+            {% endif %}
 
-  <section style="border:1px solid #ddd; padding:16px; max-width:700px; margin-top:16px;">
-    <h2>Change Password</h2>
-    <form method="post" action="{% url 'account_change_password' %}" style="display:grid; gap:10px;">
-      {% csrf_token %}
-      <label>
-        Current Password
-        <input type="password" name="current_password" required>
-      </label>
+            {% if email_success %}
+                <div style="border:1px solid #22c55e; background:#f0fdf4; color:#166534; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ email_success }}
+                </div>
+            {% endif %}
 
-      <label>
-        New Password
-        <input type="password" name="new_password" required>
-      </label>
+            <div style="display:flex; justify-content:flex-end;">
+                <button class="btn" type="submit">Send Verification Link</button>
+            </div>
+        </form>
+    </section>
 
-      <label>
-        Confirm New Password
-        <input type="password" name="confirm_new_password" required>
-      </label>
+    <section class="card" style="box-shadow:none; max-width:900px; margin-top:14px;">
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Change Password</h2>
+        <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
+            Choose a strong password to keep your account secure. Password must be at least 8 characters and include a mix of letters and numbers.
+        </p>
 
-      {% if password_error %}
-        <div style="border:1px solid#b00; padding:10px; color:#b00;">
-          {{ password_error }}
-        </div>
-      {% endif %}
+        <form method="post" action="{% url 'account_change_password' %}" style="display:grid; gap:12px; max-width:520px;">
+            {% csrf_token %}
 
-      <button type="submit">Update Password</button>
-    </form>
-  </section>
+            <label style="display:flex; gap:6px; font-size:14px; font-weight:700;">
+                Current Password
+                <input
+                    type="password"
+                    name="current_password"
+                    required
+                    autocomplete="current-password"
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;"
+                />
+            </label>
+
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                New Password
+                <input
+                    type="password"
+                    name="new_password"
+                    required
+                    autocomplete="new-password"
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;"
+                />
+            </label>
+
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Confirm New Password
+                <input
+                    type="password"
+                    name="confirm_password"
+                    required
+                    autocomplete="new-password"
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;"
+                />
+            </label>
+
+            {% if password_error %}
+                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ password_error }}
+                </div>
+            {% endif %}
+
+            {% if password_success %}
+                <div style="border:1px solid #22c55e; background:#f0fdf4; color:#166534; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ password_success }}
+                </div>
+            {% endif %}
+
+            <div style="display:flex; justify-content:flex-end;">
+                <button class="btn" type="submit">Update Password</button>
+            </div>
+        </form>
+    </section>
+
+    <style>
+        input:focus{
+            border-color: #60a5fa !important;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
+        }
+    </style>
 {% endblock %}
