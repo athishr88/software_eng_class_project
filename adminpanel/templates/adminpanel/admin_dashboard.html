@@ -31,7 +31,7 @@
           <a class="nav-item" href="#"><span class="nav-dot"></span>Returns</a>
           <a class="nav-item" href="#"><span class="nav-dot"></span>Payments</a>
           <a class="nav-item" href="#"><span class="nav-dot"></span>Notifications</a>
-          <a class="nav-item" href="#"><span class="nav-dot"></span>Reports & Flags</a>
+          <a class="nav-item" href="/staff/reports/"><span class="nav-dot"></span>Reports & Flags</a>
           <a class="nav-item" href="#"><span class="nav-dot"></span>Audit Logs</a>
           <a class="nav-item" href="#"><span class="nav-dot"></span>Settings</a>
         </nav>
@@ -104,11 +104,14 @@
               <div class="card-foot">{{ metrics.returns_month_note }}</div>
             </div>
 
-            <div class="card">
-              <div class="card-label">Open Flags</div>
-              <div class="card-value danger">{{ metrics.open_flags }}</div>
-              <div class="card-foot">{{ metrics.open_flags_note }}</div>
-            </div>
+            <a href="/staff/reports/" style="text-decoration: none;">
+              <div class="card">
+                
+                <div class="card-label">Open Flags</div>
+                <div class="card-value danger">{{ metrics.open_flags }}</div>
+                <div class="card-foot">{{ metrics.open_flags_note }}</div>
+              </div>
+            </a>
 
             <div class="card">
               <div class="card-label">Revenue (This Month)</div>
