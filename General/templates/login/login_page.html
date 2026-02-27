@@ -63,7 +63,7 @@
             place-items: center;
             padding-top: 8px;
         }
-
+        
         .login-card{
             width: 100%;
             max-width: 420px;
@@ -163,7 +163,7 @@
             <div class="login-card">
                 <h2>Login to Continue</h2>
 
-                <form action="#" method="post">
+                <form action="{% url 'login' %}" method="post">
                     {% csrf_token %}
                     <label for="username">
                         Username / Email
@@ -175,16 +175,17 @@
                         <input id="password" name="password" type="password" autocomplete="current-password" required/>
                     </label>
                     <div class="actions">
-                        <button type="submit">Login</button>
+                            <button type="submit">Login</button>
+                
 
-                        <div class="links">
-                            <a href="#" aria-label="Forgot Password link">Forgot password?</a>
-                            <a href="#" aria-label="Create account link">Create Account</a>
+                            <div class="links">
+                                <a href="#" aria-label="Forgot Password link">Forgot password?</a>
+                                <a href="#" aria-label="Create account link">Create Account</a>
+                            </div>
                         </div>
-                    </div>
-                </form>
-            </div>
-        </section>
-    </main>
-</body>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </body>
 </html>

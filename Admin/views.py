@@ -139,7 +139,7 @@ def admin_dashboard(request):
             "revenue_month_note": "Platform fees",
         },
     }
-    return render(request, "Admin/admin_dashboard.html", context)
+    return render(request, "dashboard/admin_dashboard.html", context)
 
 
 def reports_flags(request):
@@ -186,4 +186,4 @@ def reports_flags(request):
         "admin_name": "Admin",
         "all_flags": all_flags,
     }
-    return render(request, "Admin/reports_flags.html", context)
+    return render(request, "dashboard/reports_flags.html", context)
