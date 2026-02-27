@@ -4,6 +4,7 @@ class User(models.Model):
     ROLE_CHOICES = [
         ("buyer", "Buyer"),
         ("steward", "Steward"),
+        ("seller", "Seller"),
         ("admin", "Admin"),
     ]
 
@@ -51,6 +52,12 @@ class Address(models.Model):
         return f"{self.user.email} - {self.label}"
 
 class Book(models.Model):
+    seller_user = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    )
     title = models.CharField(max_length=255)
     author = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
@@ -85,3 +92,41 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f"{self.book.title} inventory"
+
+class StewardContribution(models.Model):
+    steward_user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    contributor_name = models.CharField(max_length=120)
+    contributor_city = models.CharField(max_length=120)
+
+    amount_cents = models.PositiveIntegerField()
+
+    message = models.CharField(max_length=255, blank=True, null=True)
+
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.contributor_name} from {self.contributor_city}"
+
+class Notification(models.Model):
+    TYPE_CHOICES = [
+        ("info", "Info"),
+        ("order", "Order"),
+        ("flag", "Flag"),
+        ("warning", "Warning"),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.CharField(max_length=30, choices=TYPE_CHOICES, default="info")
+
+    title = models.CharField(max_length=120, blank=True, null=True)
+    message = models.TextField()
+
+    is_read = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Notification {self.id} to {self.user.email}"
