@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -38,15 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'adminpanel.apps.AdminpanelConfig',
-    'accounts.apps.AccountsConfig',
-    'authn.apps.AuthnConfig',
-    'cart.apps.CartConfig',
-    'inventory.apps.InventoryConfig',
-    'notifications.apps.NotificationsConfig',
-    'orders.apps.OrdersConfig',
-    'pages.apps.PagesConfig',
-    'returns.apps.ReturnsConfig',
+    'Buyer.apps.BuyerConfig',
+    'Seller.apps.SellerConfig',
+    'Admin.apps.AdminConfig',
+    'General.apps.GeneralConfig',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
@@ -129,22 +123,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-}
-
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),   # access token expiry
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),     # refresh token expiry
-    'ROTATE_REFRESH_TOKENS': True,                   # new refresh token on refresh
-    'BLACKLIST_AFTER_ROTATION': True,                # blacklist old refresh (needs token_blacklist app)
-    'AUTH_HEADER_TYPES': ('Bearer',),
-}
