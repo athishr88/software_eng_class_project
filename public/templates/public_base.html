@@ -1,0 +1,244 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}Pass It On Books{% endblock %}</title>
+
+    <style>
+        :root{
+            --bg: #f6f7fb;
+            --card: #fff;
+            --text: #121826;
+            --muted: #6b7280;
+            --border: #d1d5db;
+            --primary: #2563eb;
+            --primaryHover: #1d4ed8;
+            --radius: 14px;
+        }
+        * { box-sizing: border-box; }
+
+        body{
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .page{
+            width: 100%;
+            max-width: 900px;
+            min-height: 520px;
+            background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
+            border-radius: 18px;
+            padding: 48px 28px;
+            display: grid;
+            align-content: start;
+            gap: 22px;
+            position: relative;
+        }
+
+        .topbar{
+            max-width: 520px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand{
+            display: grid;
+            gap: 4px;
+        }
+
+        .brand h1{
+            margin: 0;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 0.25px;
+            line-height: 1.1;
+        }
+
+        .brand p{
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .navlinks{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .link{
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            width: fit-content;
+        }
+        .link:hover{ text-decoration: underline; }
+
+        .btn{
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 800;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn:hover{ background: var(--primaryHover); }
+
+        .title{
+            text-align: left;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .title h2{
+            margin: 0 0 10px;
+            font-size: clamp(26px, 4vw, 40px);
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            line-height: 1.05;
+        }
+
+        .title p{
+            margin: 0;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.35;
+        }
+
+        .content-wrap{
+            display: grid;
+            place-items: center;
+            padding-top: 6px;
+        }
+
+        .card{
+            width: 100%;
+            max-width: 820px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            box-shadow: 0 10px 24px rgba(18,24,38,0.08);
+        }
+
+        .messages{
+            width: 100%;
+            max-width: 820px;
+            display: grid;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .message{
+            border: 1px solid var(--border);
+            background: #fff;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+        }
+
+        .message.error{
+            border-color: #ef4444;
+            background: #FFF5F5;
+            color: #991b1b;
+        }
+
+        form{ display: grid; gap: 12px; }
+        label{
+            display: grid;
+            gap: 6px;
+            font-size: 14px;
+            color: var(--text);
+            font-weight: 700;
+        }
+
+        input, select, textarea{
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 15px;
+            outline: none;
+            background: #fff;
+            font-family: inherit;
+        }
+        input:focus, select:focus, textarea:focus{
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25);
+        }
+
+        @media (min-width: 700px){
+            .topbar, .title, .content-wrap { margin-left: 120px; margin-right: auto; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page">
+        <header class="topbar" aria-label="Public Top Navigation">
+            <div class="brand">
+                <h1>Pass It On Books</h1>
+                <p>Buy, share, and pass it on.</p>
+            </div>
+
+            <nav class="navlinks" aria-label="Public Navigation Links">
+                <a class="link" href="{% url 'home' %}">Home</a>
+                <a class="link" href="{% url 'catalog' %}">Browse</a>
+                <a class="link" href="{% url 'cart' %}">Cart</a>
+
+                {% if user.is_authenticated %}
+                    <a class="link" href="{% url 'account_dashboard' %}">Account</a>
+                    <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                        {% csrf_token %}
+                        <button class="btn" type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a class="link" href="{% url 'login' %}">Login</a>
+                    <a class="link" href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </nav>
+        </header>
+
+        {% block hero %}
+            <section class="title" aria-label="Page Header">
+                <h2>{% block hero_title %}Welcome to<br/>Pass It On Books{% endblock %}</h2>
+                <p>{% block hero_subtitle %}Find affordbale books and support the community.{% endblock}</p>
+            </section>
+        
+        <section class="content-wrap" aria-label="Public Content">
+            {% if messages %}
+                <div class="messages" aria-label="System Messages"></div>
+                    {% for message in messages %}
+                        <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% block content %}
+                <div class="card">
+                    <p style="margin:0; color:var(--muted);">Add public page content here.</p>
+                </div>
+            {% endblock %}
+        </section>
+    </main>
+</body>
+</html>

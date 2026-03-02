@@ -1,0 +1,178 @@
+{% extends "base_buyer.html" %}
+{% block title %}Payment Methods | My Account{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+            Payment Methods
+        </h1>
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Add or manage your saved payment methods and billing information.
+        </p>
+    </header>
+
+    <section class="card" style="box-shadow:none; max-width:900px;">
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Add Payment Method</h2>
+        <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
+            Use your payment processor to generatge a token
+        </p>
+
+        <form method="post" action="{% url 'account_add_payment' %}" style="display:grid; gap:12px; max-width:520px;">
+            {% csrf_token %}
+
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Payment Token (from processor)
+                <input
+                    type="text"
+                    name="payment_token"
+                    placeholder="token..."
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <label style="display:grid; gap:6px; font-size: 14px; font-weight:700;">
+                    Brand
+                    <input
+                        type="text"
+                        name="brand"
+                        placeholder="e.g. Visa"
+                        required
+                        style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                    />
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Last 4 Digits
+                    <input
+                        type="text"
+                        name="last4"
+                        placeholder="e.g. 4242"
+                        minlength="4"
+                        maxlength="4"
+                        inputmode="numeric"
+                        required
+                        style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                    />
+                </label>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Expiration Month
+                    <input
+                        type="number"
+                        name="exp_month"
+                        placeholder="MM"
+                        minlength="2"
+                        maxlength="12"
+                        inputmode="numeric"
+                        required
+                        style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                    />
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Expiration Year
+                    <input
+                        type="number"
+                        name="exp_year"
+                        placeholder="YYYY"
+                        min="2026"
+                        inputmode="numeric"
+                        required
+                        style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                    />
+                </label>
+            </div>
+
+            {% if payment_error %}
+                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ payment_error }}
+                </div>
+            {% endif %}
+
+            {% if payment_success %}
+                <div style="border:1px solid #22c55e; background:#f0fdf4; color:#166534; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ payment_success }}
+                </div>
+            {% endif %}
+
+            <div style="display:flex; justify-content:flex-end;">
+                <button class="btn" type="submit">Save Payment Method</button>
+            </div>
+        </form>
+    </section>
+
+    <section style="margin-top:14px;">
+        <div style="display:flex; align-items:end; justify-content:space-between; gap:10px;">
+            <div>
+                <h2 style="margin:0; font-size:16px; font-weight:800;">Saved Payment Methods</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    View and manage your saved payment methods.
+                </p>
+            </div>
+        </div>
+
+        <div class="card" style="box-shadow:none; margin-top:112px; padding: 0; overflow:hidden;">
+            {% if payment_methods %}
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f8fafc;">
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
+                                Brand
+                            </th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
+                                Last 4
+                            </th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
+                                Expiration
+                            </th>
+                            <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for method in payment_methods %}
+                            <tr>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-weight:700;">
+                                    {{ method.brand }}
+                                </td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                                    **** **** **** {{ method.last4 }}
+                                </td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                                    {{ method.exp_month }}/{{ method.exp_year }}
+                                </td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
+                                    <form method="post" action="{% url 'account_delete_payment' method.id %}" style="margin:0;">
+                                        {% csrf_token %}
+                                        <button class="btn" type="submit" style="background:#ef4444;">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="padding:14px;">
+                    <p style="margin:0; color:var(--muted); font-size:14px;">
+                        You have no saved payment methods.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <style>
+        input:focus{
+            border-color: #c0a5fa !important;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.3) !important;  
+        }
+
+        @media (max-width: 820px) {
+            div[style*="grid-template-columns: 1fr 1fr"]{
+                grid-template-columns: 1fr !important;  
+            }
+        }
+    </style>
+{% endblock %}
