@@ -1,0 +1,159 @@
+{% extend "base_buyer.html" %}
+{% block title %}Cart | Pass It On Books{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+            Your Cart
+        </h1>
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Review items, update quantities, and proceeed to checkout.
+        </p>
+    </header>
+
+    <section class="card" style="box-shadow:none; max-width:900px; padding:0; overflow:hidden;">
+        <div style="padding:16px 18px; border-bottom:1px solid var(--border);display:flex; justify-content:space-between; gap:12px; align-items:end;">
+            <div>
+                <h2 style="margin:0; font-size:16px; font-weight:800;">Items</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    {% if cart_items %}{{ cart_items|length }} item(s) in your cart.{% else %}Your cart is empty.{% endif %}
+                </p>
+            </div>
+            <a class="link" href="{% url 'catalog' %}">Continue Shopping</a>
+        </div>
+
+        {% if cart_items %}
+            <div style="padding:18px;">
+                <div style="display:grid; gap:12px;">
+                    {% for item in cart_items %}
+                        <article style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff; display:grid; gap:10px;">
+                            <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+                                <div style="min-width:220px;">
+                                    <a class="link" href="{% url 'book_detail' item.book.id %}" style="font-weight:900; font-size:14px;">
+                                        {{ item.book.title }}
+                                    </a>
+                                    <div style="color:var(--muted); font-size:13px; margin-top:4px;">
+                                        by {{ item.book.author }}
+                                    </div>
+
+                                    <div style="margin-top:8px; font-size:13px;">
+                                        {% if item.book.stock_quantity <= 0 %}
+                                            <span style="color:#991b1b; font-weight:800;">Out of Stock</span>
+                                        {% elif item.quantity > item.book.stock_quantity %}
+                                            <span style="color:#991b1b; font-weight:800;">
+                                                Only {{ item.book.stock_quantity }} left
+                                            </span>
+                                        {% else %}
+                                            <span style="color:#166534; font-weight:800;">In Stock</span>
+                                            <span style="color:var(--muted);">({{ item.book.tock_quantity }})</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div style="display:grid; gap:8px; align-items:start; justify-items:end;">
+                                    <div style="text-align:right;">
+                                        <div style="font-size:12px; color:var(--muted);">Price</div>
+                                        <div style="font-weight:900;">${{ item.book.price }}</div>
+                                    </div>
+
+                                    <form method="post" action="{% url 'update_cart_item' item.id %}" style="display:flex; gap:10px; align-items:end; flex-wrap:wrap; justify-content:flex-end; margin:0;">
+                                        {% csrf_token %}
+                                        <label style="display:grid; gap:6px; font-size:13px; font-weight:800; color:var(--text);">
+                                            Qty
+                                            <input
+                                                type="number"
+                                                name="quantity"
+                                                min="1"
+                                                value="{{ item.quantity }}"
+                                                style="width:110px;"
+                                            />
+                                        </label>
+                                        <button class="btn" type="submit" style="min-width:unset;">Update</button>
+                                    </form>
+                                    
+                                    <div style="text-align:right;">
+                                        <div style="font-size:13px; color:var(--muted);">Subtotal</div>
+                                        <div style="font-weight:900;">${{ item.subtotal }}</div>
+                                    </div>
+
+                                    <form method="post" action="{% url 'remove_cart_item' item.id %}" style="margin:0;">
+                                        {% csrf_token %}
+                                        <button class="btn" type="submit" style="background:#ef4444; min-width:unset;">
+                                            Remove
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            </div>
+        {% else %}
+            <div style="padding:18px;">
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    Your cart is empty. Browse books to add items.
+                </p>
+                <div style="margin-top:12px;">
+                    <a class="btn" href="{% url 'catalog '%}" style="text-decoration:none; display:inline-flex; align-items:center;justify-content:center;">
+                        Browse Books
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+    </section>
+
+    <section style="margin-top:14px; display:grid; grid-template-columns: 1fr 320px; gap:12px; max-width:900px;">
+        <div class="card" style="box-shadow:none;">
+            <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Need Help?</h2>
+            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
+                Stock is validated again during checkout. If an item becomes unavaliable, you'll be prompted to adjust your cart.
+            </p>
+            <div style="margin-top:10px;">
+                <a class="link" href="{% url 'catalog' %}">Back to browse</a>
+            </div>
+        </div>
+
+        <div class="card" style="box-shadow:none;">
+            <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Order Summary</h2>
+
+            <div style="display:grid; gap:8px; font-size:14px;">
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                    <span style="color:var(--muted);">Subtotal</span>
+                    <strong>${{ cart_total|default:cart_subtotal|default:"0.00" }}</strong>
+                </div>
+            </div>
+
+            <div style="margin-top:14px; display:grid; gap:10px;">
+                <a
+                    class="btn"
+                    href="{% url 'checkout' %}"
+                    style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;{% if not cart_items %}pointer-events:none; opacity:0.6;{% endif %}">
+                    Proceed to Checkout
+                </a>
+
+                <a class="link" href="{% url 'catalog' %}" style="text-align:center;">
+                    Continue Shopping
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <style>
+        input:focus{
+            border-color: #60a5fa !important;
+            box-shadow:0 0 0 4px rgba(96,165,250,0.25) !important;
+        }
+
+        @media (max-width: 900px){
+            section[style*="grid-template-columns:1fr 320px"]{
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 520px){
+            form[style*="dsiplay:flex"][action*="update"]{
+                justify-content: stretch !important;
+            }
+        }
+    </style>
+{% endblock %}
+      
