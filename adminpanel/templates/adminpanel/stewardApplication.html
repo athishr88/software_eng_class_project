@@ -1,0 +1,285 @@
+{% extend "admin_base.html" %}
+{% block title %}Steward Application | Admin | PASS IT ON BOOKS{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <div style="display:flev; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+                    Steward Applications
+                </h1>
+                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+                    Review steward applications, approve/deny, and monitor risk signals.
+                </p>
+            </div>
+            <a class="link" href="{% url 'admin_dashboard' %}">Back to Dashboard</a>
+        </div>
+    </header>
+
+    <section class="card" style="box-shadow:none; max-width:900px;">
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Search & Filters</h2>
+        <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
+            Search by user email/name. Filter by application status and date range.
+        </p>
+
+        <form method="get" action="{% url 'admin_stewards' %}" style="display:grid; gap:12px;">
+            <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Search
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Email or name..."
+                        value="{{ request.GET.q }}"
+                    />
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Status
+                    <select name="status">
+                        <option value="">All</option>
+                        <option value="PENDING" {% if request.GET.status == "PENDING" %}selected{% endif %}>Pending</option>
+                        <option value="APPROVED" {% if request.GET.status == "APPROVED" %}selected{% endif %}>Approved</option>
+                        <option value="DENIED" {% if request.GET.status == "DENIED" %}selected{% endif %}>Denied</option>
+                        <option value="REVOKED" {% if request.GET.status == "REVOKED" %}selected{% endif %}>Revoked</option>
+                    </select>
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Sort
+                    <select name="sort">
+                        <option value="">Newest</option>
+                        <option value="oldest" {% if request.GET.status == "oldest" %}selected{% endif %}>Oldest</option>
+                        <option value="risk_desc" {% if request.GET.status == "risk_desc" %}selected{% endif %}>Highest Risk</option>
+                    </select>
+                </label>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    From
+                    <input
+                        type="date"
+                        name="from"
+                        value="{{ request.GET.from }}">
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    To
+                    <input
+                        type="date"
+                        name="to"
+                        value="{{ request.GET.to }}">
+                </label>
+
+                <label style="display:flex; gap:10px; align-items:center; font-size:14px; font-weight:800; margin-top:22px;">
+                    <input
+                        type="checkbox"
+                        name="flagged_only"
+                        value="1"
+                        {% if request.GET.flagged_only %}checked{% endif %}
+                        style="width:auto; margin:0;">
+                    Flagged only
+                </label>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                <a class="link" href="{% url 'admin_stewards %}" style="align-self:center;">Clear</a>
+                <button class="btn" type="submit">Apply</button>
+            </div>
+        </form>
+    </section>
+
+    <div style="height:14px;"></div>
+
+    <section class="card" style="box-shadow:none; max-width:900px; padding:0; overflow:hidden;">
+        <div style="padding:16px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h2 style="margin:0; font-size:16px; font-weight:800;">Applications</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    {% if page_obj %}Showing {{ page_obj.paginator.count }} application(s).{% else %}No applications found.{% endif %}
+                </p>
+            </div>
+            <a class="link" href="{% url 'admin_abuse_flags %}">View abuse flags</a>
+        </div>
+
+        {% if page_obj and page_obj.object_list %}
+            <div style="padding:18px; display:grid; gap:12px;">
+                {% for app in page_obj.object_list %}
+                    <article style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff; display:grid; gap:10px;">
+                        <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+                            <div style="min-width:260px;">
+                                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                    <strong style="font-size:14px;">{{ app.user_email }}</strong>
+
+                                    {% if app.status == "PENDING" %}
+                                        <span style="font-size:12px; font-weight:900; color:#92400e; border:1px solid #f59e0b; background:#fffbeb; padding:2px 10px; border-radius:999px;">
+                                            PENDING
+                                        </span>
+                                    {% elif app.status == "APPROVED" %}
+                                        <span style="font-size:12px; font-weight:900; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 10px; border-radius:999px;">
+                                            APPROVED
+                                        </span>
+                                    {% elif app.status == "DENIED" %}
+                                        <span style="font-size:12px; font-weight:900; color:#991b1b; border:1px solid #ef4444; background:#fff5f5; padding:2px 10px; border-radius:999px;">
+                                            DENIED
+                                        </span>
+                                    {% else %}
+                                        <span style="font-size:12px; font-weight:900; color:#6b7280; border:1px solid #d1d5db; background:#f8fafc; padding:2px 10px; border-radius:999px;">
+                                            REVOKED
+                                        </span>
+                                    {% endif %}
+
+                                    {% if app.is_flagged %}
+                                        <span style="font-size:12px; font-weight:900; color:#991b1b; border:1px solid #ef4444; background:#fff5f5; padding:2px 10px; border-radius:999px;">
+                                            FLAGGED
+                                        </span>
+                                    {% endif %
+                                </div>}
+
+                                <div style="margin-top:8px; color:var(--muted); font-size:13px; line-height:1.45;">
+                                    <div><strong style="color:var(--text);">Applicant:</strong> {{ app.user_first_name }} {{ app.user_last_name }}</div>
+                                    <div><strong style="color:var(--text);">Created:</strong> {{ app.created_at }}</div>
+                                    {% if app.signup_ip %}
+                                        <div><strong style="color:var(--text);">Signup IP:</strong> {{ app.signup_ip }}</div>
+                                    {% endif %}
+                                    {% if app.unique_identifier %}
+                                        <div><strong style="color:var(--text);">Identifier:</strong> {{ app.unique_identifier }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if app.risk_summary %}
+                                    <p style="margin:10px 0 0; color:var(--muted); font-size:14px;">
+                                        {{ app.risk_summary }}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                            <div style="display:grid; gap:10px; justify-items:end; min-width:280px;">
+                                <a class="link" href="{% url 'admin_user_detail' app.user_id %}">
+                                    View User
+                                </a>
+
+                                {% if app.status == "PENDING" %}
+                                    <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; width:100%;">
+                                        <h3 style="margin:0 0 8px; font-size:14px; font-weight:900;">Decision</h3>
+                                    
+                                        <form method="post" action="{% url 'admin_steward_decide' app.id %}" style="display:grid; gap:10px; margin:0;">
+                                            {% csrf_token %}
+                                        
+                                            <label style="display:grid; gap:6px; font-size:13px; font-weight:900;">
+                                                Action
+                                                <select name="decision">
+                                                    <option value="">Select</option>
+                                                    <option value="APPROVE">Approve</option>
+                                                    <option value="DENY">Deny</option>
+                                                </select>
+                                            </label>
+
+                                            <label style="display:grid; gap:6px; font-size:13px; font-weight:900;">
+                                                Admin Note
+                                                <input
+                                                    type="text"
+                                                    name="note"
+                                                    placeholder="Reason for decision..."
+                                                    required>
+                                            </label>
+
+                                            <button class="btn" type="submit" style="min-width:unset;">Save Decision</button>
+
+                                            <div style="color:var(--muted); font-size:13px; line-height:1.4;">
+                                                Decisions should create an audit log entry/\.
+                                            </div>
+                                        </form>
+                                    </div>
+                                {% else %}
+                                    <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; width:100%;">
+                                        <h3 style="margin:0 0 8px; font-size:14px; font-weight:900;">Admin Notes</h3>
+                                        <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
+                                            {{ app.admin_note|default:"No admin note available." }}
+                                        </p>
+
+                                        {% if app.status == "APPROVED" %}
+                                            <div style="margin-top:10px;">
+                                                <form method="post" action="{% url 'admin_steward_revoke' app.id %}" style="margin:0; display:grid; gap:10px;">
+                                                    {% csrf_token %}
+                                                    <label style="display:grid; gap:6px; font-size:13px; font-weight:900;">
+                                                        Revoke Note
+                                                        <input
+                                                            type="text"
+                                                            name="note"
+                                                            placeholder="Reason for revocation..."
+                                                            required>
+                                                    </label>
+                                                    <button class="btn" type="submit" style="background:#ef4444;">Revoke Steward</button>
+                                                </form>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            <div style="padding:14px 18px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="color:var(--muted); font-size:14px;">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center;">
+                    {% if page_obj.has_previous %}
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status}}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}{% if request.GET.suspicious_only %}suspicious_only=1&{% endif %}page={{ page_obj.previous_page_number }}">
+                            Prev
+                        </a>
+                    {% endif %}
+
+                    {% if page_obj.has_next %}
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status}}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}{% if request.GET.suspicious_only %}suspicious_only=1&{% endif %}page={{ page_obj.next_page_number }}">
+                            Next
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% else %}
+            <div style="padding:18px;">
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    No steward applications match your filters.
+                </p>
+            </div>
+        {% endif %}
+    </section>
+
+    <style>
+        
+        input:focus, select:focus{
+            border-color: #60a5fa !important;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
+        }
+
+        @media (max-width: 900px) {
+            div[style*="grid-template-columns: 2fr 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="grid-template-columns: 1fr 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="min-width:280px"]{
+                min-width: 0 !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+{% endblock %}
+        
+        
+
+
+                       
+
+
+
+                                
+
+
