@@ -1,0 +1,8 @@
+
+ POST http://localhost:8000/api/token/ HTTP/1.1
+ Content-Type: application/json
+
+ {
+    "email" : "ar2903@msstate.edu",
+    "password": "passiton"
+ }
