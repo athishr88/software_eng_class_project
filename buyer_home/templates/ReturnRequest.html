@@ -1,0 +1,155 @@
+{% extend "base_buyer.html" %}
+{% block title %}Request a Return | Pass It On Books{% endblock %}
+{% block content %}
+
+    <header style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+                    Request a Return
+                </h1>
+                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+                    Order #{{ order.id }} - Choose an item and tell us why you're returning it.
+                </p>
+            </div>
+            <a class="link" href="{% url 'order_detail' order.id %}">Back to Orders</a>
+        </div>
+    </header>
+
+    {% if return_error %}
+        <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding: 10px 12px; font-size:14px; margin-bottom:12px; max-width:900px;">
+            {{ return_error }}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'return_request_submit' order.id %}" style="max-width:900px;">
+        {% csrf_token %}
+
+        <section style="display:grid; grid-template-columns: 1fr 340px; gap:12px; align-items:start;">
+            <div style="display:grid; gap:12px;">
+
+                <div class="card" style="box-shadow:none;">
+                    <h2 style="margin:0; font-size:16px; font-weight:800;">1) Select Item</h2>
+                    <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                        Pick the item you want to return.
+                    </p>
+
+                    <div style="margin-top:12px; display:grid; gap:10px;">
+                        {% if order_items %}
+                            {% for item in order_items %}
+                                <label style="display:block; border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
+                                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                                        <input
+                                            type="radio"
+                                            name="order_item_id"
+                                            value="{{ item.id }}"
+                                            required
+                                            style="width:auto; margin-top:3px;"/>
+                                        <div style="display:grid; gap:4px;">
+                                            <strong style="font-size:14px;">{{ item.title }}</strong>
+                                            <div style="color:var(--muted); font-size:13px;">
+                                                Qty {{ item.quantity }}
+                                                {% if item.deposit_required %}
+                                                    Deposit ${{ item.deposit_amount }}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                            {% endfor %}
+                        {% else %}
+                            <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
+                                <p style="margin:0; color:var(--muted); font-size:14px;">
+                                    No items are available to return for this order.
+                                </p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card" style="box-shadow:none;">
+                    <h2 style="margin:0; font-size:16px; font-weight:800;">2) Reason</h2>
+                    <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                        Select a reason and provide optional details.
+                    </p>
+
+                    <div style="margin-top:12px; display:grid; gap:12px; max-width:640px;">
+                        <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                            Reason
+                            <select name="reason" required>
+                                <option value="">Select a reason</option>
+                                <option value="DAMAGED">Damaged</option>
+                                <option value="WRONG_ITEM">Wrong Item</option>
+                                <option value="NOT_AS_DESCRIBED">Not as described</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </label>
+
+                        <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                            Additional details (optional)
+                            <textarea
+                                name="details"
+                                rows="4"
+                                placeholder="Share any extra details that could help the seller review your request..."
+                            ></textarea>
+                        </label>
+                    </div>
+
+                    <div style="margin-top:10px; color:var(--muted); font-size:13px; line-height:1.4;">
+                        Return requests are reviewed by the seller. Admin may override decisions in disputes.
+                    </div>
+                </div>
+            </div>
+
+            <aside class="card" style="box-shadow:none; position:sticky; top:18px;">
+                <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Summary</h2>
+
+                <div style="display:grid; gap:8px; font-size:14px; color:var(--muted);">
+                    <div>
+                        <strong style="color:var(--text);">Order:</strong> #{{ order.id }}
+                    </div>
+                    <div>
+                        <strong style="color:var(--text);">Status:</strong> #{{ order.status }}
+                    </div>
+                    <div>
+                        <strong style="color:var(--text);">Placed:</strong> #{{ order.created_at }}
+                    </div>
+                </div>
+
+                <div style="margin-top:14px; display:grid; gap:10px;">
+                    <button
+                        class="btn"
+                        type="submit"
+                        {% if not order_items %}disabled{% endif %}
+                        style="{% if not order_items %}opacity:0.6; cursor:not-allowed;{% endif %}">
+                        Submit Return Request
+                    </button>
+
+                    <a class="link" href="{% url 'order_detail' order.id %}" style="text-align:center;">
+                        Cancel
+                    </a>
+                </div>
+                    
+                <div style="margin-top:12px; color:var(--muted); font-size:13px; line-height:1.4;">
+                    Tip: Keep the item in its current condition until you recieve next steps from the seller.
+                </div>
+            <aside>
+        </section>
+    </form>
+
+    <style>
+        input:focus, select:focus, textarea:focus{
+            border-color: #60a5fa !important;
+            box-shadow:0 0 0 4px rgba(96,165,250,0.25) !important
+        }
+
+        @media (max-width:900px){
+            section[style*="grid-template-columns: 1fr 340px"]{
+                grid-template-columns: 1fr !important;
+            }
+            aside[style*="position:sticky"]{
+                position: static !important
+            }
+        }
+    </style>
+{% endblock %}

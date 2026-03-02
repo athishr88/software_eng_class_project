@@ -1,0 +1,391 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Pass-It-On Books</title>
+
+    <style>
+        :root{
+            --bg: #f6f7fb;
+            --card: #fff;
+            --text: #121826;
+            --muted: #6b7280;
+            --border: #d1d5db;
+            --primary: #2563eb;
+            --primaryHover: #1d4ed8;
+            --radius: 14px;
+        }
+        * { box-sizing: border-box; }
+        
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+
+        .page{
+            width: 100%;
+            max-width: 900px;
+            min-height: 520px;
+            background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
+            border-radius: 18px;
+            padding: 48px 28px;
+            display: grid;
+            align-content: start;
+            gap: 28px;
+            position: relative;
+        }
+
+        .topbar{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .brand h1{
+            margin: 0;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 0.25px;
+            line-height: 1.1;
+        }
+        
+        .brand p{
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .navlinks{
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .navlinks a{
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            width: fit-content;
+        }
+        .navlinks a:hover{ text-decoration: underline; }
+
+        .title{
+            text-align: left;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .title h2{
+            margin: 0 0 10px;
+            font-size: clamp(26px, 4vw, 40px);
+            font-weight: 800;
+            letter-spacing: 0.25px;
+            line-height: 1.05;
+        }
+
+        .title p{
+            margin: 0;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.35;
+        }
+
+        .search-wrap{
+            display: grid;
+            place-items: center;
+            padding-top: 6px;
+        }
+
+        .search-card h3{
+            margin: 0;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+        }
+
+        form{
+            display: grid;
+            gap: 10px;
+        }
+
+        .row{
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+
+        input{
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 15px;
+            outline: none;
+            background: #fff;
+        }
+
+        input:focus{
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.25);
+        }
+
+        button{
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 800;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+            min-width: 110px;
+        }
+        button:hover{ background: var(--primaryHover); }
+
+        .featured{
+            display: grid;
+            place-items: center;
+        }
+
+        .featured-inner{
+            width: 100%;
+            max-width: 820px;
+            display: grid;
+            gap: 12px;
+        }
+
+        .featured-head{
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: end;
+            max-width: 520px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .featured-head h3{
+            margin: 0;
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .featured-head a{
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .featured-head a:hover{ text-decoration: underline; }
+
+        .grid{
+            max-width: 820px;
+            margin: 0 auto;
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .book{
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 14px;
+            box-shadow: 0 10px 24px rgba(18,24,38,0.08);
+            display: grid;
+            gap: 8px;
+        }
+
+        .book h4{
+            margin: 0;
+            font-size: 14px;
+            font-weight: 900;
+            line-height: 1.2;
+        }
+        
+        .book .meta{
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .book .price{
+            margin: 4px 0 0;
+            font-weight: 900;
+            font-size: 14px;
+        }
+
+        .book a{
+            margin-top: 6px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 14px;
+            width: fit-content
+        }
+        .book a:hover{ text-decoration: underline; }
+
+        .cta-wrap{
+            display: grid;
+            place-items: center;
+            margin-top: 4px;
+        }
+
+        .cta{
+            width: 100%;
+            max-width: 520px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px;
+            box-shadow: 0 10px 24px rgba(18,24,38,0.08);
+            display: grid;
+            gap: 8px;
+        }
+
+        .cta h3{
+            margin: 0;
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .cta p{
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        @media (min-width: 700px){
+            .topbar, .title, .search-wrap, .featured-head, .cta-wrap{ margin-left: 120px; margin-right: auto; }
+        }
+
+        @media (max-width: 900px){
+            .grid{ grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 520px){
+            .row{ grid-template-columns: 1fr; }
+            .grid{ grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="page">
+
+        <header class="topbar" aria-label="Top Navigation"></header>
+            <div class="brand">
+                <h1>Pass-It-On Books</h1>
+                <p>Buy, share, and pass on books in your community</p>
+            </div>
+
+            <nav class="navlinks" aria-label="Primary Navigation">
+                <a href="{% url 'catalog' %}">Browse</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'account_dashboard' %}">Account</a>
+                <a href="{% url 'cart' %}">Cart</a>
+                <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <button type="submit" style="min-width:unset; padding:10px 12px;">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+            </nav>
+        </header>
+
+        <section class="search-wrap" aria-label="Search Section">
+            <div class="search-card">
+                <h3>Find Your Next Book</h3>
+                <p>Search our collection of books to find your next great read.</p>
+                <form method="get" action="{% url 'catalog' %}">
+                    <div class="row">
+                        <input
+                            type="text"
+                            name="q"
+                            placeholder="Search by title, author, or ISBN..."
+                            value="{{ request.GET.q|default:'' }}"
+                            aria-label="Search Books"
+                        />
+                        <button type="submit">Search</button>
+                    </div>
+
+                    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                        <a href="{% url 'catalog' %}" style="color:var(--primary); text-decoration:none; font-weight:700; font-size:14px;">
+                            Browse All Books
+                        </a>
+
+                        {% if not user.is_authenticated %}
+                            <a href="{% url 'register' %}" style="color:var(--primary); text-decoration:none; font-weight:700; font-size:14px;">
+                                Create an Account
+                            </a>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section class="featured" aria-label="Featured Books">
+            <div class="featured-inner">
+                <div class="featured-head">
+                    <h3>Featured Books</h3>
+                    <a href="{% url 'catalog' %}">See More</a>
+                </div>
+
+                {% if featured_books %}
+                    <div class="grid">
+                        {% for book in featured_books %}
+                            <article class="book">
+                                <h4>{{ book.title }}</h4>
+                                <p class="meta">{{ book.author }}</p>
+                                <p class="price">${{ book.price }}</p>
+                                <a href="{% url 'book_detail' book.id %}">View Details</a>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="search-card" style="max-width:820px;">
+                        <p style="margin:0; color:var(--muted); font-size:14px;">
+                           No featured books available at the moment. Please check back later.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="cta-wrap" aria-label="Steward Program CTA">
+            <div class="cta">
+                <h3>Steward Program</h3>
+                <p>
+                   Earn and donate credits, unlock discounts, and support community book exchange.
+                </p>
+                <a href="{% url 'steward_info' %}" style="color:var(--primary); text-decoration:none; font-weight:800; font-size:14px; width:fit-content;">
+                    Learn about becoming a Steward
+                </a>
+            </div>
+        </section>
+    </main>
+</body>
+</html>
+
+
+        

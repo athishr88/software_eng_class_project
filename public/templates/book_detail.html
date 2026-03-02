@@ -1,0 +1,126 @@
+{% extends "public_base.html" %}
+{% block title %}{{ book.title }} | Pass It On Books {% endblock %}
+
+{% block hero_title %}
+{% book.title %}
+{% endblock %}
+
+{% block hero_subtitle %} by {{ book.author }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="card" style="max-width:820px;">
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start;">
+
+            <div style="display:grid; gap:10px;">
+
+                <p style="margin:0; font-size:14px; color:var(--muted);">
+                    Seller: <strong style="color:var(--text);">{{ book.seller_display_name }}</strong>
+                </p>
+
+                <p style="margin:0; font-size:20px; font-weight:900;">
+                    ${{ book.price }}
+                </p>
+
+                <p style="margin:0; font-size:14px;">
+                    {% if book.stock_quantity > 0 %}
+                        <span style="color:#166534; font-weight:800;">In Stock</span>
+                        <span style="color:var(--muted);">({{ book.stock_quantity }} available)</span>
+                    {% else %}
+                        <span style="color:#991b1b; font-weight:800;">Out of Stock</span>
+                    {% endif %}
+                </p>
+
+                {% if book.deposit_required %}
+                    <p style="margin:6px 0 0; font-size:14px; color:var(--muted);">
+                        Deposit Required:
+                        <strong style="color:vara(--text);">${{ book.deposit_amount }}</strong>
+                    </p>
+                {% endif %}
+
+                <div style="margin-top:10px;">
+                    <form method="post" action="{% url 'add_to_cart' book.id %}" style="display:grid; gap:10px; max-width:240px;">
+                        {% csrf_token %}
+
+                        <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                            Quantity
+                            <input
+                                type="number"
+                                name="quantity"
+                                min="1"
+                                value="1"
+                                {% if book.stock_quantity <= 0 %}disabled{% endif %}>
+                        </label>
+
+                        <button 
+                            class="btn"
+                            type="sumbit"
+                            {% if book.stock_quantity <= 0 %}disabled{% endif %}>
+                            Add to Cart
+                        </button>
+                    </form>
+                </div>
+
+                {% if user.is_authenticated and user.is_steward %}
+                    <div style="margin-top:8px;">
+                        <a class="link" href="{% url 'steward_checkout' book.id %}">
+                            Buy with Steward Discount
+                        </a>
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <div>
+                <h3 style="margin:0 0 8px; font-size:16px; font-weight:900;">
+                    Description
+                </h3>
+                <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.5;">
+                    {{ book.description }}
+                </p>
+            </div>
+    
+        </div>
+    </div>
+
+    <div style="height:14px;"></div>
+
+    <div class="card" style="max-width:820px; padding:0; overflow:hidden;">
+        <div style="padding:16px 18px; border-bottom:1px soliod var(--border);">
+            <h3 style="margin:0; font-size:16px; font-weight:900;">
+                Reviews
+            </h3>
+        </div>
+
+        {% if reviews %}
+            <div style="padding:18px; display:grid; gap:14px;">
+                {% for review in reviews %}
+                    <div style="border-bottom:1px solid #eee; padding-bottom:10px;">
+                        <p style="margin:0; font-weight:800; font-size:14px;">
+                            {{ review.comment }}
+                        </p>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div style="padding:18px;">
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    No reviews yet.
+                </p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div style="margin-top:14px;">
+        <a class="link" href="{ur; 'catalog' %}"> Back to Browse</a>
+    </div>
+
+    <style>
+        @media (max-width: 820px){
+            div[style*="grid-template-columns: 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+{% endblock %}

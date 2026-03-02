@@ -1,0 +1,274 @@
+{% extend "seller_base.html" %}
+{% block title %}User Monitoring | Admin | PASS IT ON BOOKS{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <div style="display:flev; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+                    User Monitoring
+                </h1>
+                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+                    Review signup info (name/email/ip/identifier) and investigate suspicious patterns.
+                </p>
+            </div>
+            <a class="link" href="{% url 'admin_dashboard' %}">Back to Dashboard</a>
+        </div>
+    </header>
+
+    <section class="card" style="box-shadow:none; max-width:900px;">
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Search & Filters</h2>
+        <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
+            Search by email, name, IP, or unique identifier. Filter for suspicous accounts.
+        </p>
+
+        <form method="get" action="{% url 'admin_users' %}" style="display:grid; gap:12px;">
+            <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Search
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Email, name, IP, identifier..."
+                        value="{{ request.GET.q }}"
+                    />
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Status
+                    <select name="status">
+                        <option value="">All</option>
+                        <option value="ACTIVE" {% if request.GET.status == "ACTIVE" %}selected{% endif %}>Active</option>
+                        <option value="SUSPENDED" {% if request.GET.status == "SUSPENDED" %}selected{% endif %}>Suspended</option>
+                        <option value="PENDING_VERIFY" {% if request.GET.status == "PENDING_VERIFY" %}selected{% endif %}>Pending Verify</option>
+                    </select>
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Sort
+                    <select name="sort">
+                        <option value="">Newest</option>
+                        <option value="oldest" {% if request.GET.sort == "oldest" %}selected{% endif %}>Oldest</option>
+                        <option value="email" {% if request.GET.sort == "email" %}selected{% endif %}>Email</option>
+                        <option value="flags_desc" {% if request.GET.sort == "flags_desc" %}selected{% endif %}>Most Flags</option>
+                    </select>
+                </label>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Signup From
+                    <input
+                        type="date"
+                        name="from"
+                        value="{{ request.GET.from }}">
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Signup To
+                    <input
+                        type="date"
+                        name="to"
+                        value="{{ request.GET.to }}">
+                </label>
+
+                <label style="display:grid; gap:6px; align-items:center; font-size:14px; font-weight:700;margin-top:22px;">
+                    <input
+                        type="checkbox"
+                        name="suspicious_only"
+                        value="1" 
+                        {$ if request.GET.suspicious_only %}checked{% endif %}
+                        style="width:auto; margin:0;">
+                    Suspicious Only
+                </label>
+            </div>
+
+            <div style="display:grid; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                <a class="link" href="{% url 'admin_users' %}" style="align-self:center;">Clear</a>
+                <button class="btn" type="submit">Apply</button>
+            </div>
+        </form>
+    </section>
+
+    <div style="height:14px;"></div>
+
+    <section style="margin-top:14px; display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; max-width:900px;">
+        <div class="card" style="box-shadow:none; padding:14px;">
+            <h3 style="margin: 0 0 6px; font-size:14px; font-weight:900;">Abuse Flags</h3>
+            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
+                Review suspicious behavior such as shared IP and shipping combinationsand unusual payment patterns.
+            </p>
+            <div style="margin-top:10px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                <div style="font-size:14px;">
+                    <strong style="color:var(--text);">Open flags:</strong> {{ stats.open_abuse_flags|default:"0" }}
+                </div>
+                <a class="link" href="{% url 'admin_abuse_flags' %}">View Flags</a>
+            </div>
+        </div>
+
+        <div class="card" style="box-shadow:none; padding:14px;">
+            <h3 style="margin:0 0 6px; font-size:14px; font-weight:900;">Steward Monitoring</h3>
+            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;"></p>"
+                Track unusually fast progress and patterns that indicate free-book abuse.
+            </p>
+
+            <div style="margin-top:10px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                <div style="font-size:14px;">
+                    <strong style="color:var(--text);">Steward Apps:</strong> {{ stats.pending_steward_apps|default:"0" }}
+                </div>
+                <a class="link" href="{% url 'admin_stewards' %}">Review Stewards</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="card" style="box-shadow:none; max-width:900px; padding:0; overflow:hidden;">
+        <div style="padding:16px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h2 style="margin:0; font-size:16px; font-weight:900;">Users</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    {% if page_obj %}Showing {{ page_obj.paginator.count }} user(s).{% else %}No users found.{% endif %}
+                </p>
+            </div>
+            <a class="link" href="{% url 'admin_audit_logs' %}">View Abuse Flags</a>
+        </div>
+
+        {% if page_obj and page_obj.object_list %}
+            <table style="width:100%; border-collapse:cpllapse;">
+                <thead>
+                    <tr style="background:#f8fafc;">
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
+                            User
+                        </th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
+                            Email
+                        </th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
+                            IP
+                        </th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
+                            Identifier
+                        </th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
+                            Flags
+                        </th>
+                        <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
+                    </tr>
+                </thead>
+                </tbody>
+                    {% for u in page_obj.object_list %}
+                        <tr>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px; font-weight:900;">
+                                {{ u.first_name }} {{ u.last_name }}
+                                {% if u.status == "SUSPENDED" %}
+                                    <div style="margin-top:4px;">
+                                        <span style="font-size:12px; font-weight:900; color:#991b1b; border:1px solid #ef4444; background: #fff5f5; padding:2px 8px; border-radius:999px;">
+                                            SUSPENDED
+                                        </span>
+                                    </div>
+                                {% elif u.status == "PENDING_VERIFY" %}
+                                    <div style="margin-top:4px;">
+                                        <span style="font-size:12px; font-weight:900; color:#92400e; border:1px solid #f59e0b; background: #fffbeb; padding:2px 8px; border-radius:999px;">
+                                            PENDING VERIFY
+                                        </span>
+                                    </div>
+                                {% else %}
+                                    <div style="margin-top:4px;">
+                                        <span style="font-size:12px; font-weight:900; color:#166534; border:1px solid #22c55e; background: #f0fdf4; padding:2px 8px; border-radius:999px;">
+                                            ACTIVE
+                                        </span>
+                                    </div>
+                                {% endif %}
+                            </td>
+
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                                {{ u.email }}
+                            </td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px; color:var(--muted);">
+                                {{ u.signup_ip.|default:"-"  }}
+                            </td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px; color:var(--muted);">
+                                {{ u.unique_identifier|default:"-"  }}
+                            </td>
+
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                                {% if u.flag_count %}
+                                    <strong>{{ u.flag_count }}</strong>
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </td>
+
+                            <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
+                                <a class="link" href="{% url 'admin_user_detail' u.id %}">View</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <div style="padding:14px 18px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="color:var(--muted); font-size:14px;">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center;">
+                    {% if page_obj.has_previous %}
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status}}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}{% if request.GET.suspicious_only %}suspicious_only=1&{% endif %}page={{ page_obj.previous_page_number }}">
+                            Prev
+                        </a>
+                    {% endif %}
+                    
+                    {% if page_obj.has_previous %}
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status}}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}{% if request.GET.suspicious_only %}suspicious_only=1&{% endif %}page={{ page_obj.next_page_number }}">
+                            Next
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% else %}
+            <div style="padding:18px;">
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    No users match your filters.
+                </p>
+            </div>
+        {% endif %}
+    </section>
+  
+    <style>
+        
+        input:focus, select:focus{
+            border-color: #60a5fa !important;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
+        }
+
+        @media (max-width: 900px) {
+            div[style*="grid-template-columns: 2fr 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="grid-template-columns: 1fr 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+        }
+        
+
+        @media (mac-width:640px){
+            table, thead, tbody, th, td, tr { display: block; }
+            thead { display: none; }
+
+            tbody tr{
+                border-bottom:1px solid var(--border);
+                padding:12px 18px;
+            }
+
+            tbody td{
+                border: none !important;
+                padding: 6px 0 !important;
+            }
+
+            tbody td:last-child{
+                text-align: left !important;
+                padding-top: 10px !important;
+            }
+        }
+    </style>
+{% endblock %}
