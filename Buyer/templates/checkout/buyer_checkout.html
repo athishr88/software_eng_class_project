@@ -18,7 +18,6 @@
 
     <form mwthod="post" action="{% url 'place_order' %}" style="max-width:900px;">
         {% csrf_token %}
-
         <section style="display:grid; grid-template-columns: 1fr 340px; gap:12px; align-items:start;">
             <div style="display:grid; gap:12px;">
 
@@ -183,8 +182,7 @@
                     <button
                         class="btn"
                         type="submit"
-                        {% if not cart_items or not addresses or not payment_methods %}disabled{% endif %}
-                        style="{% if not cart_items or not addresses or not payment_methods %}opacity:0.6; cursor:not-allowed;{% endif %}">
+                        {% if not cart_items or not addresses or not payment_methods %}disabled{% endif %}>
                         Place Order
                     </button>
 
@@ -211,6 +209,10 @@
     </form>
 
     <style>
+        button.btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
         input:focus{
             border-color: #60a5fa !important;
             box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important
