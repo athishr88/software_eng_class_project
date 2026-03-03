@@ -1,4 +1,4 @@
-{% extend "admin_base.html" %}
+{% extends "admin_base.html" %}
 {% block title %}Abuse Detection | Admin | PASS IT ON BOOKS{% endblock %}
 {% block content %}
     <header style="margin-bottom:16px;">
@@ -21,7 +21,7 @@
             Filter by signal type, severity, status, and date range.
         </p>
 
-        <form method="get" action="{% url 'admin_abuse_flags' %}" style="display:grid; gap:12px;">
+        <form method="get" action="{% url 'abuse_detection' %}" style="display:grid; gap:12px;">
             <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
                 <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                     Search
@@ -86,7 +86,7 @@
             </div>
 
             <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
-                <a class="link" href="{% url 'admin_abuse_flags %}" style="align-self:center;">Clear</a>
+                <a class="link" href="{% url 'abuse_detection' %}" style="align-self:center;">Clear</a>
                 <button class="btn" type="submit">Apply</button>
             </div>
         </form>
@@ -102,7 +102,7 @@
                     {% if page_obj %}Showing {{ page_obj.paginator.count }} flag(s).{% else %}No flags found.{% endif %}
                 </p>
             </div>
-            <a class="link" href="{% url 'admin_audit_logs %}">View Activity Logs</a>
+            <a class="link" href="{% url 'activity_logs' %}">View Activity Logs</a>
         </div>
 
         {% if page_obj and page_obj.object_list %}

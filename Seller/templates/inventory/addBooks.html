@@ -12,7 +12,7 @@
                     Create a new listing. You can publish immediately or save as unpublished.
                 </p>
             </div>
-            <a class="link" href="{% url 'seller_books' order.id %}">Back to Books</a>
+            <a class="link" href="{% url 'manage_inventory' %}">Back to Books</a>
         </div>
     </header>
 
@@ -28,7 +28,7 @@
         </div>
     {% endif %}
 
-    <form method="post" action="{% url 'seller_add_book' %}" style="max-width:900px;">
+    <form method="post" action="{% url 'add_books' %}" style="max-width:900px;">
         {% csrf_token %}
 
         <section style="display:grid; grid-template-columns: 1fr 340px; gap:12px; align-items:start;">
@@ -142,7 +142,7 @@
 
                 <div style="margin-top:14px; display:grid; gap:10px;">
                     <button class="btn" type="submit">Save Book</button>
-                    <a class="link" href="{% url 'seller_books' }" style="text-align:center;">Cancel</a>
+                    <a class="link" href="{% url 'manage_inventory' %}" style="text-align:center;">Cancel</a>
                 </div>
 
                 <div style="margin-top:12px; color:var(--muted); font-size:13px; line-height:1.4;">

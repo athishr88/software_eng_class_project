@@ -1,4 +1,4 @@
-{% extend "base_buyer.html" %}
+{% extends "base_buyer.html" %}
 {% block title %}Shipping Addresses | My Account{% endblock %}
 {% block content %}
     <header style="margin-bottom:16px;">
@@ -16,7 +16,7 @@
             Make sure your shipping info is accurate to avoid delivery issues.
         </p>
 
-        <form method="post" action="{% url 'account_add_address' %}" style="display:grid; gap:12px; max-width:640px;">
+        <form method="post" action="{% url 'buyer_shipping' %}" style="display:grid; gap:12px; max-width:640px;">
             {% csrf_token %}
 
             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
@@ -115,7 +115,7 @@
 
                                 <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                                     {% if not addr.is_default %}
-                                        <form method="post" action="{% url 'account_set_default_address' addr.id %}" style="margin:0;">
+                                        <form method="post" action="{% url 'buyer_shipping' %}" style="margin:0;">
                                             {% csrf_token %}
                                             <button class="btn" type="submit" style="background:#16a34a;">
                                                 Set Default

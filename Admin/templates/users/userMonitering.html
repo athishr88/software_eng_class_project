@@ -1,4 +1,4 @@
-{% extend "seller_base.html" %}
+{% extends "admin_base.html" %}
 {% block title %}User Monitoring | Admin | PASS IT ON BOOKS{% endblock %}
 {% block content %}
     <header style="margin-bottom:16px;">
@@ -21,7 +21,7 @@
             Search by email, name, IP, or unique identifier. Filter for suspicous accounts.
         </p>
 
-        <form method="get" action="{% url 'admin_users' %}" style="display:grid; gap:12px;">
+        <form method="get" action="{% url 'user_monitoring' %}" style="display:grid; gap:12px;">
             <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
                 <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                     Search
@@ -83,7 +83,7 @@
             </div>
 
             <div style="display:grid; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
-                <a class="link" href="{% url 'admin_users' %}" style="align-self:center;">Clear</a>
+                <a class="link" href="{% url 'user_monitoring' %}" style="align-self:center;">Clear</a>
                 <button class="btn" type="submit">Apply</button>
             </div>
         </form>
@@ -101,13 +101,13 @@
                 <div style="font-size:14px;">
                     <strong style="color:var(--text);">Open flags:</strong> {{ stats.open_abuse_flags|default:"0" }}
                 </div>
-                <a class="link" href="{% url 'admin_abuse_flags' %}">View Flags</a>
+                <a class="link" href="{% url 'abuse_detection' %}">View Flags</a>
             </div>
         </div>
 
         <div class="card" style="box-shadow:none; padding:14px;">
             <h3 style="margin:0 0 6px; font-size:14px; font-weight:900;">Steward Monitoring</h3>
-            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;"></p>"
+            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
                 Track unusually fast progress and patterns that indicate free-book abuse.
             </p>
 
@@ -115,7 +115,7 @@
                 <div style="font-size:14px;">
                     <strong style="color:var(--text);">Steward Apps:</strong> {{ stats.pending_steward_apps|default:"0" }}
                 </div>
-                <a class="link" href="{% url 'admin_stewards' %}">Review Stewards</a>
+                <a class="link" href="{% url 'steward_application' %}">Review Stewards</a>
             </div>
         </div>
     </section>
@@ -128,11 +128,11 @@
                     {% if page_obj %}Showing {{ page_obj.paginator.count }} user(s).{% else %}No users found.{% endif %}
                 </p>
             </div>
-            <a class="link" href="{% url 'admin_audit_logs' %}">View Abuse Flags</a>
+            <a class="link" href="{% url 'activity_logs' %}">View Abuse Flags</a>
         </div>
 
         {% if page_obj and page_obj.object_list %}
-            <table style="width:100%; border-collapse:cpllapse;">
+            <table style="width:100%; border-collapse:collapse;">
                 <thead>
                     <tr style="background:#f8fafc;">
                         <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
@@ -153,7 +153,7 @@
                         <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
                     </tr>
                 </thead>
-                </tbody>
+                <tbody>
                     {% for u in page_obj.object_list %}
                         <tr>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px; font-weight:900;">
@@ -183,7 +183,7 @@
                                 {{ u.email }}
                             </td>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px; color:var(--muted);">
-                                {{ u.signup_ip.|default:"-"  }}
+                                {{ u.signup_ip|default:"-"  }}
                             </td>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px; color:var(--muted);">
                                 {{ u.unique_identifier|default:"-"  }}
@@ -198,7 +198,7 @@
                             </td>
 
                             <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
-                                <a class="link" href="{% url 'admin_user_detail' u.id %}">View</a>
+                                <a class="link" href="{% url 'user_monitoring' %}">View</a>
                             </td>
                         </tr>
                     {% endfor %}

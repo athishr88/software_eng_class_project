@@ -1,4 +1,4 @@
-{% extend "base_buyer.html" %}
+{% extends "base_buyer.html" %}
 {% block title %}Request a Return | Pass It On Books{% endblock %}
 {% block content %}
 
@@ -120,8 +120,7 @@
                     <button
                         class="btn"
                         type="submit"
-                        {% if not order_items %}disabled{% endif %}
-                        style="{% if not order_items %}opacity:0.6; cursor:not-allowed;{% endif %}">
+                        {% if not order_items %}disabled{% endif %}>
                         Submit Return Request
                     </button>
 
@@ -131,13 +130,17 @@
                 </div>
                     
                 <div style="margin-top:12px; color:var(--muted); font-size:13px; line-height:1.4;">
-                    Tip: Keep the item in its current condition until you recieve next steps from the seller.
+                    Tip: Keep the item in its current condition until you receive next steps from the seller.
                 </div>
-            <aside>
+            </aside>
         </section>
     </form>
 
     <style>
+        button.btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
         input:focus, select:focus, textarea:focus{
             border-color: #60a5fa !important;
             box-shadow:0 0 0 4px rgba(96,165,250,0.25) !important

@@ -300,7 +300,7 @@
             <nav class="navlinks" aria-label="Primary Navigation">
                 <a href="{% url 'catalog' %}">Browse</a>
             {% if user.is_authenticated %}
-                <a href="{% url 'account_dashboard' %}">Account</a>
+                <a href="{% url 'buyer_dashboard' %}">Account</a>
                 <a href="{% url 'cart' %}">Cart</a>
                 <form method="post" action="{% url 'logout' %}" style="margin:0;">
                     {% csrf_token %}
@@ -378,7 +378,7 @@
                 <p>
                    Earn and donate credits, unlock discounts, and support community book exchange.
                 </p>
-                <a href="{% url 'steward_info' %}" style="color:var(--primary); text-decoration:none; font-weight:800; font-size:14px; width:fit-content;">
+                <a href="{% url 'catalog' %}" style="color:var(--primary); text-decoration:none; font-weight:800; font-size:14px; width:fit-content;">
                     Learn about becoming a Steward
                 </a>
             </div>

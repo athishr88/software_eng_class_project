@@ -17,7 +17,7 @@
             Email changes require varification via a link sent to your new email address.
         </p>
 
-        <form method="post" action="{% url 'account_update_email' %}" style="display:grid; gap:12px; max-width:520px;">
+        <form method="post" action="{% url 'buyer_profile' %}" style="display:grid; gap:12px; max-width:520px;">
             {% csrf_token %}
 
             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
@@ -55,7 +55,7 @@
             Choose a strong password to keep your account secure. Password must be at least 8 characters and include a mix of letters and numbers.
         </p>
 
-        <form method="post" action="{% url 'account_change_password' %}" style="display:grid; gap:12px; max-width:520px;">
+        <form method="post" action="{% url 'buyer_profile' %}" style="display:grid; gap:12px; max-width:520px;">
             {% csrf_token %}
 
             <label style="display:flex; gap:6px; font-size:14px; font-weight:700;">

@@ -1,4 +1,4 @@
-{% extends "public_base.html" %}
+{% extends "public/public_base.html" %}
 {% block title %}Email Verification | Pass It On Books {% endblock %}
 
 {% block hero_title %}Email<br/>Verification{% endblock %}
@@ -31,7 +31,7 @@
 
             <div style="margin-top:14px; display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
                 <a class="link" href="{% url 'register' %}">Create Account</a>
-                <a class="btn" href="{% url 'resend_verification' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                <a class="btn" href="{% url 'login' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
                     Resend Email
                 </a>
             </div>
@@ -46,7 +46,7 @@
 
             <div style="margin-top:14px; display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
                 <a class="link" href="{% url 'login' %}">Back to Login</a>
-                <a class="btn" href="{% url 'resend_verification' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                <a class="btn" href="{% url 'login' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
                     Resend Email
                 </a>
             </div>
@@ -69,7 +69,7 @@
 
             <div style="margin-top:14px; display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
                 <a class="link" href="{% url 'login' %}">Back to Login</a>
-                <a class="btn" href="{% url 'resend_verification' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                <a class="btn" href="{% url 'login' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
                     Resend Email
                 </a>
             </div>

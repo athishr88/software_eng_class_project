@@ -1,4 +1,4 @@
-{% extend "seller_base.html" %}
+{% extends "seller_base.html" %}
 {% block title %}Order #{{ order.id }} | Seller | Pass It On Books{% endblock %}
 {% block content %}
 
@@ -79,7 +79,7 @@
                         Mark the order as shipped and optionally save a tracking number.
                     </p>
 
-                    <form method="post" action="{% url 'seller_mark_shipped' order.id %}" style="display:grid; gap:10px; margin:0;">
+                    <form method="post" action="{% url 'seller_order_details' order.id %}" style="display:grid; gap:10px; margin:0;">
                         {% csrf_token %}
 
                         <label style="display:grid; gap:6px; font-size:13px; font-weight:900;">
@@ -94,7 +94,7 @@
                             class="btn"
                             type="submit"
                             {% if not order.payment_confirmed or order.status == "SHIPPED" or order.status == "DELIVERED" %}disabled{% endif %}
-                            style="{% if not order.payment_confirmed or order.status == "SHIPPED" or order.status == "DELIVERED" %}opacity:0.6; curcor:not-allowed;{% endif %}">
+                            class="btn">
                             Mark as shipped
                         </button>
 
@@ -118,7 +118,7 @@
             <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; color:var(--muted); font-size:14px; line-height:1.45;">
                 <strong style="color:var(--text);">{{ order.shipping_name }}</strong>
                 {{ order.shipping_line1 }}{% if order.shipping_line2 %}, {{ order.shipping_line2 }}{% endif %}<br>
-                {{ order.shipping_city }}, {{ order.shipping_lstate }} {{ order.shipping_postal_code }}<br>
+                {{ order.shipping_city }}, {{ order.shipping_state }} {{ order.shipping_postal_code }}<br>
                 {{ order.shipping_country }}
             </div>
         {% else %}
@@ -131,7 +131,7 @@
     </section>
 
     <section class="card" style="box-shadow:none; max-width:900px; margin-top:12px; padding:0; overflow:hidden;">
-        <div style="padding:16px 18pxl border-bottom:1px solid var(--border);">
+        <div style="padding:16px 18px; border-bottom:1px solid var(--border);">
             <h2 style="margin:0; font-size:16px; font-weight:800;">Items</h2>
         </div>
 
@@ -168,10 +168,10 @@
         <div class="card" style="box-shadow:none;">
             <h3 style="margin:0 0 6px; font-size:14px; font-weight:900;">Returns & Refunds</h3>
             <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
-                Return requests may be approved/denied by the seller. Adminmy override in disputes.
+                Return requests may be approved/denied by the seller. Admin may override in disputes.
             </p>
             <div style="margin-top:10px">
-                <a class="link" href="{% url 'seller_returns' %}">View return requests</a>
+                <a class="link" href="{% url 'seller_orders' %}">View return requests</a>
             </div>
         </div>
 
@@ -199,6 +199,10 @@
                 min-width: 0 !important;
                 width: 100% !important;
             }
+        }
+        button.btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
     </style>
 {% endblock %}

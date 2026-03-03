@@ -1,4 +1,4 @@
-{% extend "base_buyer.html" %}
+{% extends "base_buyer.html" %}
 {% block title %}Cart | Pass It On Books{% endblock %}
 {% block content %}
    <header style="margin-bottom:16px;">
@@ -16,7 +16,7 @@
         </div>
     {% endif %}
 
-    <form mwthod="post" action="{% url 'place_order' %}" style="max-width:900px;">
+    <form method="post" action="{% url 'buyer_checkout' %}" style="max-width:900px;">
         {% csrf_token %}
         <section style="display:grid; grid-template-columns: 1fr 340px; gap:12px; align-items:start;">
             <div style="display:grid; gap:12px;">
@@ -61,7 +61,7 @@
                                     You dont have any saved addresses.
                                 </p>
                                 <div style="margin-top:10px;">
-                                    <a class="btn" href="{% url 'account_addresses' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                    <a class="btn" href="{% url 'buyer_shipping' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
                                         Add Address
                                     </a>
                                 </div>
@@ -78,7 +78,7 @@
                                 Choose a saved payment method.
                             </p>
                         </div>
-                        <a class="link" href="{% url 'account_payments' %}">Manage</a>
+                        <a class="link" href="{% url 'buyer_payments' %}">Manage</a>
                     </div>
 
                     <div style="margin-top:12px; display:grid; gap:10px;">
@@ -109,7 +109,7 @@
                                     You don't have any saved payment methods.
                                 </p>
                                 <div style="margin-top:10px;">
-                                    <a class="btn" href="{% url 'account_payments' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                    <a class="btn" href="{% url 'buyer_payments' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
                                         Add Payment Method
                                     </a>
                                 </div>

@@ -1,4 +1,4 @@
-{% extend "admin_base.html" %}
+{% extends "admin_base.html" %}
 {% block title %}Steward Application | Admin | PASS IT ON BOOKS{% endblock %}
 {% block content %}
     <header style="margin-bottom:16px;">
@@ -21,7 +21,7 @@
             Search by user email/name. Filter by application status and date range.
         </p>
 
-        <form method="get" action="{% url 'admin_stewards' %}" style="display:grid; gap:12px;">
+        <form method="get" action="{% url 'steward_application' %}" style="display:grid; gap:12px;">
             <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
                 <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                     Search
@@ -83,7 +83,7 @@
             </div>
 
             <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
-                <a class="link" href="{% url 'admin_stewards %}" style="align-self:center;">Clear</a>
+                <a class="link" href="{% url 'steward_application' %}" style="align-self:center;">Clear</a>
                 <button class="btn" type="submit">Apply</button>
             </div>
         </form>
@@ -99,7 +99,7 @@
                     {% if page_obj %}Showing {{ page_obj.paginator.count }} application(s).{% else %}No applications found.{% endif %}
                 </p>
             </div>
-            <a class="link" href="{% url 'admin_abuse_flags %}">View abuse flags</a>
+            <a class="link" href="{% url 'abuse_detection' %}">View abuse flags</a>
         </div>
 
         {% if page_obj and page_obj.object_list %}
@@ -133,8 +133,8 @@
                                         <span style="font-size:12px; font-weight:900; color:#991b1b; border:1px solid #ef4444; background:#fff5f5; padding:2px 10px; border-radius:999px;">
                                             FLAGGED
                                         </span>
-                                    {% endif %
-                                </div>}
+                                    {% endif %}
+                                </div>
 
                                 <div style="margin-top:8px; color:var(--muted); font-size:13px; line-height:1.45;">
                                     <div><strong style="color:var(--text);">Applicant:</strong> {{ app.user_first_name }} {{ app.user_last_name }}</div>
@@ -155,7 +155,7 @@
                             </div>
 
                             <div style="display:grid; gap:10px; justify-items:end; min-width:280px;">
-                                <a class="link" href="{% url 'admin_user_detail' app.user_id %}">
+                                <a class="link" href="{% url 'user_monitoring' %}">
                                     View User
                                 </a>
 
@@ -163,7 +163,7 @@
                                     <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; width:100%;">
                                         <h3 style="margin:0 0 8px; font-size:14px; font-weight:900;">Decision</h3>
                                     
-                                        <form method="post" action="{% url 'admin_steward_decide' app.id %}" style="display:grid; gap:10px; margin:0;">
+                                        <form method="post" action="{% url 'steward_application' %}" style="display:grid; gap:10px; margin:0;">
                                             {% csrf_token %}
                                         
                                             <label style="display:grid; gap:6px; font-size:13px; font-weight:900;">
@@ -187,7 +187,7 @@
                                             <button class="btn" type="submit" style="min-width:unset;">Save Decision</button>
 
                                             <div style="color:var(--muted); font-size:13px; line-height:1.4;">
-                                                Decisions should create an audit log entry/\.
+                                                Decisions should create an audit log entry.
                                             </div>
                                         </form>
                                     </div>
@@ -200,7 +200,7 @@
 
                                         {% if app.status == "APPROVED" %}
                                             <div style="margin-top:10px;">
-                                                <form method="post" action="{% url 'admin_steward_revoke' app.id %}" style="margin:0; display:grid; gap:10px;">
+                                                <form method="post" action="{% url 'steward_application' %}" style="margin:0; display:grid; gap:10px;">
                                                     {% csrf_token %}
                                                     <label style="display:grid; gap:6px; font-size:13px; font-weight:900;">
                                                         Revoke Note

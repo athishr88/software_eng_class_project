@@ -1,4 +1,4 @@
-{% extend "base_buyer.html" %}
+{% extends "base_buyer.html" %}
 {% block title %}Order Confirmed | Pass It On Books{% endblock %}
 {% block content %}
 
@@ -6,8 +6,8 @@
         <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
             Order Confirmed
         </h1>
-        <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
-            Thanks! Your oder has been successfully placed.
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Thanks! Your order has been successfully placed.
         </p>
     </header>
 
@@ -25,11 +25,11 @@
             </div>
 
             <div style="display:grid; gap:10px; justify-items:end;">
-                <a class="btn" href="{% url 'catalog' order.id %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                <a class="btn" href="{% url 'order_detail' order.id %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
                     View Order
                 </a>
-                <a class="link" href="{% url 'catalog' %}" style="text-align:right;">
-                    View Order
+                <a class="link" href="{% url 'order_history' %}" style="text-align:right;">
+                    View Orders
                 </a>
                 <a class="link" href="{% url 'catalog' %}" style="text-align:right;">
                     Continue Shopping
@@ -42,7 +42,7 @@
                 What happens next?
             </h3>
             <ul style="margin:0; padding-left:18px; color:var(--muted); font-size:14px; line-height:1.5;">
-                <li>The seller recieves your ahipping address after payment confirnation.</li>
+                <li>The seller receives your shipping address after payment confirmation.</li>
                 <li>You'll be notified when the order ships.</li>
                 <li>You can track stats anytime from your Orders page.</li>
             </ul>
@@ -71,7 +71,7 @@
 
         {% if order_items %}
             <div style="padding:18px; display:grid; gap:10px;">
-                {% for item inorder_items %}
+                {% for item in order_items %}
                     <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
                         <div>
                             <strong style="font-size:14px;">{{ item.title }}</strong>
@@ -105,7 +105,7 @@
                 View all orders and statuses in one place.
             </p>
             <div style="margin-top:10px;">
-                <a class="link" href="{% url 'account_orders' %}">Go to Orders</a>
+                <a class="link" href="{% url 'order_history' %}">Go to Orders</a>
             </div>
         </div>
 
@@ -115,7 +115,7 @@
                 If something looks wrong, double check your shipping details and order status.
             </p>
             <div style="margin-top:10px;">
-                <a class="link" href="{% url 'account_addresses' %}">Manage addresses</a>
+                <a class="link" href="{% url 'buyer_shipping' %}">Manage addresses</a>
             </div>
         </div>
     </section>

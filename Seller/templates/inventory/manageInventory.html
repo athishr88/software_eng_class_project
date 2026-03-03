@@ -1,4 +1,4 @@
-{% extend "seller_base.html" %}
+{% extends "seller_base.html" %}
 {% block title %}Manage Inventory| Pass It On Books{% endblock %}
 {% block content %}
 
@@ -8,11 +8,11 @@
                 <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
                     Manage Inventory
                 </h1>
-                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
                     Update stock levels, prices, and publish status for your listings.
                 </p>
             </div>
-            <a class="link" href="{% url 'seller_add_books' %}">Add Books</a>
+            <a class="link" href="{% url 'add_books' %}">Add Books</a>
         </div>
     </header>
 
@@ -22,7 +22,7 @@
             Quickly find a listing by title/author or filter by status.
         </p>
 
-        <form method="get" action="{% url 'seller_books' %}" style="display:grid; gap:12px;">
+        <form method="get" action="{% url 'manage_inventory' %}" style="display:grid; gap:12px;">
             <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px;">
                 <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                     Search
@@ -58,7 +58,7 @@
             </div>
 
             <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
-                <a class="link" href="{% url 'seller_books %}" style="align-self:center;">Clear</a>
+                <a class="link" href="{% url 'manage_inventory' %}" style="align-self:center;">Clear</a>
                 <button class="btn" type="submit">Apply</button>
             </div>
         </form>
@@ -121,7 +121,7 @@
                                 </div>
                             </div>
 
-                            <form method="post" action="{% url 'seller_update_inventory' book.id %}" style="margin:0; display:grid; gap:10; min-width:280px; justify-items:end;">
+                            <form method="post" action="{% url 'manage_inventory' %}" style="margin:0; display:grid; gap:10px; min-width:280px; justify-items:end;">
                                 {% csrf_token %}
 
                                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; width:100%;">
@@ -156,7 +156,7 @@
                                 </label>
 
                                 <div style="display:flex; gap:10px; align-items:center; justify-content:flex-end; flex-wrap:wrap;">
-                                    <a class="link" href="{% url 'seller_edit_book' book.id %}">Edit Details</a>
+                                    <a class="link" href="{% url 'manage_inventory' %}">Edit Details</a>
                                     <button class="btn" type="submit" style="min-width:unset;">Save</button>
                                 </div>
                             </form>
@@ -172,13 +172,13 @@
 
                 <div style="display:flex; gap:10px; align-items:center;">
                     {% if page_obj.has_previous %}
-                        <a class="link href=?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET>status }}&{% endif %}{% if request.GET>sort %}sort={{ request.GET.sort}}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}">
                             Prev
                         </a>
                     {% endif %}
 
                     {% if page_obj.has_next %}
-                        <a class="link href=?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET>status }}&{% endif %}{% if request.GET>sort %}sort={{ request.GET.sort}}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}">
                             Next
                         </a>
                     {% endif %}
@@ -190,7 +190,7 @@
                         No listings found. Try adjusting your filters or add a new book.
                     </p>
                     <div style="margin-top:10px;">
-                        <a class="btn" href="{% url 'seller_add_book' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center">
+                        <a class="btn" href="{% url 'add_books' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center">
                             Add Book
                         </a>
                     </div>

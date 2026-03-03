@@ -16,7 +16,7 @@
             Use your payment processor to generatge a token
         </p>
 
-        <form method="post" action="{% url 'account_add_payment' %}" style="display:grid; gap:12px; max-width:520px;">
+        <form method="post" action="{% url 'buyer_payments' %}" style="display:grid; gap:12px; max-width:520px;">
             {% csrf_token %}
 
             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
@@ -144,7 +144,7 @@
                                     {{ method.exp_month }}/{{ method.exp_year }}
                                 </td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
-                                    <form method="post" action="{% url 'account_delete_payment' method.id %}" style="margin:0;">
+                                    <form method="post" action="{% url 'buyer_payments' %}" style="margin:0;">
                                         {% csrf_token %}
                                         <button class="btn" type="submit" style="background:#ef4444;">Delete</button>
                                     </form>

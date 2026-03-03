@@ -199,12 +199,12 @@
             </div>
 
             <nav class="navlinks" aria-label="Public Navigation Links">
-                <a class="link" href="{% url 'home' %}">Home</a>
+                <a class="link" href="{% url 'general_home' %}">Home</a>
                 <a class="link" href="{% url 'catalog' %}">Browse</a>
                 <a class="link" href="{% url 'cart' %}">Cart</a>
 
                 {% if user.is_authenticated %}
-                    <a class="link" href="{% url 'account_dashboard' %}">Account</a>
+                    <a class="link" href="{% url 'buyer_dashboard' %}">Account</a>
                     <form method="post" action="{% url 'logout' %}" style="margin:0;">
                         {% csrf_token %}
                         <button class="btn" type="submit">Logout</button>
@@ -219,7 +219,7 @@
         {% block hero %}
             <section class="title" aria-label="Page Header">
                 <h2>{% block hero_title %}Welcome to<br/>Pass It On Books{% endblock %}</h2>
-                <p>{% block hero_subtitle %}Find affordbale books and support the community.{% endblock}</p>
+                <p>{% block hero_subtitle %}Find affordable books and support the community.{% endblock}</p>
             </section>
         
         <section class="content-wrap" aria-label="Public Content">

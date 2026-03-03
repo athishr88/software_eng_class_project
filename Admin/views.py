@@ -187,3 +187,28 @@ def reports_flags(request):
         "all_flags": all_flags,
     }
     return render(request, "dashboard/reports_flags.html", context)
+
+
+def user_monitoring(request):
+    """User monitoring page."""
+    return render(request, "users/userMonitering.html")
+
+
+def steward_application(request):
+    """Steward applications."""
+    return render(request, "stewards/stewardApplication.html")
+
+
+def abuse_detection(request):
+    """Abuse detection / moderation."""
+    return render(request, "moderation/abuseDetection.html")
+
+
+def return_disputes(request):
+    """Return disputes."""
+    return render(request, "disputes/returnDisputes.html")
+
+
+def activity_logs(request):
+    """Activity / audit logs."""
+    return render(request, "audit/activityLogs.html")

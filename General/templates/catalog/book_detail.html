@@ -1,4 +1,4 @@
-{% extends "public_base.html" %}
+{% extends "public/public_base.html" %}
 {% block title %}{{ book.title }} | Pass It On Books {% endblock %}
 
 {% block hero_title %}
@@ -40,7 +40,7 @@
                 {% endif %}
 
                 <div style="margin-top:10px;">
-                    <form method="post" action="{% url 'add_to_cart' book.id %}" style="display:grid; gap:10px; max-width:240px;">
+                    <form method="post" action="{% url 'cart' %}" style="display:grid; gap:10px; max-width:240px;">
                         {% csrf_token %}
 
                         <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
@@ -55,7 +55,7 @@
 
                         <button 
                             class="btn"
-                            type="sumbit"
+                            type="submit"
                             {% if book.stock_quantity <= 0 %}disabled{% endif %}>
                             Add to Cart
                         </button>
@@ -64,7 +64,7 @@
 
                 {% if user.is_authenticated and user.is_steward %}
                     <div style="margin-top:8px;">
-                        <a class="link" href="{% url 'steward_checkout' book.id %}">
+                        <a class="link" href="{% url 'catalog' %}">
                             Buy with Steward Discount
                         </a>
                     </div>

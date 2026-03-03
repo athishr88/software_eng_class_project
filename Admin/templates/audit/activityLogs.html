@@ -1,4 +1,4 @@
-{% extend "admin_base.html" %}
+{% extends "admin_base.html" %}
 {% block title %}Activity Logs | Admin | PASS IT ON BOOKS{% endblock %}
 {% block content %}
     <header style="margin-bottom:16px;">
@@ -21,7 +21,7 @@
             Filter by event type, actor, IP, and date range.
         </p>
 
-        <form method="get" action="{% url 'admin_audit_logs' %}" style="display:grid; gap:12px;">
+        <form method="get" action="{% url 'activity_logs' %}" style="display:grid; gap:12px;">
             <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
                 <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                     Search
@@ -80,7 +80,7 @@
             </div>
 
             <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
-                <a class="link" href="{% url 'admin_audit_logs' %}" style="align-self:center;">Clear</a>
+                <a class="link" href="{% url 'activity_logs' %}" style="align-self:center;">Clear</a>
                 <button class="btn" type="submit">Apply</button>
             </div>
         </form>
@@ -99,7 +99,7 @@
         </div>
         
         {% if page_obj and page_obj.object_list %}
-            <table style="width:100%; border-collapse:cpllapse;">
+            <table style="width:100%; border-collapse:collapse;">
                 <thead>
                     <tr style="background:#f8fafc;">
                         <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
@@ -127,7 +127,7 @@
                             </td>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
                                 {{ ev.actor_email|default:"System" }}
-                                {% if ev.actor_role" %}
+                                {% if ev.actor_role %}
                                     <div style="margin-top:4px;">
                                         <span style="font-size:12px; font-weight:900; color:#1d4ed8; border:1px solid #60a5fa; background: #eff6ff; padding:2px 8px; border-radius:999px;">
                                             {{ ev.actor_role }}
@@ -162,7 +162,7 @@
                         </a>
                     {% endif %}
                     
-                    {% if page_obj.has_previous %}
+                    {% if page_obj.has_next %}
                         <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status}}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}{% if request.GET.suspicious_only %}suspicious_only=1&{% endif %}page={{ page_obj.next_page_number }}">
                             Next
                         </a>

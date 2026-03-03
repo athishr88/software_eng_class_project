@@ -1,4 +1,4 @@
-{% extend "base_buyer.html" %}
+{% extends "base_buyer.html" %}
 {% block title %}Order History | Pass It On Books{% endblock %}
 {% block content %}
 
@@ -17,7 +17,7 @@
             Narrow results by status and date range.
         </p>
 
-        <form method="get" action="{% url 'account_orders' %}" style="display:grid; gap:12px;">
+        <form method="get" action="{% url 'order_history' %}" style="display:grid; gap:12px;">
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
                 <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                     Status
@@ -36,7 +36,7 @@
             </div>
 
             <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
-                <a class="link" href="{% url 'account_orders' %}" style="align-self:center;">Clear</a>
+                <a class="link" href="{% url 'order_history' %}" style="align-self:center;">Clear</a>
                 <button class="btn" type="submit">Apply</button>
             </div>
         </form>

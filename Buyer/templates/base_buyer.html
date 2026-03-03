@@ -189,7 +189,7 @@
             </div>
 
             <div class="top-actions">
-                <a class="link" href="{% url 'home' %}">Home</a>
+                <a class="link" href="{% url 'general_home' %}">Home</a>
                 <a class="link" href="{% url 'catalog' %}">Browse</a>
                 <a class="link" href="{% url 'cart' %}">Cart</a>
 
@@ -205,11 +205,11 @@
                 <h2>My Account</h2>
 
                 <ul class="menu">
-                    <li><a class="link" href="{% url 'account_dashboard' %}">Dashboard</a></li>
-                    <li><a class="link" href="{% url 'account_profile' %}">Profile</a></li>
-                    <li><a class="link" href="{% url 'account_payment' %}">Payment Methods</a></li>
-                    <li><a class="link" href="{% url 'account_addresses' %}">Shipping Addresses</a></li>
-                    <li><a class="link" href="{% url 'account_orders' %}">Orders</a></li>
+                    <li><a class="link" href="{% url 'buyer_dashboard' %}">Dashboard</a></li>
+                    <li><a class="link" href="{% url 'buyer_profile' %}">Profile</a></li>
+                    <li><a class="link" href="{% url 'buyer_payments' %}">Payment Methods</a></li>
+                    <li><a class="link" href="{% url 'buyer_shipping' %}">Shipping Addresses</a></li>
+                    <li><a class="link" href="{% url 'order_history' %}">Orders</a></li>
                 </ul>
             
                 <div class="meta">
@@ -224,7 +224,7 @@
                         </div>
                     {% else %}
                         <div>
-                        <a class="link" href="{% url 'steward_info' %}">Become a Steward</a>
+                        <a class="link" href="{% url 'catalog' %}">Become a Steward</a>
                         </div>
                     {% endif %}
                 </div>

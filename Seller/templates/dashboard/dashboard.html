@@ -1,11 +1,11 @@
-{% extend "seller_base.html" %}
+{% extends "seller_base.html" %}
 {% block title %}Seller Dashboard | My Account{% endblock %}
 {% block content %}
     <header style="margin-bottom:16px;">
         <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
             Seller Dashboard
         </h1>
-        <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
             Overview of your listings, inventory, and recent orders.
         </p>
     </header>
@@ -20,7 +20,7 @@
                 <strong style="color:var(--text);">Unpublished:</strong> {{ stats.unpublished_books|default:"0" }}
             </p>
             <div style="margin-top:10px;">
-                <a class="link" href="{$ url 'seller_books' %}">Manage Books</a>
+                <a class="link" href="{% url 'manage_inventory' %}">Manage Books</a>
             </div>
         </div>
 
@@ -34,7 +34,7 @@
             </p>
             
             <div style="margin-top:10px;">
-                <p class="link" href="{$ url 'seller_books' %}">Update Inventory</a>
+                <a class="link" href="{% url 'manage_inventory' %}">Update Inventory</a>
             </div>
         </div>
 
@@ -59,17 +59,17 @@
                 Create a listing, set price, and publish when ready.
             </p>
             <div style="margin-top:10px;">
-                <a class="link" href="{% url 'seller_add_book' %}">Add Book</a>
+                <a class="link" href="{% url 'add_books' %}">Add Book</a>
             </div>
         </div>
 
         <div class="card" style="box-shadow:none; padding:14px;">
-            <h3 style="margin:0 0 6px; font-size:14-x; font-weight:900;">Manage Listings</h3>
-            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;"></p>"
+            <h3 style="margin:0 0 6px; font-size:14px; font-weight:900;">Manage Listings</h3>
+            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
                 Publish/Unpublish listings and adjust inventory.
             </p>
             <div style="margin-top:10px;">
-                <a class="link" href="{% url 'seller_books' %}">Go to Books</a>
+                <a class="link" href="{% url 'manage_inventory' %}">Go to Books</a>
             </div>
         </div>
     </section>
@@ -87,7 +87,7 @@
 
         <div class="card" style="box-shadow:none; margin-top:12px; padding:0; overflow:hidden;">
             {% if recent_orders %}
-                <table style="width:100%; border-collapse:cpllapse;">
+                <table style="width:100%; border-collapse:collapse;">
                     <thead>
                         <tr style="background:#f8fafc;">
                             <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Order</th>
@@ -107,7 +107,7 @@
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.total_amount }}</td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.created_at }}</td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
-                                    <a class="link" href="{% url 'seller_order_detail' order.id %}">View</a>
+                                    <a class="link" href="{% url 'seller_order_details' order.id %}">View</a>
                                 </td>
                             </tr>
                         {% endfor %}
