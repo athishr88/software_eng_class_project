@@ -1,0 +1,265 @@
+{% extends "admin_base.html" %}
+{% block title %}Abuse Detection | Admin | PASS IT ON BOOKS{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <div style="display:flev; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+                    Abuse Detection
+                </h1>
+                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+                    Review suspicious patterns (shared IP, shipping, unusually fast Steward progress, abnormal payment behvaior).
+                </p>
+            </div>
+            <a class="link" href="{% url 'admin_dashboard' %}">Back to Dashboard</a>
+        </div>
+    </header>
+
+    <section class="card" style="box-shadow:none; max-width:900px;">
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Search & Filters</h2>
+        <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
+            Filter by signal type, severity, status, and date range.
+        </p>
+
+        <form method="get" action="{% url 'abuse_detection' %}" style="display:grid; gap:12px;">
+            <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Search
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Email, IP, address, order id, keywords..."
+                        value="{{ request.GET.q }}"
+                    />
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Signal
+                    <select name="signal">
+                        <option value="">All</option>
+                        <option value="SHARED_IP_SHIPPING" {% if request.GET.signal == "SHARED_IP_SHIPPIN" %}selected{% endif %}>Shared IP + Shipping</option>
+                        <option value="FAST_STEWARD_PROGRESS" {% if request.GET.status == "FAST_STEWARD_PROGRESS" %}selected{% endif %}>Fast Steward Progress</option>
+                        <option value="ABNORMAL_PAYMENT" {% if request.GET.status == "ABNORMAL_PAYMENT" %}selected{% endif %}>abnormal Payment</option>
+                        <option value="MULTI_ACCOUNT_PATTERN" {% if request.GET.status == "MULTI_ACCOUNT_PATTERN" %}selected{% endif %}>Mulit-account Pattern</option>
+                    </select>
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Status
+                    <select name="status">
+                        <option value="">All</option>
+                        <option value="OPEN" {% if request.GET.status == "OPEN" %}selected{% endif %}>Open</option>
+                        <option value="IN_REVIEW" {% if request.GET.status == "IN_REVIEW" %}selected{% endif %}>In Review</option>
+                        <option value="RESOLVED" {% if request.GET.status == "RESOLVED" %}selected{% endif %}>Resolved</option>
+                        <option value="DISMISSED" {% if request.GET.status == "DISMISSED" %}selected{% endif %}>Dismissed</option>
+
+                    </select>
+                </label>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
+                    <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Severity
+                    <select name="severity">
+                        <option value="">All</option>
+                        <option value="LOW" {% if request.GET.status == "LOW" %}selected{% endif %}>Low</option>
+                        <option value="MEDIUM" {% if request.GET.status == "MEDIUM" %}selected{% endif %}>MEDIUM</option>
+                        <option value="HIGH" {% if request.GET.status == "HIGH" %}selected{% endif %}>High</option>
+                        <option value="CRITICAL" {% if request.GET.status == "CRITICAL" %}selected{% endif %}>Critical</option>
+                    </select>
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    From
+                    <input
+                        type="date"
+                        name="from"
+                        value="{{ request.GET.from }}">
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    To
+                    <input
+                        type="date"
+                        name="to"
+                        value="{{ request.GET.to }}">
+                </label>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                <a class="link" href="{% url 'abuse_detection' %}" style="align-self:center;">Clear</a>
+                <button class="btn" type="submit">Apply</button>
+            </div>
+        </form>
+    </section>
+
+    <div style="height:14px;"></div>
+
+    <section class="card" style="box-shadow:none; max-width:900px; padding:0; overflow:hidden;">
+        <div style="padding:16px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h2 style="margin:0; font-size:16px; font-weight:800;">Flags</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    {% if page_obj %}Showing {{ page_obj.paginator.count }} flag(s).{% else %}No flags found.{% endif %}
+                </p>
+            </div>
+            <a class="link" href="{% url 'activity_logs' %}">View Activity Logs</a>
+        </div>
+
+        {% if page_obj and page_obj.object_list %}
+            <div style="padding:18px; display:grid; gap:12px;">
+                {% for flag in page_obj.object_list %}
+                    <article style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff; display:grid; gap:10px;">
+                        <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+                            <div style="min-width:260px;">
+                                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                    <strong style="font-size:14px;">{{ flag.signal_type }}</strong>
+
+                                    {% if flag.severity == "CRITICAL" or flag.severity =="HIGH" %}
+                                        <span style="font-size:12px; font-weight:900; color:#991b1b; border:1px solid #ef4444; background:#fff5f5; padding:2px 10px; border-radius:999px;">
+                                            {{ flag.severity }}
+                                        </span>
+                                    {% elif flag.severity == "MEDIUM" %}
+                                        <span style="font-size:12px; font-weight:900; color:#92400e; border:1px solid #f59e0b; background:#fffbeb; padding:2px 10px; border-radius:999px;">
+                                            {{ flag.severity }}
+                                        </span>
+                                    {% else %}
+                                        <span style="font-size:12px; font-weight:900; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 10px; border-radius:999px;">
+                                            {{ flag.severity }}
+                                        </span>
+                                    {% endif %}
+
+                                    {% if flag.status == "OPEN" %}
+                                        <span style="font-size:12px; font-weight:900; color:#1d4ed8; border:1px solid #60a5fa; background:#eff6ff; padding:2px 10px; border-radius:999px;">
+                                            OPEN
+                                        </span>
+                                    {% elif flag.status == "IN_REVIEW" %}
+                                        <span style="font-size:12px; font-weight:900; color:#92400e; border:1px solid #f59e0b; background:#fffbeb; padding:2px 10px; border-radius:999px;">
+                                            IN REVIEW
+                                        </span>
+                                    {% elif flag.status == "RESOLVED" %}
+                                        <span style="font-size:12px; font-weight:900; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 10px; border-radius:999px;">
+                                            RESOLVED
+                                        </span>
+                                    {% else %}
+                                        <span style="font-size:12px; font-weight:900; color:#6b7280; border:1px solid #d1d5db; background:#f8fafc; padding:2px 10px; border-radius:999px;">
+                                            DISMISSED
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <div style="margin-top:8px; color:var(--muted); font-size:13px; line-height:1.45;">
+                                    <div><strong style="color:var(--text);">Created:</strong> {{ flag.created_at }}</div>
+                                    {% if flag.user_email %}
+                                        <div><strong style="color:var(--text);">User:</strong> {{ flag.user_email }}</div>
+                                    {% endif %}
+                                    {% if flag.user_email %}
+                                        <div><strong style="color:var(--text);">IP:</strong> {{ flag.ip_address }}</div>
+                                    {% endif %}
+                                    {% if flag.shipping_fingerprint %}
+                                        <div><strong style="color:var(--text);">Shipping Fingerprint:</strong> {{ flag.shipping_fingerprint }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                {% if flag.summary %}
+                                    <p style="margin:10px 0 0; color:var(--muted); font-size:14px;">
+                                        {{ flag.summary }}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                            <div style="display:grid; gap:10px; justify-items:end; min-width:280px;">
+                                <a class="link" href="{% url 'admin_abuse_flag_detail' flag.id %}">
+                                    View Details
+                                </a>
+
+                                <form method="post" action="{% url 'admin-abuse-flag-update' flag.id %}" style="margin:0; width:100%; display:grid; gap:10px;">
+                                    {% csrf_token %}
+
+                                    <label style="display:grid; gap:6px; font-size:13px; font-weight:900;">
+                                        Update Status
+                                        <select name="status">
+                                            <option value="OPEN" {% if request.GET.status == "OPEN" %}selected{% endif %}>OPEN</option>
+                                            <option value="IN_REVIEW" {% if request.GET.status == "IN_REVIEW" %}selected{% endif %}>IN_REVIEW</option>
+                                            <option value="RESOLVED" {% if request.GET.status == "RESOLVED" %}selected{% endif %}>RESOLVED</option>
+                                            <option value="DISMISSED" {% if request.GET.status == "DISMISSED" %}selected{% endif %}>DISMISSED</option>
+                                        </select>
+                                    </label>
+
+                                    <label style="display:grid; gap:6px; font-size:13px; font-weight:900;">
+                                        Admin Note (optional)
+                                        <input
+                                            type="text"
+                                            name="note"
+                                            placeholder="Reason / action taken...">
+                                    </label>
+
+                                    <button class="btn" type="submit" style="min-width:unset;">
+                                        Save
+                                    </button>
+
+                                    <div style="color:var(--muted); font-size:13px; line-height:1.4;">
+                                        Change should be recorded in audit logs.
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+
+            <div style="padding:14px 18px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="color:var(--muted); font-size:14px;">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center;">
+                    {% if page_obj.has_previous %}
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status}}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}{% if request.GET.suspicious_only %}suspicious_only=1&{% endif %}page={{ page_obj.previous_page_number }}">
+                            Prev
+                        </a>
+                    {% endif %}
+
+                    {% if page_obj.has_next %}
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status}}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}{% if request.GET.suspicious_only %}suspicious_only=1&{% endif %}page={{ page_obj.next_page_number }}">
+                            Next
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% else %}
+            <div style="padding:18px;">
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    No abuse flags match your filters.
+                </p>
+            </div>
+        {% endif %}
+    </section>
+
+    <style>
+        
+        input:focus, select:focus{
+            border-color: #60a5fa !important;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
+        }
+
+        @media (max-width: 900px) {
+            div[style*="grid-template-columns: 2fr 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="grid-template-columns: 1fr 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="min-width:280px"]{
+                min-width: 0 !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+{% endblock %}
+        
+        
+
+
+                       
+

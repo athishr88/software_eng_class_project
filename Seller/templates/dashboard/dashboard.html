@@ -1,0 +1,152 @@
+{% extends "seller_base.html" %}
+{% block title %}Seller Dashboard | My Account{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+            Seller Dashboard
+        </h1>
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Overview of your listings, inventory, and recent orders.
+        </p>
+    </header>
+
+    <section style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:10px;">
+        <div class="card" style="box-shadow:none; padding:14px;">
+            <h3 style="margin:0 0 8px; font-size:14px; font-weight:800;">Listings</h3>
+            <p style="margin:0; font-size:14px">
+                <strong style="color:var(--text);">Published:</strong> {{ stats.published_books|default:"0" }}
+            </p>
+            <p style="margin:4px 0 0; font-size:14px;">
+                <strong style="color:var(--text);">Unpublished:</strong> {{ stats.unpublished_books|default:"0" }}
+            </p>
+            <div style="margin-top:10px;">
+                <a class="link" href="{% url 'manage_inventory' %}">Manage Books</a>
+            </div>
+        </div>
+
+        <div class="card" style="box-shadow:none; padding:14px;">
+            <h3 style="margin:0 0 8px; font-size:14px; font-weight:800;">Inventory</h3>
+            <p style="margin:0; font-size:14px;">
+                <strong style="color:var(--text);">Low Stock:</strong> ${{ stats.low_stock_count|default:"0" }}
+            </p>
+            <p style="margin:0; font-size:14px;">
+                <strong style="color:var(--text);">Out of Stock:</strong> ${{ stats.out_of_stock_count|default:"0" }}
+            </p>
+            
+            <div style="margin-top:10px;">
+                <a class="link" href="{% url 'manage_inventory' %}">Update Inventory</a>
+            </div>
+        </div>
+
+        <div class="card" style="box-shadow:none; padding:14px;">
+            <h3 style="margin:0 0 8px; font-size:14px; font-weight:800;">Orders</h3>
+            <p style="margin:0; font-size:14px;">
+                <strong style="color:var(--text);">Open:</strong> {{ stats.open_order|default:"0" }}
+            </p>
+            <p style="margin:0; font-size:14px;">
+                <strong style="color:var(--text);">Shipped:</strong> {{ stats.shipped_orders|default:"0" }}
+            </p>
+            <div style="margin-top:10px;">
+                <a class="link" href="{% url 'seller_orders' %}">View Orders</a>
+            </div>
+        </div>
+    </section>
+
+    <section style="margin-top:14px; display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; max-width:900px;">
+        <div class="card" style="box-shadow:none; padding:14px;">
+            <h3 style="margin: 0 0 6px; font-size:14px; font-weight:900;">Add a new book</h3>
+            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
+                Create a listing, set price, and publish when ready.
+            </p>
+            <div style="margin-top:10px;">
+                <a class="link" href="{% url 'add_books' %}">Add Book</a>
+            </div>
+        </div>
+
+        <div class="card" style="box-shadow:none; padding:14px;">
+            <h3 style="margin:0 0 6px; font-size:14px; font-weight:900;">Manage Listings</h3>
+            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
+                Publish/Unpublish listings and adjust inventory.
+            </p>
+            <div style="margin-top:10px;">
+                <a class="link" href="{% url 'manage_inventory' %}">Go to Books</a>
+            </div>
+        </div>
+    </section>
+
+    <section style="margin-top:14px; max-width:900px;">
+        <div style="display:flex; align-items:end; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div>
+                <h2 style="margin:0; font-size:16px; font-weight:900;">Recent Orders</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    Orders needing your attention (payment-confirmed orders inculde shipping details).
+                </p>
+            </div>
+            <a class="link" href="{% url 'seller_orders' %}">See All</a>
+        </div>
+
+        <div class="card" style="box-shadow:none; margin-top:12px; padding:0; overflow:hidden;">
+            {% if recent_orders %}
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f8fafc;">
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Order</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Status</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Buyer</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Total</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Placed</th>
+                            <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
+                        </tr>
+                    </thead>
+                    </tbody>
+                        {% for order in recent_orders %}
+                            <tr>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">#{{ order.id }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.status }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.buyer_email }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.total_amount }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.created_at }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
+                                    <a class="link" href="{% url 'seller_order_details' order.id %}">View</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="padding:18px;">
+                    <p style="margin:0; color:var(--muted); font-size:14px;">
+                        No recent orders.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <style>
+        @media (max-width: 900px) {
+            section[style*="grid-template-columns:repeat(3"] { grid-template-columns: 1fr !important; }
+            section[style*="grid-template-columns:repeat(2"] { grid-template-columns: 1fr !important; }
+        }
+
+        @media (mac-width:640px){
+            table, thead, tbody, th, td, tr { display: block; }
+            thead { display: none; }
+
+            tbody tr{
+                border-bottom:1px solid var(--border);
+                padding:12px 18px;
+            }
+
+            tbody td{
+                border: none !important;
+                padding: 6px 0 !important;
+            }
+
+            tbody td:last-child{
+                text-align: left !important;
+                padding-top: 10px !important;
+            }
+        }
+    </style>
+{% endblock %}

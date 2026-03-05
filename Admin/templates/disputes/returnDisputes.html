@@ -1,0 +1,280 @@
+{% extends "admin_base.html" %}
+{% block title %}Return Disputes | Admin | PASS IT ON BOOKS{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+                    Return Disputes
+                </h1>
+                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+                    Review seller decisions, apply admin overrides, and confirm refunds after receipt.
+                </p>
+            </div>
+            <a class="link" href="{% url 'admin_dashboard' %}">Back to Dashboard</a>
+        </div>
+    </header>
+
+    {% if dispute_error %}
+        <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px; margin-bottom:12px; max-width:900px;">
+            {{ dispute_error }}
+        </div>
+    {% endif %}
+
+    {% if dispute_success %}
+        <div style="border:1px solid #22c55e; background:#f0fdf4; color:#166534; border-radius:10px; padding:10px 12px; font-size:14px; margin-bottom:12px; max-width:900px;">
+            {{ dispute_success }}
+        </div>
+    {% endif %}
+
+    <section class="card" style="box-shadow:none; max-width:900px;">
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Search & Filters</h2>
+        <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
+            Search by order id, buyer/seller email. Filter by dispute status and date range.
+        </p>
+
+        <form method="get" action="{% url 'admin_returns' %}" style="display:grid; gap:12px;">
+            <div style="display:grid; grid-template-columns: 2fr 1fr 1fr; gap:12px;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Search
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Order #, buyer, seller..."
+                        value="{{ request.GET.q }}"
+                    />
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Status
+                    <select name="status">
+                        <option value="">All</option>
+                        <option value="REQUESTED" {% if request.GET.status == "REQUESTED" %}selected{% endif %}>Requested</option>
+                        <option value="APPROVED" {% if request.GET.status == "APPROVED" %}selected{% endif %}>Approved</option>
+                        <option value="DENIED" {% if request.GET.status == "DENIED" %}selected{% endif %}>Denied</option>
+                        <option value="ADMIN_REVIEW" {% if request.GET.status == "ADMIN_REVIEW" %}selected{% endif %}>Admin Review</option>
+                        <option value="AWAITING_RECEIPT" {% if request.GET.status == "AWAITING_RECEIPT" %}selected{% endif %}>Awaiting Receipt</option>
+                        <option value="REFUNDED" {% if request.GET.status == "REFUNDED" %}selected{% endif %}>Refunded</option>
+                        <option value="CLOSED" {% if request.GET.status == "CLOSED" %}selected{% endif %}>Closed</option>
+                    </select>
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Sort
+                    <select name="sort">
+                        <option value="">Newest</option>
+                        <option value="oldest" {% if request.GET.status == "oldest" %}selected{% endif %}>Oldest</option>
+                        <option value="risk_desc" {% if request.GET.status == "risk_desc" %}selected{% endif %}>Highest Risk</option>
+                    </select>
+                </label>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    From
+                    <input
+                        type="date"
+                        name="from"
+                        value="{{ request.GET.from }}">
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    To
+                    <input
+                        type="date"
+                        name="to"
+                        value="{{ request.GET.to }}">
+                </label>
+
+                <label style="display:flex; gap:10px; align-items:center; font-size:14px; font-weight:800; margin-top:22px;">
+                    <input
+                        type="checkbox"
+                        name="flagged_only"
+                        value="1"
+                        {% if request.GET.flagged_only %}checked{% endif %}
+                        style="width:auto; margin:0;">
+                    Disputes only
+                </label>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                <a class="link" href="{% url 'admin_stewards %}" style="align-self:center;">Clear</a>
+                <button class="btn" type="submit">Apply</button>
+            </div>
+        </form>
+    </section>
+
+    <div style="height:14px;"></div>
+
+    <section class="card" style="box-shadow:none; max-width:900px; padding:0; overflow:hidden;">
+        <div style="padding:16px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h2 style="margin:0; font-size:16px; font-weight:800;">Return Requests</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    {% if page_obj %}Showing {{ page_obj.paginator.count }} return request(s).{% else %}No applications found.{% endif %}
+                </p>
+            </div>
+            <a class="link" href="{% url 'admin_audit_logs %}">View audit logs</a>
+        </div>
+
+        {% if page_obj and page_obj.object_list %}
+            <div style="padding:18px; display:grid; gap:12px;">
+                {% for r in page_obj.object_list %}
+                    <article style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff; display:grid; gap:10px;">
+                        <div style="display:flex; justify-content:space-between; gap:12px; align-items:flex-start; flex-wrap:wrap;">
+                            <div style="min-width:260px;">
+                                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                    <strong style="font-size:14px;">Return #{{ r.id }}</strong>
+                                    <span style="color:var(--muted); font-size:13px;">Order #{{ r.order_id }}</span>
+
+                                    {% if r.status == "DENIED" %}
+                                        <span style="font-size:12px; font-weight:900; color:#991b1b; border:1px solid #ef4444; background:#fff5f5; padding:2px 10px; border-radius:999px;">
+                                            DENIED
+                                        </span>
+                                    {% elif r.status == "APPROVED" or r.status == "REFUNDED" %}
+                                        <span style="font-size:12px; font-weight:900; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 10px; border-radius:999px;">
+                                            APPROVED
+                                        </span>
+                                    {% elif r.status == "ADMIN_REVIEW" %}
+                                        <span style="font-size:12px; font-weight:900; color:#92400e; border:1px solid #f59e0b; background:#fffbeb; padding:2px 10px; border-radius:999px;">
+                                            ADMIN_REVIEW
+                                        </span>
+                                    {% else %}
+                                        <span style="font-size:12px; font-weight:900; color:#1d4ed8; border:1px solid #60a5fa; background:#eff6ff; padding:2px 10px; border-radius:999px;">
+                                            {{ r.status }}
+                                        </span>
+                                    {% endif %}
+
+                                    {% if r.is_disputed %}
+                                        <span style="font-size:12px; font-weight:900; color:#991b1b; border:1px solid #ef4444; background:#fff5f5; padding:2px 10px; border-radius:999px;">
+                                            DISPUTE
+                                        </span>
+                                    {% endif %}
+                                </div>
+
+                                <div style="margin-top:8px; color:var(--muted); font-size:13px; line-height:1.45;">
+                                    <div><strong style="color:var(--text);">Buyer:</strong> {{ r.buyer_email }}</div>
+                                    <div><strong style="color:var(--text);">Seller:</strong> {{ r.seller_email }}</div>
+                                    <div><strong style="color:var(--text);">Item:</strong> {{ r.item_title }}</div>
+                                    <div><strong style="color:var(--text);">Reason:</strong> {{ r.reason }}</div>
+                                    <div><strong style="color:var(--text);">Created:</strong> {{ r.created_at }}</div>
+                                </div>
+
+                                {% if r.details %}
+                                    <p style="margin:10px 0 0; color:var(--muted); font-size:14px;">
+                                        {{ r.details }}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                            <div style="display:grid; gap:10px; justify-items:end; min-width:320px;">
+                                <a class="link" href="{% url 'admin_return_detail' r.id %}">View Details</a>
+
+                                <div style="border:1px solid var(--border); border-radius:var(--radius; padding:12px; background:#fff; width:100%;">
+                                    <h3 style="margin:0 0 8px; font-size:14px; font-weight:900;">Admin Action</h3>
+
+                                    <form method="post" action="{% url 'admin_return_override' r.id %}" style="display:grid; gap:10px; margin:0;">
+                                        {% csrf_token %}
+
+                                    <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                                        Override Decision
+                                        <select name="override_action">
+                                            <option value="">Select</option>
+                                            <option value="APPROVE">Approve Return</option>
+                                            <option value="Deny">Deny Return</option>
+                                            <option value="MOVE_TO_ADMIN_REVIEW">Move to Admin Review</option>
+                                            <option value="CONFIRM_RECEIPT">Confirm Seller Receipt</option>
+                                            <option value="ISSUE_REFUND">Issue Refund</option>
+                                            <option value="CLOSE">Close</option>
+                                        </select>
+                                    </label>
+
+                                    <label style="display:grid; gap:6px; font-size:13px; font-weight:900;">
+                                        Admin note
+                                        <input
+                                            type="text"
+                                            name="note"
+                                            placeholder="Explain why this action is taken..."
+                                            required>
+                                    </label>
+
+                                    <button class="btn" type="submit" style="min-width:unset;">
+                                        Save
+                                    </button>
+
+                                    <div style="color:var(--muted); font-size:13px; line-height:1.4px;">
+                                        Refunds should only occur after seller confirms receipt (per policy).
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+        <div style="padding:14px 18px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="color:var(--muted); font-size:14px;">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center;">
+                    {% if page_obj.has_previous %}
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status}}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}{% if request.GET.suspicious_only %}suspicious_only=1&{% endif %}page={{ page_obj.previous_page_number }}">
+                            Prev
+                        </a>
+                    {% endif %}
+
+                    {% if page_obj.has_next %}
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status}}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}{% if request.GET.suspicious_only %}suspicious_only=1&{% endif %}page={{ page_obj.next_page_number }}">
+                            Next
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+        {% else %}
+            <div style="padding:18px;">
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    No return disputes match your filters.
+                </p>
+            </div>
+        {% endif %}
+    </section>
+
+    <style>
+        
+        input:focus, select:focus{
+            border-color: #60a5fa !important;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
+        }
+
+        @media (max-width: 900px) {
+            div[style*="grid-template-columns: 2fr 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="grid-template-columns: 1fr 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+            div[style*="min-width:280px"]{
+                min-width: 0 !important;
+                width: 100% !important;
+            }
+        }
+    </style>
+{% endblock %}
+        
+        
+
+
+                       
+
+
+
+                                
+
+
+
+                                    
+

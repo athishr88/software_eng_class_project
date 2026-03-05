@@ -1,0 +1,214 @@
+{% extends "seller_base.html" %}
+{% block title %}Orders| Pass It On Books{% endblock %}
+{% block content %}
+
+    <header style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+                    Orders
+                </h1>
+                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+                    View and manage orders. Shipping details appear after paument is confirmed.
+                </p>
+            </div>
+            <a class="link" href="{% url 'seller_dashboard' %}">Back to Dashboard</a>
+        </div>
+    </header>
+
+    <section class="card" style="box-shadow:none; max-width:900px;">
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Filters</h2>
+        <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
+            Filter by status, date range, or search bt order id / buyer email.
+        </p>
+
+        <form method="get" action="{% url 'seller_orders' %}" style="display:grid; gap:12px;">
+            <div style="display:grid; grid-template-columns:2fr 1fr 1fr; gap:12px;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Search
+                    <input
+                        type="text"
+                        name="q"
+                        placeholder="Order # or buyer email."
+                        value="{{ request.GET.q }}">
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Status
+                    <select name="status">
+                        <option value="">All</option>
+                        {% for s in statuses %}
+                            <option value="s"{% if request.GET.status == "s"%}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Sort
+                    <select name="sort">
+                        <option value="">Newest</option>
+                        <option value="oldest" {% if request.GET.status == "oldest" %}selected{% endif %}>Oldest</option>
+                        <option value="total_desc"{% if request.GET.status == "total_desc" %}selected{% endif %}>Total: High -> Low</option>
+                        <option value="total_asc"{% if request.GET.status == "total_asc"%}selected{% endif %}>Total: Low -> High</option>
+                    </select>
+                </label>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-width:520px;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    From
+                    <input
+                        type="date"
+                        name="from"
+                        value="{{ request.GET.from }}">
+                </label>
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    To
+                    <input
+                        type="date"
+                        name="to"
+                        value="{{ request.GET.to }}">
+                </label>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                <a class="link" href="{% url 'seller_orders' %}" style="align-self:center;">Clear</a>
+                <button class="btn" type="submit">Apply</button>
+            </div>
+        </form>
+    </section>
+
+    <div style="height:14px;"></div>
+
+    <section class="card" style="box-shadow:none; max-width:900px; padding:0; overflow:hidden;">
+        <div style="padding:16px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:end;">
+            <div>
+                <h2 style="margin:0; font-size:16px; font-weight:800;">Results</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    {% if page_obj %}Showing {{ page_obj.paginator.count }} order(s).{% else %} No orders found.{% endif %}
+                </p>
+            </div>
+        </div>
+
+        {% if page_obj and page_obj.object_list %}
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#f8fafc;">
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Order</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Status</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Buyer</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Total</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Placed</th>
+                        <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {   % for order in page_obj.object_list %}
+                        <tr>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">
+                                #{{ order.id }}
+                            </td>
+
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                                {{ order.status }}
+                                {% if order.payment_confirmed %}
+                                    <span style="margin-left:8px; font-size:12px; font-weight:900; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 8px; border-radius:999px;">
+                                        PAID
+                                    </span>
+                                {% else %}
+                                    <span style="margin-left:8px; font-size:12px; font-weight:900; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 8px; border-radius:999px;">
+                                        UNPAID
+                                    </span>
+                                {% endif }
+                            </td>
+
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                                {{ order.buyer_email }}
+                            </td>
+
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                                ${{ order.total_amount }}
+                            </td>
+
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                                {{ order.created_at }}
+                            </td>
+
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
+                                <a class="link" href="{% url 'seller_order_details' order.id %}">View</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+                                       
+            <div style="padding:14px 18px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+                <div style="color:var(--muted); font-size:14px;">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </div>
+
+                <div style="display:flex; gap:10px; align-items:center;">
+                    {% if page_obj.has_previous %}
+                        <a class="link href=?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET>status }}&{% endif %}{% if request.GET>sort %}sort={{ request.GET.sort}}&{% endif %}page={{ page_obj.previous_page_number }}">
+                            Prev
+                        </a>
+                    {% endif %}
+
+                    {% if page_obj.has_next %}
+                        <a class="link href=?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET>status }}&{% endif %}{% if request.GET>sort %}sort={{ request.GET.sort}}&{% endif %}page={{ page_obj.previous_page_number }}">
+                            Next
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <div style="padding:18px;">
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    No orders match your filters,
+                </p>
+            </div>
+        {% endif %}
+    </section>
+
+    <style>
+        input:focus, select:focus{
+            border-color:#60a5fa !important;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
+        }
+
+        @media (max-width: 900px){
+            div[style*="grid-template-columns: 2fr 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+
+            div[style*="grid-template-columns: 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        @media (max-width: 640px){
+            table, thead, tbody, th, td, tr { display: block; }
+            thead { display: none; }
+
+            tbody tr{
+                border-bottom: 1px solid var(--border);
+                padding:12px 18px;
+            }
+
+            tbody td{
+                border:none !important;
+                padding: 6px 0 !important;
+            }
+
+            tbody td:last-child{
+                text-align:left !important;
+                padding-top: 10px !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+                    
+

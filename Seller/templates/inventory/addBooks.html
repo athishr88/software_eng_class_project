@@ -1,0 +1,182 @@
+{% extends "seller_base.html" %}
+{% block title %}Request a Return | Pass It On Books{% endblock %}
+{% block content %}
+
+    <header style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+                    Add a Book
+                </h1>
+                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+                    Create a new listing. You can publish immediately or save as unpublished.
+                </p>
+            </div>
+            <a class="link" href="{% url 'manage_inventory' %}">Back to Books</a>
+        </div>
+    </header>
+
+    {% if form_error %}
+        <div style="border:1px solid #ef4444; background:#fff5f5; color:991b1b; border-radius:10px; padding:10px 12px; font-size:14px; margin-bottom:12px; max-width:900px;">
+            {{ form_error }}
+        </div>
+    {% endif %}
+
+    {% if form_success %}
+        <div style="border:1px solid #22c55e; background:#f0fdf4; color:166534; border-radius:10px; padding:10px 12px; font-size:14px; margin-bottom:12px; max-width:900px;">
+            {{ form_success }}
+        </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'add_books' %}" style="max-width:900px;">
+        {% csrf_token %}
+
+        <section style="display:grid; grid-template-columns: 1fr 340px; gap:12px; align-items:start;">
+            <div style="display:grid; gap:12px;">
+
+                <div class="card" style="box-shadow:none;">
+                    <h2 style="margin:0; font-size:16px; font-weight:800;">Book Details</h2>
+                    <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                        Provide clear, accurate information for buyers.
+                    </p>
+
+                    <div style="margin-top:12px; display:grid; gap:12px; max-width:720px;">
+                        <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                            Title
+                            <input type="text" name="title" required value="{{ form_values.title|default:'' }}">
+                        </label>
+
+                       <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                            Author
+                            <input type="text" name="author" required value="{{ form_values.author|default:'' }}">
+                        </label>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; grid:12px;">
+                            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                                ISBN (optional)
+                                <input type="text" name="isbn" required value="{{ form_values.isbn|default:'' }}">
+                            </label>
+
+                            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                                Condition (optional)
+                                <select name="condition">
+                                    <option value=""{% if not form_values.condition %}selected{% endif %}>Select</option>
+                                    <option value="NEW"{% if not form_values.condition == "NEW"%}selected{% endif %}>New</option>
+                                    <option value="LIKE_NEW"{% if not form_values.condition == "LIKE_NEW"%}selected{% endif %}>Like New</option>
+                                    <option value="Good"{% if not form_values.condition == "GOOD"%}selected{% endif %}>Good</option>
+                                    <option value="ACCEPTABLE"{% if not form_values.condition == "ACCEPTABLE"%}selected{% endif %}>Acceptable</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                            Description
+                            <textarea name="description" rows="4" placeholder="Briefly describe the book (edition, notes, wear, etc.)">{{ form_values.description|default:'' }}</textarea>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="card" style="box-shadow:none;">
+                    <h2 style="margin:0; font-size:16px; font-weight:800;">Pricing & Inventory</h2>
+                    <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                        Set the price and available quantity. Inventory is checked at checkout.
+                    </p>
+
+                    <div style="margin-top:12px; display:grid; gap:12px; max-width:720px;">
+                        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
+                            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                                Price (USD)
+                                <input type="number" step="0.01" min="0" name="price" required value="{{ form_values.price|default:'' }}">
+                            </label>
+
+                            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                                Stock Quantity
+                                <input type="number" min="0" name="stock_quantity" required value="{{ form_values.stock|default:'' }}">
+                            </label>
+
+                            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                                Publish
+                                <select name="is_published">
+                                    <option value="1" {% if form_values.is_published|default:"1" == "1" %}selected{% endif %}>Publish Now</option>
+                                    <option value="0" {% if form_values.is_published == "0" %}selected{% endif %}>Save Unpublished</option>
+                                </select>
+                            </label>
+                        </div>
+
+                        <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
+                            <h3 style="margin:0 0 8px; font-size:14px; font-weight:900;">Deposit Required (optional)</h3>
+                            <p style="margin:0 0 10px; color:var(--muted); font-size:14px; line-height:1.45;">
+                                If this book required a refundable deposit, enable it and the set amount.
+                            </p>
+
+                            <label style="display:flex; gap:10px; align-items:center; font-weight:800; font-size:14px;">
+                                <input 
+                                    type="checkbox" 
+                                    name="deposit_required" 
+                                    value="1"
+                                    {% if form_values.deposit_required %}checked{% endif %}
+                                    style="width:auto; margin:0;">
+                                Deposit Required
+                            </label>
+
+                            <div style="margin-top:10px; max-width:260px;">
+                                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                                    Deposit Amount (USD)
+                                    <input type="number" step="0.01" min="0" name="deposit_amount" value="{{ form_values.deposit_amount|default:'' }}">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="card" style="box-shadow:none; position:sticky; top:18px;">
+                <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Publish Checklist</h2>
+
+                <ul style="margin:0; padding-left:18px; color:var(--muted); font-size:14px; line-height:1.5">
+                    <li>Title and author are correct</li>
+                    <li>Price is accurate</li>
+                    <li>Stock quantity is set</li>
+                    <li>Description explains condition</li>
+                </ul>
+
+                <div style="margin-top:14px; display:grid; gap:10px;">
+                    <button class="btn" type="submit">Save Book</button>
+                    <a class="link" href="{% url 'manage_inventory' %}" style="text-align:center;">Cancel</a>
+                </div>
+
+                <div style="margin-top:12px; color:var(--muted); font-size:13px; line-height:1.4;">
+                    Tip: You can edit inventory and publish/unpublish anytime from "manage Books".
+                </div>
+            </aside>
+
+        </section>
+    </form>
+
+    <style>
+        input:focus, select:focus, textarea:focus{
+            border-color:#60a5fa !important;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
+        }
+
+        @media (max-width: 900px){
+            section[style*="grid-template-columns: 1fr 340px;"]{
+                grid-template-columns: 1fr !important;
+            }
+            aside[style*="position:sticky"]{
+                position: static !important;
+            }
+
+            div[style*="grid-template-columns: 1fr 1fr 1fr;"]{
+                grid-template-columns: 1fr !important;
+            }
+
+            div[style*="grid-template-columns: 1fr 1fr;"]{
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+                    
+

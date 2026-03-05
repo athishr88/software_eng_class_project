@@ -1,0 +1,84 @@
+{% extends "public/public_base.html" %}
+{% block title %}Email Verification | Pass It On Books {% endblock %}
+
+{% block hero_title %}Email<br/>Verification{% endblock %}
+{% block hero_subtitle %}Confirm your email to finish setting up your account.{% endblock %}
+
+{% block content %}
+    <dive class="card" style="max-width:520px;">
+        <h3 style="margin:0 0 10px; font-size:16px; font-weight:900; letter-spacing:0.2px;">
+            Verification Status
+        </h3>
+
+        {% if status == "success" %}
+            <p style="margin:0; color:var(--text); font-size:14px; line-height:1.5;">
+                Your email has been verified. You can now log in.
+            </p>
+
+            <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+                <a class="btn" href="{% url 'login' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                    Go to Login
+                </a>
+            </div>
+
+        {% elif status == "expired" %}
+            <p style="margin:0; color:#991b1b; font-size:14px; line-height:1.5;">
+                Verification link has expired.
+            </p>
+            <p style="margin:10px 0 0; color:var(--muted); font-size:14px; line-height:1.5;">
+                Request a new verification email to continue.
+            </p>
+
+            <div style="margin-top:14px; display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                <a class="link" href="{% url 'register' %}">Create Account</a>
+                <a class="btn" href="{% url 'login' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                    Resend Email
+                </a>
+            </div>
+
+        {% elif status == "invalid" %}
+            <p style="margin:0; color:#991b1b; font-size:14px; line-height:1.5;">
+                Verification link is invalid.
+            </p>
+            <p style="margin:10px 0 0; color:var(--muted); font-size:14px; line-height:1.5;">
+                Request a new verification link to verify your email.
+            </p>
+
+            <div style="margin-top:14px; display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                <a class="link" href="{% url 'login' %}">Back to Login</a>
+                <a class="btn" href="{% url 'login' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                    Resend Email
+                </a>
+            </div>
+
+            {% elif status == "already_verified" %}
+            <p style="margin:0; color:var(--text); font-size:14px; line-height:1.5;">
+                Your email is alreadyy verified.
+            </p>
+
+            <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+                <a class="btn" href="{% url 'login' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                    Go to Login
+                </a>
+            </div>
+
+            {% else %}
+            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.5;">
+                We couldn't determine your verification status.
+            </p>
+
+            <div style="margin-top:14px; display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
+                <a class="link" href="{% url 'login' %}">Back to Login</a>
+                <a class="btn" href="{% url 'login' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                    Resend Email
+                </a>
+            </div>
+        {% endif %}
+
+        <div style="margin-top:14px; color:var(--muted); font-size:13px; line-height:1.4;">
+            Tip: Check your spam folder if you dont see an email within a few minutes.
+        </div>
+    </div>
+{% endblock %}
+
+

@@ -1,0 +1,75 @@
+{% extends "public/public_base.html" %}
+{% block title %}Create Account | Pass It On Books {% endblock %}
+
+{% block hero_title %}Create<br/>Your Account{% endblock %}
+{% block hero_subtitle %}Join Pass It On Books to buy, track orders, and manage your account.{% endblock %}
+
+{% block content %}
+    <div class="card" style="max-width:520px;">
+        <h3 style="margin:0 0 12px; font-size:16px; font-weight:900; letter-spacing:0.2px;">
+            Register to Continue
+        </h3>
+
+        <form method="post" action="{% url 'register' %}">
+            {% csrf_token %}
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <label>
+                    First Name
+                    <input type="text" name="first_name" autocomplete="given_name" required>
+                </label>
+
+                <label>
+                    Last Name
+                    <input type="text" name="last_name" autocomplete="family_name" required>
+                </label>
+            </div>
+
+            <label>
+                Email
+                <input type="email" name="email" autocomplete="email" required>
+            </label>
+
+            <label>
+                Password
+                <input type="password" name="password" autocomplete="password" required>
+            </label>
+
+            <label>
+                Confirm Password
+                <input type="password" name="confirm_password" autocomplete="new-password" required>
+            </label>
+
+            {% if form_errors %}
+                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ form_errors }}
+                </div>
+            {% endif %}
+
+            {% if success_message %}
+                <div style="border:1px solid #22c55e; background:#f0fdf4; color:#166534; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ success_message }}
+                </div>
+            {% endif %}
+
+            <div style="display:flex; justify-content:flex-end; gAP:10px; align-items:center; margin-top:4px;">
+                <a class="link" href="{% url 'login' %}">Already have an account?</a>
+                <button class="btn" type="submit">Create Account</button>
+            </div>
+        </form>
+
+        <div style="margin-top:12px; color:var(--muted); font-size:13px; line-height:1.4;">
+            By creating an account, you agree to our community rules and responsible use of credits.
+        </div>
+    </div>
+
+    <style>
+        @media (macx-width: 520px){
+            div[stule*="grid-template-columns: 1fr 1fr"]{
+                grid-template-columns: 1fr !important;
+            }
+        }
+    </style>
+{% endblock %}
+
+                
