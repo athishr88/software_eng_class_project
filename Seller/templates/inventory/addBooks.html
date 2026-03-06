@@ -53,24 +53,24 @@
 
                         <div style="display:grid; grid-template-columns: 1fr 1fr; grid:12px;">
                             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                                ISBN (optional)
+                                ISBN
                                 <input type="text" name="isbn" required value="{{ form_values.isbn|default:'' }}">
                             </label>
 
                             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                                 Condition (optional)
                                 <select name="condition">
-                                    <option value=""{% if not form_values.condition %}selected{% endif %}>Select</option>
-                                    <option value="NEW"{% if not form_values.condition == "NEW"%}selected{% endif %}>New</option>
-                                    <option value="LIKE_NEW"{% if not form_values.condition == "LIKE_NEW"%}selected{% endif %}>Like New</option>
-                                    <option value="Good"{% if not form_values.condition == "GOOD"%}selected{% endif %}>Good</option>
-                                    <option value="ACCEPTABLE"{% if not form_values.condition == "ACCEPTABLE"%}selected{% endif %}>Acceptable</option>
+                                    <option value="" selected>Select</option>
+                                    <option value="NEW" >New</option>
+                                    <option value="LIKE_NEW" >Like New</option>
+                                    <option value="Good" >Good</option>
+                                    <option value="ACCEPTABLE" >Acceptable</option>
                                 </select>
                             </label>
                         </div>
 
                         <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                            Description
+                            Description (Optional)
                             <textarea name="description" rows="4" placeholder="Briefly describe the book (edition, notes, wear, etc.)">{{ form_values.description|default:'' }}</textarea>
                         </label>
                     </div>
@@ -122,7 +122,8 @@
                             <div style="margin-top:10px; max-width:260px;">
                                 <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                                     Deposit Amount (USD)
-                                    <input type="number" step="0.01" min="0" name="deposit_amount" value="{{ form_values.deposit_amount|default:'' }}">
+                                    <input type="number" step="0.01" min="0" name="deposit_amount" value="{{ form_values.deposit_amount|default:'' }}" {% if form_values.deposit_required %} required {% endif %}>
+                                    <!--TODO: add a script to make this required if deposit.required is checked-->
                                 </label>
                             </div>
                         </div>
