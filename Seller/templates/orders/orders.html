@@ -105,7 +105,7 @@
                 </thead>
 
                 <tbody>
-                {   % for order in page_obj.object_list %}
+                    {% for order in page_obj.object_list %}
                         <tr>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">
                                 #{{ order.id }}
@@ -121,7 +121,7 @@
                                     <span style="margin-left:8px; font-size:12px; font-weight:900; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 8px; border-radius:999px;">
                                         UNPAID
                                     </span>
-                                {% endif }
+                                {% endif %}
                             </td>
 
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
@@ -140,7 +140,7 @@
                                 <a class="link" href="{% url 'seller_order_details' order.id %}">View</a>
                             </td>
                         </tr>
-                    {% endfor %}
+                    {% endfor %} <!--FIXME: django expects endif not endfor-->
                 </tbody>
             </table>
                                        
@@ -151,13 +151,13 @@
 
                 <div style="display:flex; gap:10px; align-items:center;">
                     {% if page_obj.has_previous %}
-                        <a class="link href=?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET>status }}&{% endif %}{% if request.GET>sort %}sort={{ request.GET.sort}}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort}}&{% endif %}page={{ page_obj.previous_page_number }}">
                             Prev
                         </a>
                     {% endif %}
 
                     {% if page_obj.has_next %}
-                        <a class="link href=?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET>status }}&{% endif %}{% if request.GET>sort %}sort={{ request.GET.sort}}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort}}&{% endif %}page={{ page_obj.next_page_number }}">
                             Next
                         </a>
                     {% endif %}
