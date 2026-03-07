@@ -54,7 +54,9 @@
                         <div style="display:grid; grid-template-columns: 1fr 1fr; grid:12px;">
                             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                                 ISBN
-                                <input type="text" name="isbn" required value="{{ form_values.isbn|default:'' }}">
+                                <input type="text" name="isbn" required value="{{ form_values.isbn|default:'' }}"
+                                pattern="^(\d{10}|\d{13}|\d{9}[Xx])$"
+                                title="Please enter a valid 10 or 13 digit ISBN without hyphens.">
                             </label>
 
                             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
