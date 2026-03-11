@@ -3,7 +3,7 @@ Django==6.0.2
 django-cors-headers==4.9.0
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
-packaging @ file:///C:/miniconda3/conda-bld/packaging_1761049098810/work
+packaging == 24.0
 PyJWT==2.11.0
 setuptools==80.10.2
 sqlparse==0.5.5
