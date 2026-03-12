@@ -224,7 +224,7 @@
         
         <section class="content-wrap" aria-label="Public Content">
             {% if messages %}
-                <div class="messages" aria-label="System Messages"></div>
+                <div class="messages" aria-label="System Messages">
                     {% for message in messages %}
                         <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
                             {{ message }}

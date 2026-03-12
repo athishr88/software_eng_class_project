@@ -163,11 +163,18 @@
             <div class="login-card">
                 <h2>Login to Continue</h2>
 
-                <form action="{% url 'login' %}" method="post">
+                {% if error %}
+                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px; margin-bottom:14px;">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <form action="{% url 'login' %}{% if next %}?next={{ next|urlencode }}{% endif %}" method="post">
                     {% csrf_token %}
+                    {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
                     <label for="username">
-                        Username / Email
-                        <input id="username" name="username" type="text" autocomplete="username" required/>
+                        Email
+                        <input id="username" name="username" type="email" autocomplete="username" required placeholder="you@example.com"/>
                     </label>
 
                     <label for="password">
@@ -175,16 +182,14 @@
                         <input id="password" name="password" type="password" autocomplete="current-password" required/>
                     </label>
                     <div class="actions">
-                            <button type="submit">Login</button>
-                
-
-                            <div class="links">
-                                <a href="#" aria-label="Forgot Password link">Forgot password?</a>
-                                <a href="#" aria-label="Create account link">Create Account</a>
-                            </div>
+                        <button type="submit">Login</button>
+                        <div class="links">
+                            <a href="{% url 'register' %}" aria-label="Create account link">Create Account</a>
                         </div>
-                    </form>
-                </div>
+                    </div>
+                </form>
+            </div>
+            <p style="margin:20px 0 0; text-align:center;"><a href="{% url 'general_home' %}" style="color:var(--primary); font-size:14px;">← Back to Home</a></p>
             </section>
         </main>
     </body>
