@@ -105,6 +105,19 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+    @property
+    def price_dollars(self):
+        """Price in dollars for display (base_price_cents / 100)."""
+        return self.base_price_cents / 100.0
+
+    @property
+    def stock_quantity(self):
+        """Available quantity from inventory, or 0 if no inventory record."""
+        try:
+            return self.inventory.quantity_available
+        except Inventory.DoesNotExist:
+            return 0
+
 class Inventory(models.Model):
     book = models.OneToOneField(Book, on_delete=models.CASCADE)
 

@@ -1,8 +1,9 @@
 {% extends "public/public_base.html" %}
+{% load static %}
 {% block title %}{{ book.title }} | Pass It On Books {% endblock %}
 
 {% block hero_title %}
-{% book.title %}
+{{ book.title }}
 {% endblock %}
 
 {% block hero_subtitle %} by {{ book.author }}
@@ -12,15 +13,25 @@
 
     <div class="card" style="max-width:820px;">
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start;">
-
+            <div style="display:grid; gap:16px;">
+                <div style="aspect-ratio:2/3; max-width:220px; background:var(--bg); border-radius:var(--radius); overflow:hidden;">
+                    {% if book.cover_image_url %}
+                        <img src="{{ book.cover_image_url }}" alt="Cover: {{ book.title }}" style="width:100%; height:100%; object-fit:cover;">
+                    {% elif cover_serve_url %}
+                        <img src="{{ cover_serve_url }}" alt="Cover: {{ book.title }}" style="width:100%; height:100%; object-fit:cover;">
+                    {% else %}
+                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); color:var(--primary); font-size:2.5rem; font-weight:900;">{{ book.title|slice:":2" }}</div>
+                    {% endif %}
+                </div>
+            </div>
             <div style="display:grid; gap:10px;">
 
                 <p style="margin:0; font-size:14px; color:var(--muted);">
-                    Seller: <strong style="color:var(--text);">{{ book.seller_display_name }}</strong>
+                    Seller: <strong style="color:var(--text);">{{ seller_display_name }}</strong>
                 </p>
 
                 <p style="margin:0; font-size:20px; font-weight:900;">
-                    ${{ book.price }}
+                    ${{ book.price_dollars|floatformat:2 }}
                 </p>
 
                 <p style="margin:0; font-size:14px;">
@@ -35,7 +46,7 @@
                 {% if book.deposit_required %}
                     <p style="margin:6px 0 0; font-size:14px; color:var(--muted);">
                         Deposit Required:
-                        <strong style="color:vara(--text);">${{ book.deposit_amount }}</strong>
+                        <strong style="color:var(--text);">${{ book.deposit_amount }}</strong>
                     </p>
                 {% endif %}
 
@@ -87,7 +98,7 @@
     <div style="height:14px;"></div>
 
     <div class="card" style="max-width:820px; padding:0; overflow:hidden;">
-        <div style="padding:16px 18px; border-bottom:1px soliod var(--border);">
+        <div style="padding:16px 18px; border-bottom:1px solid var(--border);">
             <h3 style="margin:0; font-size:16px; font-weight:900;">
                 Reviews
             </h3>
@@ -113,7 +124,7 @@
     </div>
 
     <div style="margin-top:14px;">
-        <a class="link" href="{ur; 'catalog' %}"> Back to Browse</a>
+        <a class="link" href="{% url 'catalog' %}"> Back to Browse</a>
     </div>
 
     <style>
