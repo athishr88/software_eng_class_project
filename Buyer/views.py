@@ -12,13 +12,28 @@ def buyer_dashboard(request):
 
 
 def buyer_cart(request):
-    """Cart page."""
-    return render(request, "cart/buyer_cart.html")
+    """Cart page. Pass default context so template lookups never fail."""
+    context = {
+        "cart_items": [],
+        "cart_subtotal": "0.00",
+        "cart_total": "0.00",
+    }
+    # TODO: load real cart for request.user and set cart_items, cart_subtotal, cart_total
+    return render(request, "cart/buyer_cart.html", context)
 
 
 def buyer_checkout(request):
-    """Checkout page."""
-    return render(request, "checkout/buyer_checkout.html")
+    """Checkout page. Pass default context so template lookups never fail."""
+    context = {
+        "cart_items": [],
+        "cart_subtotal": "0.00",
+        "cart_total": "0.00",
+        "addresses": [],
+        "payment_methods": [],
+        "checkout_error": None,
+    }
+    # TODO: load real cart, addresses, payment methods for request.user
+    return render(request, "checkout/buyer_checkout.html", context)
 
 
 def buyer_payments(request):

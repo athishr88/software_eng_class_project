@@ -42,18 +42,18 @@
 
                 <label>
                     Sort
-                    <select name="sort"></select>
+                    <select name="sort">
                         <option value="">Relevance</option>
-                        <option value="price_asc" {% if request.GET.sort = "price_asc" %}Selected{% endif %}>Price: Low -> High</option>
-                        <option value="price_desc" {% if request.GET.sort = "price_desc" %}Selected{% endif %}>Price: Low -> High</option>
-                        <option value="newest" {% if request.GET.sort = "newest" %}Selected{% endif %}>Newest</option>
-                        <option value="rating_desc" {% if request.GET.sort = "rating_desc" %}Selected{% endif %}>Rating</option>
+                        <option value="price_asc" {% if request.GET.sort == "price_asc" %}selected{% endif %}>Price: Low -> High</option>
+                        <option value="price_desc" {% if request.GET.sort == "price_desc" %}selected{% endif %}>Price: High -> Low</option>
+                        <option value="newest" {% if request.GET.sort == "newest" %}selected{% endif %}>Newest</option>
+                        <option value="rating_desc" {% if request.GET.sort == "rating_desc" %}selected{% endif %}>Rating</option>
                     </select>
                 </label>
             </div>
 
             <label style="display:flex; gap:10px; align-items:center; font-weight:700;">
-                <input type="checkbox" name="in_stock" value="1" {% if request.GET>in_stock %}checked{% endif %}style=width:auto; margin:0;>
+                <input type="checkbox" name="in_stock" value="1" {% if request.GET.in_stock %}checked{% endif %} style="width:auto; margin:0;">
                 In Stock Only
             </label>
 
@@ -121,13 +121,13 @@
 
                 <div style="display:flex; gap:10px; align-items:center;">
                     {% if page_obj.has_previous %}
-                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{& endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.min_rating %}min_rating={{ request.GET.min_rating }}&{% endif %}{% if request.GET.in_stock %}in_stock=1&{% endif %}{% if request.GET.sort %}sort={{request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.min_rating %}min_rating={{ request.GET.min_rating }}&{% endif %}{% if request.GET.in_stock %}in_stock=1&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}">
                             Prev
                         </a>
                     {% endif %}
 
                     {% if page_obj.has_next %}
-                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{& endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.min_rating %}min_rating={{ request.GET.min_rating }}&{% endif %}{% if request.GET.in_stock %}in_stock=1&{% endif %}{% if request.GET.sort %}sort={{request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}">
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.min_rating %}min_rating={{ request.GET.min_rating }}&{% endif %}{% if request.GET.in_stock %}in_stock=1&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}">
                             Next
                         </a>
                     {% endif %}

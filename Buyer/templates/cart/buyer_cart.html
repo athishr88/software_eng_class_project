@@ -6,7 +6,7 @@
             Your Cart
         </h1>
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-            Review items, update quantities, and proceeed to checkout.
+            Review items, update quantities, and proceed to checkout.
         </p>
     </header>
 
@@ -44,7 +44,7 @@
                                             </span>
                                         {% else %}
                                             <span style="color:#166534; font-weight:800;">In Stock</span>
-                                            <span style="color:var(--muted);">({{ item.book.tock_quantity }})</span>
+                                            <span style="color:var(--muted);">({{ item.book.stock_quantity }})</span>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -154,7 +154,7 @@
         }
 
         @media (max-width: 520px){
-            form[style*="dsiplay:flex"][action*="update"]{
+            form[style*="display:flex"][action*="update"]{
                 justify-content: stretch !important;
             }
         }
