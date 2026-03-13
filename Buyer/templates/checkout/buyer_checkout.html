@@ -16,7 +16,7 @@
         </div>
     {% endif %}
 
-    <form method="post" action="{% url 'buyer_checkout' %}" style="max-width:900px;">
+    <form method="post" action="{% url 'checkout' %}" style="max-width:900px;">
         {% csrf_token %}
         <section style="display:grid; grid-template-columns: 1fr 340px; gap:12px; align-items:start;">
             <div style="display:grid; gap:12px;">
@@ -167,12 +167,21 @@
                 <div style="display:grid; gap:8px; font-size:14px;">
                     <div style="display:flex; justify-content:space-between; gap:10px;">
                         <span style="color:var(--muted);">Subtotal</span>
-                        <strong>${{ cart_subtotal|default:"0.00" }}</strong>
+                        <strong>${{ cart_subtotal|floatformat:2 }}</strong>
                     </div>
+                    <div style="display:flex; justify-content:space-between; gap:10px;">
+                        <span style="color:var(--muted);">Fees</span>
+                        <strong>${{ fees|floatformat:2 }}</strong>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; gap:10px;">
+                        <span style="color:var(--muted);">Tax</span>
+                        <strong>${{ tax|floatformat:2 }}</strong>
+                    </div>
+                    <hr style="border:none, border-top:1px solid var(--border); margin:4px 0;">
 
                     <div style="display:flex; justify-content:space-between; gap:10px;">
                         <span style="color:var(--muted)">Total</span>
-                        <strong>${{ cart_total|default:cart_subtotal|default:"0.00" }}</strong>
+                        <strong>${{ final_total|floatformat:2 }}</strong>
                     </div>
                 </div>
 
@@ -195,7 +204,7 @@
                     </p>
                 {% elif not payment_methods %}
                     <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">
-                        Add a payment address to place your order.
+                        Add a payment method to place your order.
                     </p>
                 {% elif not cart_items %}
                     <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">

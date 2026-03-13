@@ -52,35 +52,18 @@
                                 <div style="display:grid; gap:8px; align-items:start; justify-items:end;">
                                     <div style="text-align:right;">
                                         <div style="font-size:12px; color:var(--muted);">Price</div>
-                                        <div style="font-weight:900;">${{ item.book.price }}</div>
+                                        <div style="font-weight:900;">${{ item.book.price_dollars|default:item.subtotal|floatformat:2 }}</div>
                                     </div>
 
-                                    <form method="post" action="{% url 'update_cart_item' item.id %}" style="display:flex; gap:10px; align-items:end; flex-wrap:wrap; justify-content:flex-end; margin:0;">
-                                        {% csrf_token %}
-                                        <label style="display:grid; gap:6px; font-size:13px; font-weight:800; color:var(--text);">
-                                            Qty
-                                            <input
-                                                type="number"
-                                                name="quantity"
-                                                min="1"
-                                                value="{{ item.quantity }}"
-                                                style="width:110px;"
-                                            />
-                                        </label>
-                                        <button class="btn" type="submit" style="min-width:unset;">Update</button>
-                                    </form>
-                                    
+                                    <div style="text-align:right;">
+                                        <div style="font-size:13px; color:var(--muted);">Quantity</div>
+                                        <div style="font-weight:800;">${{ item.quantity }}</div>
+                                    </div>
+
                                     <div style="text-align:right;">
                                         <div style="font-size:13px; color:var(--muted);">Subtotal</div>
-                                        <div style="font-weight:900;">${{ item.subtotal }}</div>
+                                        <div style="font-weight:900;">${{ item.subtotal|floatformat:2 }}</div>
                                     </div>
-
-                                    <form method="post" action="{% url 'remove_cart_item' item.id %}" style="margin:0;">
-                                        {% csrf_token %}
-                                        <button class="btn" type="submit" style="background:#ef4444; min-width:unset;">
-                                            Remove
-                                        </button>
-                                    </form>
                                 </div>
                             </div>
                         </article>
@@ -92,9 +75,9 @@
                 <p style="margin:0; color:var(--muted); font-size:14px;">
                     Your cart is empty. Browse books to add items.
                 </p>
-                <div style="margin-top:12px;">
-                    <a class="btn" href="{% url 'catalog' %}" style="text-decoration:none; display:inline-flex; align-items:center;justify-content:center;">
-                        Browse Books
+                <div style="padding:18px;">
+                    <a class="btn" href="{% url 'catalog' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                        Browse books
                     </a>
                 </div>
             </div>
@@ -118,14 +101,14 @@
             <div style="display:grid; gap:8px; font-size:14px;">
                 <div style="display:flex; justify-content:space-between; gap:10px;">
                     <span style="color:var(--muted);">Subtotal</span>
-                    <strong>${{ cart_total|default:cart_subtotal|default:"0.00" }}</strong>
+                    <strong>${{ cart_total|floatformat:2 }}</strong>
                 </div>
             </div>
 
             <div style="margin-top:14px; display:grid; gap:10px;">
                 <a
                     class="btn {% if not cart_items %}btn-disabled{% endif %}"
-                    href="{% url 'buyer_checkout' %}"
+                    href="{% url 'checkout' %}"
                     style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
                     Proceed to Checkout
                 </a>
@@ -150,12 +133,6 @@
         @media (max-width: 900px){
             section[style*="grid-template-columns:1fr 320px"]{
                 grid-template-columns: 1fr !important;
-            }
-        }
-
-        @media (max-width: 520px){
-            form[style*="display:flex"][action*="update"]{
-                justify-content: stretch !important;
             }
         }
     </style>
