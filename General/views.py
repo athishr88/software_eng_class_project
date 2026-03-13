@@ -1,5 +1,6 @@
 from pathlib import Path
 from urllib.parse import quote
+from decimal import Decimal, ROUND_HALF_UP
 
 from django.conf import settings
 from django.shortcuts import render, redirect, get_object_or_404
@@ -159,14 +160,14 @@ def register(request):
     return render(request, "auth/register.html")
 
 
-def email_verif(request):
+def email_verification(request):
     """Email verification page."""
-    return render(request, "auth/email_verif.html")
+    return render(request, "auth/email_verification.html")
 
 
 def catalog(request):
     """Book catalog / browse: list all active books from DB with filters and pagination."""
-    qs = Book.objects.filter(is_active=True).select_related("seller_user").prefetch_related("inventory").order_by("title")
+    qs = Book.objects.filter(is_active=True).select_related("seller_user").prefetch_related("inventory").order_by("title").distinct()
 
     q = (request.GET.get("q") or "").strip()
     if q:
@@ -186,7 +187,7 @@ def catalog(request):
             pass
 
     if request.GET.get("in_stock"):
-        qs = qs.filter(inventory__quantity_available__gt=0)
+        qs = qs.filter(inventory__quantity_available__gt=0).distinct()
 
     sort = request.GET.get("sort") or ""
     if sort == "price_asc":
@@ -200,29 +201,36 @@ def catalog(request):
     else:
         qs = qs.order_by("title")
 
-    paginator = Paginator(qs, per_page=12)
+    paginator = Paginator(qs, 12)
     page_number = request.GET.get("page", 1)
+    if not page_number or page_number == "0":
+        page_number = 1
     page_obj = paginator.get_page(page_number)
 
     for book in page_obj.object_list:
-        book.cover_static_path = _get_book_cover_static_path(book.title)
         fn = _get_book_cover_filename(book.title) or "default.jpg"
-        book.cover_serve_filename = fn
-        book.cover_serve_url = request.build_absolute_uri("/book_covers/" + quote(fn, safe=""))
+        book.cover_serve_url = request.build_absolute_uri(" /book_covers/" + quote(fn, safe=""))
+        
 
-    return render(request, "catalog/catalog.html", {"page_obj": page_obj})
+    return render(
+        request, 
+        "catalog/catalog.html", 
+        {
+            "page_obj": page_obj,
+        }
+    )
 
 
 def book_detail(request, pk=None):
     """Single book detail by pk."""
-    book = get_object_or_404(Book.objects.filter(is_active=True), pk=pk)
+    book = get_object_or_404(Book.objects.filter(is_active=True ), pk=pk)
     seller_display_name = (
         f"{book.seller_user.first_name} {book.seller_user.last_name}".strip()
         if book.seller_user else "—"
     )
     cover_static_path = _get_book_cover_static_path(book.title)
     cover_serve_filename = _get_book_cover_filename(book.title) or "default.jpg"
-    cover_serve_url = request.build_absolute_uri("/book_covers/" + quote(cover_serve_filename, safe=""))
+    cover_serve_url = request.build_absolute_uri(f"/book_covers/{quote(cover_serve_filename, safe='')}")
     return render(
         request,
         "catalog/book_detail.html",
@@ -233,6 +241,40 @@ def book_detail(request, pk=None):
             "cover_serve_filename": cover_serve_filename,
             "cover_serve_url": cover_serve_url,
             "reviews": [],
+        },
+    )
+
+def cart(request):
+    """TEMP BUYER CART PAGE"""
+    cart_items = []
+    subtotal = 0.00
+
+    return render(
+        request,
+        "catalog/cart.html",
+        {
+            "cart_items": cart_items,
+            "subtotal": subtotal,
+        },
+    )
+
+def checkout(request):
+    """TEMP CHECKOUT SUMMARY PAGE"""
+    cart_items = []
+    subtotal = 0.00
+    tax = 0.00
+    fees = 0.00
+    final_total = 0.00
+
+    return render(
+        request,
+        "catalog/cart.html",
+        {
+            "cart_items": cart_items,
+            "subtotal": subtotal,
+            "tax": tax,
+            "fees": fees,
+            "final_total": final_total,
         },
     )
 
