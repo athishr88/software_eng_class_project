@@ -199,7 +199,7 @@
             </div>
 
             <nav class="navlinks" aria-label="Public Navigation Links">
-                <a class="link" href="{% url 'general_home' %}">Home</a>
+                <a class="link" href="{% url 'catalog' %}">Home</a>
                 <a class="link" href="{% url 'catalog' %}">Browse</a>
                 <a class="link" href="{% url 'cart' %}">Cart</a>
 
@@ -218,13 +218,13 @@
 
         {% block hero %}
             <section class="title" aria-label="Page Header">
-                <h2>{% block hero_title %}Welcome to<br/>Pass It On Books{% endblock %}</h2>
-                <p>{% block hero_subtitle %}Find affordable books and support the community.{% endblock}</p>
+                <h2>{% block hero_title %}Welcome to<br/>Pass It On Books{% endblock hero_title %}</h2>
+                <p>{% block hero_subtitle %}Find affordable books and support the community.{% endblock hero_subtitle %}</p>
             </section>
         
         <section class="content-wrap" aria-label="Public Content">
             {% if messages %}
-                <div class="messages" aria-label="System Messages"></div>
+                <div class="messages" aria-label="System Messages">
                     {% for message in messages %}
                         <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
                             {{ message }}
@@ -237,8 +237,9 @@
                 <div class="card">
                     <p style="margin:0; color:var(--muted);">Add public page content here.</p>
                 </div>
-            {% endblock %}
+            {% endblock content %}
         </section>
+        {% endblock hero %}
     </main>
 </body>
 </html>

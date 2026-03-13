@@ -197,9 +197,11 @@
 
             <div class="top-actions">
                 <a class="link" href="{% url 'general_home' %}">Home</a>
+                <a class="link" href="{% url 'catalog' %}">Browse</a>
+                <a class="link" href="{% url 'seller_dashboard' %}">Dashboard</a>
                 <a class="link" href="{% url 'seller_orders' %}">Orders</a>
                 <a class="link" href="{% url 'manage_inventory' %}">Inventory</a>
-
+                <a class="link" href="{% url 'add_books' %}">Add Book</a>
                 <form method="post" action="{% url 'logout' %}" style="margin:0;">
                     {% csrf_token %}
                     <button class="btn" type="submit">Logout</button>

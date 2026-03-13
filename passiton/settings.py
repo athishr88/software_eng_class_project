@@ -128,6 +128,14 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# Serve book cover images from book_images/ (project root or parent directory)
+_BOOK_IMAGES_DIR = BASE_DIR / 'book_images'
+if not _BOOK_IMAGES_DIR.exists():
+    _BOOK_IMAGES_DIR = BASE_DIR.parent / 'book_images'
+STATICFILES_DIRS = []
+if _BOOK_IMAGES_DIR.exists():
+    STATICFILES_DIRS.append((str(_BOOK_IMAGES_DIR), 'book_images'))
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",

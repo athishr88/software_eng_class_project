@@ -8,6 +8,15 @@
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
             Quick overview of your orders, credits, and account details.
         </p>
+        <div style="margin-top:12px; display:flex; gap:12px; flex-wrap:wrap;">
+            <a class="link" href="{% url 'catalog' %}">Browse Catalog</a>
+            <span style="color:var(--muted);">|</span>
+            <a class="link" href="{% url 'cart' %}">Cart</a>
+            <span style="color:var(--muted);">|</span>
+            <a class="link" href="{% url 'order_history' %}">Orders</a>
+            <span style="color:var(--muted);">|</span>
+            <a class="link" href="{% url 'buyer_checkout' %}">Checkout</a>
+        </div>
     </header>
 
     <section style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:10px;">

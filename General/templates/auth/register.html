@@ -1,75 +1,162 @@
-{% extends "public/public_base.html" %}
-{% block title %}Create Account | Pass It On Books {% endblock %}
-
-{% block hero_title %}Create<br/>Your Account{% endblock %}
-{% block hero_subtitle %}Join Pass It On Books to buy, track orders, and manage your account.{% endblock %}
-
-{% block content %}
-    <div class="card" style="max-width:520px;">
-        <h3 style="margin:0 0 12px; font-size:16px; font-weight:900; letter-spacing:0.2px;">
-            Register to Continue
-        </h3>
-
-        <form method="post" action="{% url 'register' %}">
-            {% csrf_token %}
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                <label>
-                    First Name
-                    <input type="text" name="first_name" autocomplete="given_name" required>
-                </label>
-
-                <label>
-                    Last Name
-                    <input type="text" name="last_name" autocomplete="family_name" required>
-                </label>
-            </div>
-
-            <label>
-                Email
-                <input type="email" name="email" autocomplete="email" required>
-            </label>
-
-            <label>
-                Password
-                <input type="password" name="password" autocomplete="password" required>
-            </label>
-
-            <label>
-                Confirm Password
-                <input type="password" name="confirm_password" autocomplete="new-password" required>
-            </label>
-
-            {% if form_errors %}
-                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
-                    {{ form_errors }}
-                </div>
-            {% endif %}
-
-            {% if success_message %}
-                <div style="border:1px solid #22c55e; background:#f0fdf4; color:#166534; border-radius:10px; padding:10px 12px; font-size:14px;">
-                    {{ success_message }}
-                </div>
-            {% endif %}
-
-            <div style="display:flex; justify-content:flex-end; gAP:10px; align-items:center; margin-top:4px;">
-                <a class="link" href="{% url 'login' %}">Already have an account?</a>
-                <button class="btn" type="submit">Create Account</button>
-            </div>
-        </form>
-
-        <div style="margin-top:12px; color:var(--muted); font-size:13px; line-height:1.4;">
-            By creating an account, you agree to our community rules and responsible use of credits.
-        </div>
-    </div>
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create Account | Pass It On Books</title>
     <style>
-        @media (macx-width: 520px){
-            div[stule*="grid-template-columns: 1fr 1fr"]{
-                grid-template-columns: 1fr !important;
-            }
+        :root {
+            --bg: #f6f7fb;
+            --card: #fff;
+            --text: #121826;
+            --muted: #6b7280;
+            --border: #d1d5db;
+            --primary: #2563eb;
+            --primaryHover: #1d52d8;
+            --radius: 14px;
         }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+        }
+        .page {
+            width: 100%;
+            max-width: 900px;
+            min-height: 520px;
+            background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
+            border-radius: 18px;
+            padding: 48px 28px;
+            display: grid;
+            align-content: start;
+            gap: 28px;
+        }
+        .title { text-align: left; max-width: 520px; margin: 0 auto; }
+        .title h1 { margin: 0 0 10px; font-size: clamp(28px, 4vw, 44px); font-weight: 800; }
+        .title p { margin: 0; color: var(--muted); font-size: 16px; }
+        .form-wrap { display: grid; place-items: center; padding-top: 8px; }
+        .form-card {
+            width: 100%;
+            max-width: 420px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: 0 10px 24px rgba(18,24,38,0.08);
+        }
+        .form-card h2 { margin: 0 0 14px; font-size: 18px; font-weight: 700; letter-spacing: 0.2px; text-align: left; }
+        form { display: grid; gap: 12px; }
+        label { display: grid; gap: 6px; font-size: 14px; color: var(--text); font-weight: 600; }
+        input, select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 15px;
+            outline: none;
+            background: #fff;
+        }
+        input:focus, select:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25);
+        }
+        .actions { display: grid; gap: 10px; margin-top: 6px; }
+        button {
+            width: 140px;
+            justify-self: end;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 700;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover { background: var(--primaryHover); }
+        .links { margin-top: 8px; font-size: 14px; }
+        .links a { color: var(--primary); text-decoration: none; }
+        .links a:hover { text-decoration: underline; }
+        .error { border: 1px solid #ef4444; background: #fff5f5; color: #991b1b; border-radius: 10px; padding: 10px 12px; font-size: 14px; }
+        @media (min-width: 700px) { .title, .form-wrap { margin-left: 120px; } }
     </style>
-{% endblock %}
+</head>
+<body>
+    <main class="page">
+        <header class="title">
+            <h1>Create Account</h1>
+            <p>Join Pass It On Books to buy, sell, and manage your account.</p>
+        </header>
+        <section class="form-wrap">
+            <div class="form-card">
+                <h2>Register to Continue</h2>
 
-                
+                {% if form_errors %}
+                <div class="error">{{ form_errors }}</div>
+                {% endif %}
+
+                <form method="post" action="{% url 'register' %}">
+                    {% csrf_token %}
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <label>
+                            First Name
+                            <input type="text" name="first_name" autocomplete="given-name" required value="{{ post.first_name|default:'' }}">
+                        </label>
+                        <label>
+                            Last Name
+                            <input type="text" name="last_name" autocomplete="family-name" required value="{{ post.last_name|default:'' }}">
+                        </label>
+                    </div>
+
+                    <label>
+                        Email
+                        <input type="email" name="email" autocomplete="email" required placeholder="you@example.com" value="{{ post.email|default:'' }}">
+                    </label>
+
+                    <label>
+                        Phone <span style="color:var(--muted); font-weight:400;">(optional)</span>
+                        <input type="tel" name="phone" autocomplete="tel" value="{{ post.phone|default:'' }}">
+                    </label>
+
+                    <label>
+                        I want to
+                        <select name="role" required>
+                            <option value="buyer" {% if post.role == 'buyer' or not post %}selected{% endif %}>Buy &amp; browse (Customer)</option>
+                            <option value="seller" {% if post.role == 'seller' %}selected{% endif %}>Sell books (Seller)</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Password <span style="color:var(--muted); font-weight:400;">(min 8 characters)</span>
+                        <input type="password" name="password" autocomplete="new-password" required minlength="8">
+                    </label>
+
+                    <label>
+                        Confirm Password
+                        <input type="password" name="confirm_password" autocomplete="new-password" required>
+                    </label>
+
+                    <div class="actions">
+                        <button type="submit">Create Account</button>
+                        <div class="links">
+                            <a href="{% url 'login' %}">Already have an account? Log in</a>
+                        </div>
+                    </div>
+                </form>
+
+                <p style="margin:14px 0 0; color:var(--muted); font-size:13px; line-height:1.4;">
+                    By creating an account, you agree to our community rules and responsible use of credits.
+                </p>
+            </div>
+            <p style="margin:20px 0 0; text-align:center;"><a href="{% url 'general_home' %}" style="color:var(--primary); font-size:14px;">← Back to Home</a></p>
+        </section>
+    </main>
+</body>
+</html>

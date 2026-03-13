@@ -1,5 +1,5 @@
 {% extends "base_buyer.html" %}
-{% block title %}Cart | Pass It On Books{% endblock %}
+{% block title %}Checkout | Pass It On Books{% endblock %}
 {% block content %}
    <header style="margin-bottom:16px;">
         <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
@@ -29,7 +29,7 @@
                                 Select a saved address for delivery.
                             </p>
                         </div>
-                        <a class="link" href="{% ur; 'account_addresses' %}">Manage</a>
+                        <a class="link" href="{% url 'buyer_shipping' %}">Manage</a>
                     </div>
 
                     <div style="margin-top:12px; display:grid; gap:10px;">
@@ -93,12 +93,10 @@
                                             {% if forloop.first %}checked{% endif %}
                                             required
                                             style="width:auto; margin-top:3px;"
-                                        >/
+                                        />
                                         <div style="display:grid; gap:4px;">
                                             <strong style="font-size:14px;">{{ pm.brand }} **** {{ pm.last4 }}</strong>
-                                            <div style="color:var(--muted); font-size:14px;"></div>
-                                                Expires {{ pm.exp_month }}/{{ pm.exp_year }}
-                                            </div>
+                                            <div style="color:var(--muted); font-size:14px;">Expires {{ pm.exp_month }}/{{ pm.exp_year }}</div>
                                         </div>
                                     </div>
                                 </label>
