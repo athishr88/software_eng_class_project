@@ -15,7 +15,7 @@
                     type="text"
                     name="q"
                     placeholder="Search by title, author..."
-                    value="{{ request.GET.q }}"
+                    value="{{ request.GET.q|default:'' }}"
                     aria-label="Search books"
                 />
             </label>
@@ -23,12 +23,12 @@
             <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap:12px;">
                 <label>
                     Min Price
-                    <input type="number" step="0.01" name="min_price" value="{{ request.GET.min_price }}">
+                    <input type="number" step="0.01" name="min_price" value="{{ request.GET.min_price|default:'' }}">
                 </label>
 
                 <label>
                     Max Price
-                    <input type="number" step="0.01" name="max_price" value="{{ request.GET.max_price }}">
+                    <input type="number" step="0.01" name="max_price" value="{{ request.GET.max_price|default:'' }}">
                 </label>
 
                 <label>
@@ -102,7 +102,9 @@
                                 <h4 class="book-card__title">
                                     <a href="{% url 'book_detail' book.pk %}">{{ book.title }}</a>
                                 </h4>
+
                                 <p class="book-card__author">by {{ book.author }}</p>
+
                                 {% if book.description %}
                                     <p class="book-card__description">{{ book.description|truncatewords:20 }}</p>
                                 {% endif %}
@@ -130,7 +132,16 @@
                                         <span class="book-card__stock--out">Out of Stock</span>
                                     {% endif %}
                                 </p>
-                                <a class="btn book-card__cta" href="{% url 'book_detail' book.pk %}">View details</a>
+
+                                <a class ="btn book-card_cta" href="{% url 'book_detail' book.pk %}">
+                                    View details
+                                </a>
+                                <form method="post" action="{% url 'add_to_cart' book.id %}" style="margin-top:8px;">
+                                    {% csrf_token %}
+                                    <button class="btn book-card_cta" type="submit">
+                                        Add to Cart
+                                    </button>
+                                </form>
                             </div>
                         </article>
                     {% endfor %}
@@ -144,15 +155,11 @@
 
                 <div style="display:flex; gap:10px; align-items:center;">
                     {% if page_obj.has_previous %}
-                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.min_rating %}min_rating={{ request.GET.min_rating }}&{% endif %}{% if request.GET.in_stock %}in_stock=1&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}">
-                            Prev
-                        </a>
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.in_stock %}in_stock=1&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.previous_page_number }}">Prev</a>
                     {% endif %}
 
                     {% if page_obj.has_next %}
-                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.min_rating %}min_rating={{ request.GET.min_rating }}&{% endif %}{% if request.GET.in_stock %}in_stock=1&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}">
-                            Next
-                        </a>
+                        <a class="link" href="?{% if request.GET.q %}q={{ request.GET.q }}&{% endif %}{% if request.GET.min_price %}min_price={{ request.GET.min_price }}&{% endif %}{% if request.GET.max_price %}max_price={{ request.GET.max_price }}&{% endif %}{% if request.GET.in_stock %}in_stock=1&{% endif %}{% if request.GET.sort %}sort={{ request.GET.sort }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>
                     {% endif %}
                 </div>
             </div>
