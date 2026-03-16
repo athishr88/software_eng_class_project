@@ -209,7 +209,9 @@ def catalog(request):
 
     for book in page_obj.object_list:
         fn = _get_book_cover_filename(book.title) or "default.jpg"
-        book.cover_serve_url = request.build_absolute_uri(" /book_covers/" + quote(fn, safe=""))
+        book.cover_serve_url = request.build_absolute_uri(f"/book_covers/{quote(fn, safe='')}")
+
+        ##book.cover_serve_url = f"/book_images/{quote(fn, safe='')}"
         
 
     return render(
