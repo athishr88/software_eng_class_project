@@ -1,0 +1,39 @@
+{% extends "admin_dashboard_base.html" %}
+{% block title %}Returns | PassItOn Books Admin{% endblock %}
+{% block page_heading %}
+<h1>Returns</h1>
+<p class="subtitle">Return requests and status</p>
+{% endblock %}
+{% block content %}
+<div class="panel full">
+  <div class="panel-head">
+    <h2>Return Requests</h2>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Order ID</th>
+          <th>Reason</th>
+          <th>Status</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in returns %}
+        <tr>
+          <td>{{ r.id }}</td>
+          <td>{{ r.order_id }}</td>
+          <td><div class="row-muted">{{ r.reason|default:"—"|truncatewords:15 }}</div></td>
+          <td><span class="pill {% if r.status == 'refunded' or r.status == 'rejected' %}resolved{% elif r.status == 'approved' or r.status == 'received' %}triage{% else %}open{% endif %}">{{ r.status }}</span></td>
+          <td>{{ r.created_at|date:"M d, Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="empty-row">No return requests</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

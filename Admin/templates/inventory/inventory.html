@@ -1,0 +1,41 @@
+{% extends "admin_dashboard_base.html" %}
+{% block title %}Inventory | PassItOn Books Admin{% endblock %}
+{% block page_heading %}
+<h1>Inventory</h1>
+<p class="subtitle">Stock levels and reorder thresholds</p>
+{% endblock %}
+{% block content %}
+<div class="panel full">
+  <div class="panel-head">
+    <h2>Inventory by Book</h2>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Book ID</th>
+          <th>Title</th>
+          <th>Available</th>
+          <th>Reserved</th>
+          <th>Reorder at</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for inv in inventory %}
+        <tr>
+          <td>{{ inv.book_id }}</td>
+          <td><div class="row-strong">{{ inv.book.title }}</div></td>
+          <td>{{ inv.quantity_available }}</td>
+          <td>{{ inv.quantity_reserved }}</td>
+          <td>{{ inv.reorder_threshold }}</td>
+          <td>{{ inv.updated_at|date:"M d, Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="empty-row">No inventory records</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

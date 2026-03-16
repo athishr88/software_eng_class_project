@@ -1,140 +1,197 @@
-from django.shortcuts import render
+from datetime import timedelta
+from functools import wraps
+
+from django.contrib.auth import authenticate, login, logout
+from django.db.models import Sum
+from django.shortcuts import redirect, render
+from django.urls import reverse
+from urllib.parse import quote
+from django.utils import timezone
+
+from Admin.models import FlagReport
+from Buyer.models import Order, ReturnRequest
+from General.models import Book, Notification, User
 
 
+def staff_required(view_func):
+    """Require an authenticated user with role=admin and is_staff. Redirect to staff login otherwise."""
+    @wraps(view_func)
+    def _wrapped(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(reverse("staff_login") + "?next=" + quote(request.get_full_path()))
+        if getattr(request.user, "role", None) != "admin" or not getattr(request.user, "is_staff", False):
+            logout(request)
+            return redirect("staff_login")
+        return view_func(request, *args, **kwargs)
+    return _wrapped
+
+
+def staff_login(request):
+    """Staff-only login at /staff/login. Only users with role=admin and is_staff can log in."""
+    if request.user.is_authenticated and getattr(request.user, "role", None) == "admin" and getattr(request.user, "is_staff", False):
+        return redirect("admin_dashboard")
+    if request.method == "POST":
+        email = (request.POST.get("email") or "").strip()
+        password = request.POST.get("password") or ""
+        user = authenticate(request, username=email, password=password)
+        if user is not None and user.is_active and getattr(user, "role", None) == "admin" and getattr(user, "is_staff", False):
+            login(request, user)
+            next_url = (request.POST.get("next") or request.GET.get("next") or "").strip()
+            if next_url.startswith("/staff/"):
+                return redirect(next_url)
+            return redirect("admin_dashboard")
+        error = "Invalid email or password, or not authorized for staff access."
+        return render(request, "auth/staff_login.html", {"error": error, "email": email})
+    return render(request, "auth/staff_login.html")
+
+
+def staff_logout(request):
+    """Log out and redirect to staff login."""
+    logout(request)
+    return redirect("staff_login")
+
+
+def _format_status(s):
+    """Map FlagReport status to display label."""
+    return {"open": "Open", "reviewing": "Triage", "resolved": "Resolved", "dismissed": "Dismissed"}.get(
+        (s or "").lower(), s or "Open"
+    )
+
+
+def _flag_to_steward_row(flag):
+    target = flag.target_user
+    return {
+        "username": target.email if target else "—",
+        "user_id": target.id if target else "—",
+        "reason": flag.details or "—",
+        "severity": getattr(flag, "severity", None) or "Medium",
+        "status": _format_status(flag.status),
+        "flagged_date": flag.created_at.strftime("%b %d, %Y"),
+    }
+
+
+def _flag_to_payment_row(flag):
+    target = flag.target_user
+    return {
+        "username": target.email if target else "—",
+        "user_id": target.id if target else "—",
+        "signal": flag.details or "—",
+        "severity": getattr(flag, "severity", None) or "Medium",
+        "status": _format_status(flag.status),
+        "flagged_date": flag.created_at.strftime("%b %d, %Y"),
+    }
+
+
+def _flag_to_all_row(flag):
+    if flag.target_user:
+        target = flag.target_user.email
+    elif flag.target_book:
+        target = f"Book ID {flag.target_book.id}"
+    else:
+        target = "—"
+    return {
+        "flag_id": f"F{flag.id}",
+        "type": flag.flag_type or "—",
+        "target": target,
+        "reason": flag.details or "—",
+        "severity": getattr(flag, "severity", None) or "Medium",
+        "status": _format_status(flag.status),
+        "date": flag.created_at.strftime("%b %d, %Y"),
+    }
+
+
+@staff_required
 def admin_dashboard(request):
-    steward_flags = [
-        {
-            "username": "erica_92",
-            "user_id": 10492,
-            "reason": "Unusual free book claim frequency",
-            "severity": "High",
-            "status": "Open",
-            "flagged_date": "Feb 21, 2026",
-        },
-        {
-            "username": "ben_reads",
-            "user_id": 7781,
-            "reason": "Repeated claim attempts across listings",
-            "severity": "Medium",
-            "status": "Open",
-            "flagged_date": "Feb 20, 2026",
-        },
-        {
-            "username": "kavya_books",
-            "user_id": 4510,
-            "reason": "Possible multi account coordination",
-            "severity": "Medium",
-            "status": "Triage",
-            "flagged_date": "Feb 18, 2026",
-        },
-        {
-            "username": "jay_s",
-            "user_id": 3394,
-            "reason": "Rapid progress pattern detected",
-            "severity": "Low",
-            "status": "Resolved",
-            "flagged_date": "Feb 16, 2026",
-        },
-    ]
+    now = timezone.now()
+    start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    thirty_days_ago = now - timedelta(days=30)
+    week_ago = now - timedelta(days=7)
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
-    payment_flags = [
-        {
-            "username": "matt_gh",
-            "user_id": 9021,
-            "signal": "Multiple failed attempts then success",
-            "severity": "High",
-            "status": "Open",
-            "flagged_date": "Feb 22, 2026",
-        },
-        {
-            "username": "divya_shop",
-            "user_id": 12011,
-            "signal": "Chargeback trend above threshold",
-            "severity": "High",
-            "status": "Triage",
-            "flagged_date": "Feb 21, 2026",
-        },
-        {
-            "username": "sam_new",
-            "user_id": 13008,
-            "signal": "Mismatch in billing region signals",
-            "severity": "Medium",
-            "status": "Open",
-            "flagged_date": "Feb 19, 2026",
-        },
-        {
-            "username": "rachel_1",
-            "user_id": 6620,
-            "signal": "Refund velocity anomaly",
-            "severity": "Low",
-            "status": "Resolved",
-            "flagged_date": "Feb 15, 2026",
-        },
-    ]
+    total_users = User.objects.count()
+    active_users_30d = User.objects.filter(last_login__gte=thirty_days_ago).count()
+    users_this_week = User.objects.filter(created_at__gte=week_ago).count()
+    active_pct = (active_users_30d / total_users * 100) if total_users else 0
 
+    books_listed = Book.objects.filter(is_active=True).count()
+    books_available = Book.objects.filter(
+        inventory__quantity_available__gt=0
+    ).count()
+    books_today = Book.objects.filter(is_active=True, created_at__gte=today_start).count()
+
+    orders_month = Order.objects.filter(created_at__gte=start_of_month).count()
+    orders_today = Order.objects.filter(created_at__gte=today_start).count()
+
+    returns_month = ReturnRequest.objects.filter(created_at__gte=start_of_month).count()
+    return_rate = (returns_month / orders_month * 100) if orders_month else 0
+
+    open_flags_count = FlagReport.objects.filter(status__in=("open", "reviewing")).count()
+
+    revenue_result = (
+        Order.objects.filter(
+            created_at__gte=start_of_month,
+            status__in=("paid", "shipped", "delivered"),
+        ).aggregate(Sum("total_cents"))
+    )
+    revenue_cents = revenue_result["total_cents__sum"] or 0
+    revenue_month = f"${revenue_cents / 100:,.0f}"
+
+    steward_flags_qs = (
+        FlagReport.objects.filter(flag_type__icontains="steward")
+        .select_related("target_user")
+        .order_by("-created_at")[:5]
+    )
+    steward_flags = [_flag_to_steward_row(f) for f in steward_flags_qs]
+
+    payment_flags_qs = (
+        FlagReport.objects.filter(flag_type__icontains="payment")
+        .select_related("target_user")
+        .order_by("-created_at")[:5]
+    )
+    payment_flags = [_flag_to_payment_row(f) for f in payment_flags_qs]
+
+    recent_books = (
+        Book.objects.filter(is_active=True)
+        .select_related("seller_user")
+        .order_by("-created_at")[:5]
+    )
     recent_listings = [
         {
-            "title": "The Alchemist",
-            "book_id": "B 44210",
-            "seller": "erica_92",
-            "condition": "Like New",
-            "status": "Live",
-            "created_date": "Feb 23, 2026",
-        },
-        {
-            "title": "Introduction to Algorithms",
-            "book_id": "B 44204",
-            "seller": "ben_reads",
-            "condition": "Good",
-            "status": "Pending Review",
-            "created_date": "Feb 23, 2026",
-        },
-        {
-            "title": "Clean Code",
-            "book_id": "B 44198",
-            "seller": "jay_s",
-            "condition": "Very Good",
-            "status": "Live",
-            "created_date": "Feb 22, 2026",
-        },
-        {
-            "title": "Harry Potter Box Set",
-            "book_id": "B 44180",
-            "seller": "kavya_books",
-            "condition": "Fair",
-            "status": "Hidden",
-            "created_date": "Feb 21, 2026",
-        },
-        {
-            "title": "Atomic Habits",
-            "book_id": "B 44177",
-            "seller": "sam_new",
-            "condition": "New",
-            "status": "Live",
-            "created_date": "Feb 21, 2026",
-        },
+            "title": b.title,
+            "book_id": f"B {b.id}",
+            "seller": b.seller_user.email if b.seller_user else "—",
+            "condition": b.condition or "—",
+            "status": "Live" if b.is_active else "Hidden",
+            "created_date": b.created_at.strftime("%b %d, %Y"),
+        }
+        for b in recent_books
     ]
 
+    admin_name = "Admin"
+    if request.user.is_authenticated:
+        admin_name = getattr(request.user, "get_full_name", lambda: request.user.email)() or request.user.email
+
     context = {
-        "admin_name": "Admin",
+        "admin_name": admin_name,
+        "nav_active": "dashboard",
         "steward_flags": steward_flags,
         "payment_flags": payment_flags,
         "recent_listings": recent_listings,
         "metrics": {
-            "total_users": "12,438",
-            "active_users_30d": "4,106",
-            "books_listed": "28,774",
-            "books_available": "9,552",
-            "orders_month": "1,284",
-            "returns_month": "74",
-            "open_flags": "26",
-            "revenue_month": "$3,920",
-            "total_users_note": "+142 this week",
-            "active_users_note": "33% of total",
-            "books_listed_note": "+310 today",
+            "total_users": f"{total_users:,}",
+            "active_users_30d": f"{active_users_30d:,}",
+            "books_listed": f"{books_listed:,}",
+            "books_available": f"{books_available:,}",
+            "orders_month": f"{orders_month:,}",
+            "returns_month": f"{returns_month:,}",
+            "open_flags": f"{open_flags_count}",
+            "revenue_month": revenue_month,
+            "total_users_note": f"+{users_this_week} this week",
+            "active_users_note": f"{active_pct:.0f}% of total",
+            "books_listed_note": f"+{books_today} today",
             "books_available_note": "In stock listings",
-            "orders_month_note": "88 today",
-            "returns_month_note": "5.8% return rate",
+            "orders_month_note": f"{orders_today} today",
+            "returns_month_note": f"{return_rate:.1f}% return rate",
             "open_flags_note": "Needs review",
             "revenue_month_note": "Platform fees",
         },
@@ -142,73 +199,120 @@ def admin_dashboard(request):
     return render(request, "dashboard/admin_dashboard.html", context)
 
 
+def _admin_context(request):
+    admin_name = "Admin"
+    if request.user.is_authenticated:
+        admin_name = getattr(request.user, "get_full_name", lambda: request.user.email)() or request.user.email
+    return {"admin_name": admin_name}
+
+
+@staff_required
 def reports_flags(request):
-    all_flags = [
-        {
-            "flag_id": "F1021",
-            "type": "Steward Abuse",
-            "target": "erica_92",
-            "reason": "Unusual free book claim frequency",
-            "severity": "High",
-            "status": "Open",
-            "date": "Feb 21, 2026",
-        },
-        {
-            "flag_id": "F1022",
-            "type": "Payment Abuse",
-            "target": "matt_gh",
-            "reason": "Multiple failed attempts then success",
-            "severity": "High",
-            "status": "Triage",
-            "date": "Feb 22, 2026",
-        },
-        {
-            "flag_id": "F1023",
-            "type": "Listing Abuse",
-            "target": "Book ID B44210",
-            "reason": "Misleading condition description",
-            "severity": "Medium",
-            "status": "Open",
-            "date": "Feb 20, 2026",
-        },
-        {
-            "flag_id": "F1024",
-            "type": "User Report",
-            "target": "ben_reads",
-            "reason": "Inappropriate listing language",
-            "severity": "Low",
-            "status": "Resolved",
-            "date": "Feb 18, 2026",
-        },
-    ]
+    all_flags_qs = (
+        FlagReport.objects.all()
+        .select_related("reporter_user", "target_user", "target_book")
+        .order_by("-created_at")
+    )
+    all_flags = [_flag_to_all_row(f) for f in all_flags_qs]
+
+    admin_name = "Admin"
+    if request.user.is_authenticated:
+        admin_name = getattr(request.user, "get_full_name", lambda: request.user.email)() or request.user.email
 
     context = {
-        "admin_name": "Admin",
+        "admin_name": admin_name,
+        "nav_active": "reports_flags",
         "all_flags": all_flags,
     }
     return render(request, "dashboard/reports_flags.html", context)
 
 
+@staff_required
+def admin_users(request):
+    users = User.objects.all().order_by("-created_at")[:200]
+    ctx = {**_admin_context(request), "nav_active": "users", "users": users}
+    return render(request, "users/users.html", ctx)
+
+
+@staff_required
+def admin_books(request):
+    books = Book.objects.all().select_related("seller_user").order_by("-created_at")[:200]
+    ctx = {**_admin_context(request), "nav_active": "books", "books": books}
+    return render(request, "books/books.html", ctx)
+
+
+@staff_required
+def admin_inventory(request):
+    from General.models import Inventory
+
+    inventory = Inventory.objects.select_related("book").order_by("book__title")[:200]
+    ctx = {**_admin_context(request), "nav_active": "inventory", "inventory": inventory}
+    return render(request, "inventory/inventory.html", ctx)
+
+
+@staff_required
+def admin_returns(request):
+    returns = ReturnRequest.objects.select_related("order").order_by("-created_at")[:200]
+    ctx = {**_admin_context(request), "nav_active": "returns", "returns": returns}
+    return render(request, "returns/returns.html", ctx)
+
+
+@staff_required
+def admin_payments(request):
+    paid = Order.objects.filter(status__in=("paid", "shipped", "delivered")).select_related("user").order_by("-created_at")[:200]
+    for p in paid:
+        p.total_dollars = p.total_cents / 100.0
+        p.subtotal_dollars = p.subtotal_cents / 100.0
+        p.discount_dollars = p.discount_cents / 100.0
+    ctx = {**_admin_context(request), "nav_active": "payments", "payments": paid}
+    return render(request, "payments/payments.html", ctx)
+
+
+@staff_required
+def admin_notifications(request):
+    notifications = Notification.objects.select_related("user").order_by("-created_at")[:200]
+    ctx = {**_admin_context(request), "nav_active": "notifications", "notifications": notifications}
+    return render(request, "notifications/notifications.html", ctx)
+
+
+@staff_required
+def admin_audit_logs(request):
+    audit_logs = FlagReport.objects.all().select_related("reporter_user", "target_user", "target_book").order_by("-created_at")[:200]
+    ctx = {**_admin_context(request), "nav_active": "audit", "audit_logs": audit_logs}
+    return render(request, "audit/audit_logs.html", ctx)
+
+
+@staff_required
+def admin_settings(request):
+    ctx = {**_admin_context(request), "nav_active": "settings"}
+    return render(request, "settings/settings.html", ctx)
+
+
+@staff_required
 def user_monitoring(request):
     """User monitoring page."""
     return render(request, "users/userMonitering.html")
 
 
+@staff_required
 def steward_application(request):
     """Steward applications."""
     return render(request, "stewards/stewardApplication.html")
 
 
+@staff_required
 def abuse_detection(request):
     """Abuse detection / moderation."""
     return render(request, "moderation/abuseDetection.html")
 
 
+@staff_required
 def return_disputes(request):
     """Return disputes."""
     return render(request, "disputes/returnDisputes.html")
 
 
+@staff_required
 def activity_logs(request):
     """Activity / audit logs."""
     return render(request, "audit/activityLogs.html")

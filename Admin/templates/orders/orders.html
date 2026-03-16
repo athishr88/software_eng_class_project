@@ -1,0 +1,39 @@
+{% extends "admin_dashboard_base.html" %}
+{% block title %}Orders | PassItOn Books Admin{% endblock %}
+{% block page_heading %}
+<h1>Orders</h1>
+<p class="subtitle">View and manage orders</p>
+{% endblock %}
+{% block content %}
+<div class="panel full">
+  <div class="panel-head">
+    <h2>All Orders</h2>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>User</th>
+          <th>Status</th>
+          <th>Total</th>
+          <th>Created</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td>{{ o.id }}</td>
+          <td><div class="row-strong">{{ o.user.email }}</div></td>
+          <td><span class="pill {% if o.status == 'delivered' %}resolved{% elif o.status == 'cancelled' or o.status == 'refunded' %}resolved{% else %}open{% endif %}">{{ o.status }}</span></td>
+          <td>${{ o.total_dollars|floatformat:2 }}</td>
+          <td>{{ o.created_at|date:"M d, Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="empty-row">No orders found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

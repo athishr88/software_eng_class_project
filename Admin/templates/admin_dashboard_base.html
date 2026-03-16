@@ -1,0 +1,92 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}PassItOn Books Admin{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'dashboard/admin_dashboard.css' %}" />
+  </head>
+
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="sidebar-top">
+          <div class="logo-box" aria-label="Logo placeholder"></div>
+          <div class="brand">
+            <div class="brand-title">PassItOn Books</div>
+            <div class="brand-subtitle">Admin Panel</div>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a class="nav-item {% if nav_active == 'dashboard' %}active{% endif %}" href="{% url 'admin_dashboard' %}">
+            <span class="nav-dot"></span>Dashboard
+          </a>
+          <a class="nav-item {% if nav_active == 'users' %}active{% endif %}" href="{% url 'admin_users' %}">
+            <span class="nav-dot"></span>Users
+          </a>
+          <a class="nav-item {% if nav_active == 'books' %}active{% endif %}" href="{% url 'admin_books' %}">
+            <span class="nav-dot"></span>Books
+          </a>
+          <a class="nav-item {% if nav_active == 'inventory' %}active{% endif %}" href="{% url 'admin_inventory' %}">
+            <span class="nav-dot"></span>Inventory
+          </a>
+          <a class="nav-item {% if nav_active == 'returns' %}active{% endif %}" href="{% url 'admin_returns' %}">
+            <span class="nav-dot"></span>Returns
+          </a>
+          <a class="nav-item {% if nav_active == 'payments' %}active{% endif %}" href="{% url 'admin_payments' %}">
+            <span class="nav-dot"></span>Payments
+          </a>
+          <a class="nav-item {% if nav_active == 'notifications' %}active{% endif %}" href="{% url 'admin_notifications' %}">
+            <span class="nav-dot"></span>Notifications
+          </a>
+          <a class="nav-item {% if nav_active == 'reports_flags' %}active{% endif %}" href="{% url 'reports_flags' %}">
+            <span class="nav-dot"></span>Reports & Flags
+          </a>
+          <a class="nav-item {% if nav_active == 'audit' %}active{% endif %}" href="{% url 'admin_audit_logs' %}">
+            <span class="nav-dot"></span>Audit Logs
+          </a>
+          <a class="nav-item {% if nav_active == 'settings' %}active{% endif %}" href="{% url 'admin_settings' %}">
+            <span class="nav-dot"></span>Settings
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="tip-card">
+            <div class="tip-title">Quick Tip</div>
+            <div class="tip-text">
+              Review flagged activity daily. Every action taken should be logged for traceability.
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div class="page-title">
+            {% block page_heading %}
+            <h1>PassItOn Books</h1>
+            <p class="subtitle">Admin</p>
+            {% endblock %}
+          </div>
+
+          <div class="topbar-right">
+            <div class="admin-chip" title="Admin account">
+              <div class="avatar-circle">A</div>
+              <div class="admin-meta">
+                <div class="admin-name">{{ admin_name }}</div>
+                <div class="admin-role">Staff</div>
+              </div>
+            </div>
+            <a class="logout-btn" href="{% url 'staff_logout' %}" title="Logout">Logout</a>
+          </div>
+        </header>
+
+        <section class="content">
+          {% block content %}{% endblock %}
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

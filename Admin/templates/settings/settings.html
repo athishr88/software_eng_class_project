@@ -1,0 +1,22 @@
+{% extends "admin_dashboard_base.html" %}
+{% block title %}Settings | PassItOn Books Admin{% endblock %}
+{% block page_heading %}
+<h1>Settings</h1>
+<p class="subtitle">Admin panel configuration</p>
+{% endblock %}
+{% block content %}
+<div class="panel full">
+  <div class="panel-head">
+    <h2>General Settings</h2>
+  </div>
+  <div style="padding: 18px;">
+    <p style="margin: 0 0 12px; color: var(--muted, #6b7280);">Configure site-wide and admin preferences here. (Settings form can be added later.)</p>
+    <ul style="margin: 0; padding-left: 20px;">
+      <li>Theme / brand (e.g. primary color)</li>
+      <li>Notification defaults</li>
+      <li>Moderation thresholds</li>
+      <li>Feature flags</li>
+    </ul>
+  </div>
+</div>
+{% endblock %}
