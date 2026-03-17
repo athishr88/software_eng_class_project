@@ -1,0 +1,41 @@
+{% extends "admin_dashboard_base.html" %}
+{% block title %}Payments | PassItOn Books Admin{% endblock %}
+{% block page_heading %}
+<h1>Payments</h1>
+<p class="subtitle">Order payments (from paid orders)</p>
+{% endblock %}
+{% block content %}
+<div class="panel full">
+  <div class="panel-head">
+    <h2>Paid Orders (as payments)</h2>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>User</th>
+          <th>Subtotal</th>
+          <th>Discount</th>
+          <th>Total</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in payments %}
+        <tr>
+          <td>{{ p.id }}</td>
+          <td><div class="row-strong">{{ p.user.email }}</div></td>
+          <td>${{ p.subtotal_dollars|floatformat:2 }}</td>
+          <td>${{ p.discount_dollars|floatformat:2 }}</td>
+          <td>${{ p.total_dollars|floatformat:2 }}</td>
+          <td>{{ p.created_at|date:"M d, Y H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="6" class="empty-row">No payments found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
