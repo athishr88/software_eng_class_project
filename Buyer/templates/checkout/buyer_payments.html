@@ -16,96 +16,76 @@
             Use your payment processor to generatge a token
         </p>
 
-        <form method="post" action="{% url 'buyer_payments' %}" style="display:grid; gap:12px; max-width:520px;">
+        <form method="POST" action="{% url 'save_payment_method' %}" style="display:grid; gap:12px; max-width:520px;">
             {% csrf_token %}
 
-            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                Payment Token (from processor)
-                <input
-                    type="text"
-                    name="payment_token"
-                    placeholder="token..."
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                Cardholder Name
+                <input 
+                    type="text" 
+                    name="cardholder" 
+                    placeholder="Name on card"
                     required
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
             </label>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                <label style="display:grid; gap:6px; font-size: 14px; font-weight:700;">
-                    Brand
-                    <input
-                        type="text"
-                        name="brand"
-                        placeholder="e.g. Visa"
-                        required
-                        style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
-                    />
-                </label>
-
-                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                    Last 4 Digits
-                    <input
-                        type="text"
-                        name="last4"
-                        placeholder="e.g. 4242"
-                        minlength="4"
-                        maxlength="4"
-                        inputmode="numeric"
-                        required
-                        style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
-                    />
-                </label>
-            </div>
-
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                    Expiration Month
-                    <input
-                        type="number"
-                        name="exp_month"
-                        placeholder="MM"
-                        minlength="2"
-                        maxlength="12"
-                        inputmode="numeric"
-                        required
-                        style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
-                    />
-                </label>
-
-                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                    Expiration Year
-                    <input
-                        type="number"
-                        name="exp_year"
-                        placeholder="YYYY"
-                        min="2026"
-                        inputmode="numeric"
-                        required
-                        style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
-                    />
-                </label>
-            </div>
-
-            {% if payment_error %}
-                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
-                    {{ payment_error }}
-                </div>
-            {% endif %}
-
-            {% if payment_success %}
-                <div style="border:1px solid #22c55e; background:#f0fdf4; color:#166534; border-radius:10px; padding:10px 12px; font-size:14px;">
-                    {{ payment_success }}
-                </div>
-            {% endif %}
-
-            <div style="display:flex; justify-content:flex-end;">
-                <button class="btn" type="submit">Save Payment Method</button>
-            </div>
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                Card Number
+                <input 
+                    type="text" 
+                    name="card_number" 
+                    placeholder="1234 5678 9012 3456" 
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                Brand
+                <input 
+                    type="text" 
+                    name="brand" 
+                    placeholder="e.g. Visa"
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                CVV
+                <input 
+                    type="text" 
+                    name="cvv" 
+                    placeholder="123" 
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                Expiration Month
+                <input 
+                    type="text" 
+                    name="exp_month" 
+                    placeholder="MM" 
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                Expiration Year
+                <input 
+                    type="text" 
+                    name="exp_year" 
+                    placeholder="YYYY" 
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <button class="btn" type="submit">Save Payment Method</button>
         </form>
     </section>
 
     <section style="margin-top:14px;">
-        <div style="display:flex; align-items:end; justify-content:space-between; gap:10px;">
+        <div style="display:flex; align-items:end; justify-content:space-between; gap:10px;;">
             <div>
                 <h2 style="margin:0; font-size:16px; font-weight:800;">Saved Payment Methods</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
@@ -114,54 +94,60 @@
             </div>
         </div>
 
-        <div class="card" style="box-shadow:none; margin-top:112px; padding: 0; overflow:hidden;">
-            {% if payment_methods %}
-                <table style="width:100%; border-collapse:collapse;">
-                    <thead>
-                        <tr style="background:#f8fafc;">
-                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                                Brand
-                            </th>
-                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                                Last 4
-                            </th>
-                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                                Expiration
-                            </th>
-                            <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for method in payment_methods %}
-                            <tr>
-                                <td style="padding:12px; border-bottom:1px solid #eee; font-weight:700;">
-                                    {{ method.brand }}
-                                </td>
-                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                    **** **** **** {{ method.last4 }}
-                                </td>
-                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                    {{ method.exp_month }}/{{ method.exp_year }}
-                                </td>
-                                <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
-                                    <form method="post" action="{% url 'buyer_payments' %}" style="margin:0;">
-                                        {% csrf_token %}
-                                        <button class="btn" type="submit" style="background:#ef4444;">Delete</button>
+        <div class="card" style="box-shadow:none; margin-top:12px; padding:0; overflow:hidden;">
+            {% if payment_method %}
+                <div style="padding:18px; display:grid; gap:12px;">
+                    {% for method in payment_method %}
+                        <article style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
+                                <div style="display:flex; flex-direction:column;">
+                                    <div style="display:flex, gap:8px; align-items:center; flex-wrap:wrap;">
+                                        <strong style="font-size:14px;">{{ method.cardholder }}</strong>
+                                        {% if method.is_default %}
+                                            <span style="font-size:12px; font-weight:800; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 8px; border-radius:999px;">
+                                                Default
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                    <div style="margin-top:6px; color:var(--muted); font-size:14px; line-height:1.4;">
+                                        <div>{{ method.brand }} ending in {{ method.last4 }}</div>
+                                        <div>Expires {{ method.exp_month }}/{{ method.exp_year }}</div>
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                        {% if not method.is_default %}
+                                            <form method="post" action="{% url 'set_default_payment_method' method.id %}" style="margin:0;">
+                                                {% csrf_token %}
+                                                <input type="hidden" action="paymeny_method_id" value="{{ method.id }}">
+                                                <button class="btn" type="submit" style="background:#16a34a;">
+                                                    Set Default
+                                                </button>
+                                            </form>
+                                        {% endif %}
+            
+                                        <form method="post" action="{% url 'action_delete_payment_method' method.id%}" style="margin:0;">
+                                            {% csrf_token %}
+                                            <button class="btn" type="submit" style="background:#ef4444;">
+                                                Delete
+                                        </button>
                                     </form>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </div>
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
             {% else %}
                 <div style="padding:14px;">
                     <p style="margin:0; color:var(--muted); font-size:14px;">
-                        You have no saved payment methods.
+                        No saved payments yet.
                     </p>
                 </div>
             {% endif %}
         </div>
     </section>
+                    
+                                        
 
     <style>
         input:focus{
