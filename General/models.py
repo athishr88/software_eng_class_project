@@ -55,6 +55,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
+    @property
+    def is_steward(self):
+        """Templates use this for steward-only UI; backed by `steward_verified`."""
+        return bool(self.steward_verified)
+
 class Address(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 

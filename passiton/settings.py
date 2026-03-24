@@ -17,7 +17,7 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = "General.User"
-
+LOGIN_URL = "login"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -135,6 +135,10 @@ if not _BOOK_IMAGES_DIR.exists():
 STATICFILES_DIRS = []
 if _BOOK_IMAGES_DIR.exists():
     STATICFILES_DIRS.append((str(_BOOK_IMAGES_DIR), 'book_images'))
+
+_ASSETS_DIR = BASE_DIR / "assets"
+if _ASSETS_DIR.exists():
+    STATICFILES_DIRS.append(_ASSETS_DIR)
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

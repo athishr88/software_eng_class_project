@@ -5,9 +5,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Staff Login | PassItOn Books Admin</title>
+  <link rel="stylesheet" href="{% static 'css/site_header.css' %}" />
   <link rel="stylesheet" href="{% static 'dashboard/admin_dashboard.css' %}" />
   <style>
-    .staff-login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--bg, #f6f7fb); padding: 24px; }
+    body { display: flex; flex-direction: column; min-height: 100vh; margin: 0; }
+    .staff-login-wrap { flex: 1; display: flex; align-items: center; justify-content: center; background: var(--bg, #f6f7fb); padding: 24px; }
     .staff-login-card { background: var(--card, #fff); border-radius: var(--radius, 14px); padding: 32px; max-width: 380px; width: 100%; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 1px solid var(--border, #d1d5db); }
     .staff-login-card h1 { margin: 0 0 8px; font-size: 20px; font-weight: 800; }
     .staff-login-card .sub { margin: 0 0 24px; color: var(--muted, #6b7280); font-size: 14px; }
@@ -19,6 +21,7 @@
   </style>
 </head>
 <body>
+  {% include "includes/site_header.html" with show_search=0 portal="staff_login" %}
   <div class="staff-login-wrap">
     <div class="staff-login-card">
       <h1>Staff Login</h1>

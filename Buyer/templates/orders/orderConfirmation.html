@@ -19,7 +19,7 @@
                 </h2>
                 <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
                     Status: <strong style="color:var(--text);">{{ order.status }}</strong><br>
-                    Total: <strong style="color:var(--text);">{{ order.total_amount }}</strong><br>
+                    Total: <strong style="color:var(--text);">${{ order_total_display }}</strong><br>
                     Placed: <strong style="color:var(--text);">{{ order.created_at }}</strong>
                 </p>
             </div>
@@ -54,12 +54,16 @@
             Shipping Address
         </h2>
 
+        {% if shipping %}
         <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; color:var(--muted); font-size:14px; line-height:1.45;">
-            <strong style="color:var(--text);">{{ order.shipping_name }}</strong>
-            {{ order.shipping_line1 }}{% if order.shipping_line2 %}, {{ order.shipping_line2 }}{% endif %}<br>
-            {{ order.shipping_city }}, {{ order.shipping_state }}{{ order.shipping_postal_code }}<br>
-            {{ order.shipping_country }}
+            {% if shipping.shipping_name %}<strong style="color:var(--text);">{{ shipping.shipping_name }}</strong><br>{% endif %}
+            {{ shipping.shipping_line1 }}{% if shipping.shipping_line2 %}, {{ shipping.shipping_line2 }}{% endif %}<br>
+            {{ shipping.shipping_city }}, {{ shipping.shipping_state }} {{ shipping.shipping_postal_code }}<br>
+            {{ shipping.shipping_country }}
         </div>
+        {% else %}
+        <p style="margin:0; color:var(--muted); font-size:14px;">No shipping snapshot on file.</p>
+        {% endif %}
     </section>
 
     <section class="card" style="box-shadow:none; max-width:900px; margin-top:12px; padding:0; overflow:hidden;">
@@ -77,9 +81,6 @@
                             <strong style="font-size:14px;">{{ item.title }}</strong>
                             <div style="margin-top:4px; color:var(--muted); font-size:13px;">
                                 Qty {{ item.quantity }}
-                                {% if item.deposit_required %}
-                                    Deposit ${{ item.deposit_amount }}
-                                {% endif %}
                             </div>
                         </div>
                         <div style="text-align:right;">
