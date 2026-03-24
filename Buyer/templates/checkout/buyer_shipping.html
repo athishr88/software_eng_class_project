@@ -16,88 +16,78 @@
             Make sure your shipping info is accurate to avoid delivery issues.
         </p>
 
-        <form method="POST" action="{% url 'buyer_shipping' %}" style="display:grid; gap:12px; max-width:640px;">
+        <form method="POST" action="{% url 'save_shipping_address' %}" style="display:grid; gap:12px; max-width:640px;">
             {% csrf_token %}
 
-            <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
-            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                Label (optional)
-                <input
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                Full Name
+                <input 
                     type="text"
-                    name="label"
-                    placeholder="Home, Work, etc."
-                    maxlength="100"
-                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
-                />
-            </label>
-            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                Address line 1
-                <input
-                    type="text"
-                    name="line1"
-                    placeholder="Street address, P.O. box, etc."
-                    maxlength="255"
+                    name="full_name" 
+                    placeholder="Full Name" 
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                     required
                 />
             </label>
-            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                Address line 2 (optional)
-                <input
-                    type="text"
-                    name="line2"
-                    placeholder="Apartment, suite, unit, etc."
-                    maxlength="255"
-                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
-                />
-            </label>
-            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                City
-                <input
-                    type="text"
-                    name="city"
-                    placeholder="City"
-                    maxlength="100"
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                Address Line 1
+                <input 
+                    type="text" 
+                    name="address_line_1" 
+                    placeholder="Address Line 1" 
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                     required
                 />
             </label>
-            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                State / province / region
-                <input
-                    type="text"
-                    name="state"
-                    placeholder="State"
-                    maxlength="100"
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                Address Line 2
+                <input 
+                    type="text" 
+                    name="address_line_2" 
+                    placeholder="Address Line 2 (Optional)"
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
-                    required
                 />
             </label>
-            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                Postal code
-                <input
-                    type="text"
-                    name="postal_code"
-                    placeholder="ZIP or postal code"
-                    maxlength="30"
-                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
-                    required
-                />
-            </label>
-            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
                 Country
-                <input
-                    type="text"
-                    name="country"
-                    placeholder="Country"
-                    maxlength="100"
+                <input 
+                    type="text" 
+                    name="country" 
+                    placeholder="Country" 
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                     required
                 />
             </label>
-            <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; cursor:pointer;">
-                <input type="checkbox" name="is_default" style="width:18px; height:18px;" />
-                Set as default shipping address
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                City
+                <input 
+                    type="text" 
+                    name="city" 
+                    placeholder="City" 
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                    required
+                />
+            </label>
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                State
+                <input 
+                    type="text" 
+                    name="state" 
+                    placeholder="State" 
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                    required
+                />
+            </label>
+            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+                Zip Code
+                <input 
+                    type="text" 
+                    name="zip_code" 
+                    placeholder="ZIP Code" 
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                    required
+                />
             </label>
             <button class="btn" type="submit">Save Address</button>
         </form>
@@ -120,12 +110,8 @@
                         <article style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
                             <div style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
                                 <div style="display:flex; flex-direction:column;">
-                                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                                        {% if addr.label %}
-                                            <strong style="font-size:14px;">{{ addr.label }}</strong>
-                                        {% else %}
-                                            <strong style="font-size:14px;">Address</strong>
-                                        {% endif %}
+                                    <div style="display:flex, gap:8px; align-items:center; flex-wrap:wrap;">
+                                        <strong style="font-size:14px;">{{ addr.full_name }}</strong>
                                         {% if addr.is_default %}
                                             <span style="font-size:12px; font-weight:800; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 8px; border-radius:999px;">
                                                 Default
@@ -134,17 +120,17 @@
                                     </div>
 
                                     <div style="margin-top:6px; color:var(--muted); font-size:14px; line-height:1.4;">
-                                        <div>{{ addr.line1 }}</div>
-                                        {% if addr.line2 %}<div>{{ addr.line2 }}</div>{% endif %}
-                                        <div>{{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}</div>
-                                        <div>{{ addr.country }}</div>
+                                        <div>{{ addr.address_line_1 }}</div>
+                                        {% if addr.address_line_2 %}<div>{{ addr.address_line_2 }}</div>{% endif %}
+                                        <div>{{ addr.city }}, {{ addr.state }} {{ addr.zip_code }} {{ addr.country }}</div>
                                     </div>
                                 </div>
 
-                                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                <div style="display:flex; gap:10px; align-items:center;">
                                     {% if not addr.is_default %}
                                         <form method="post" action="{% url 'set_default_address' addr.id %}" style="margin:0;">
                                             {% csrf_token %}
+                                            <input type="hidden" name="address_id" value="{{ addr.id }}">
                                             <button class="btn" type="submit" style="background:#16a34a;">
                                                 Set Default
                                             </button>

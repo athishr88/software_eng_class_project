@@ -151,6 +151,24 @@
 <body>
     {% include "includes/site_header.html" with show_search=0 portal="buyer" %}
     <main class="page">
+        <header class="topbar" aria-label="Buyer Header">
+            <div class="brand">
+                <h1>Pass It On Books</h1>
+                <p>Buyer Portal</p>
+            </div>
+
+            <div class="top-actions">
+                <a class="link" href="{% url 'general_home' %}">Login</a>
+                <a class="link" href="{% url 'catalog' %}">Browse</a>
+                <a class="link" href="{% url 'cart' %}">Cart</a>
+
+                <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <button class="btn" type="submit">Logout</button>
+                </form>
+            </div>
+        </header>
+        
         <section class="content" aria-label="Buyer Content">
             <aside class="card sidebar">
                 <h2>My Account</h2>

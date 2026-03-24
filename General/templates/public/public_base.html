@@ -173,7 +173,30 @@
 </head>
 
 <body>
-    {% include "includes/site_header.html" with show_search=1 portal="public" %}
+    <main class="page">
+        <header class="topbar" aria-label="Public Top Navigation">
+            <div class="brand">
+                <h1>Pass It On Books</h1>
+                <p>Buy, share, and pass it on.</p>
+            </div>
+
+            <nav class="navlinks" aria-label="Public Navigation Links">
+                <a class="link" href="{% url 'catalog' %}">Login</a>
+                <a class="link" href="{% url 'catalog' %}">Browse</a>
+                <a class="link" href="{% url 'cart' %}">Cart</a>
+
+                {% if user.is_authenticated %}
+                    <a class="link" href="{% url 'buyer_dashboard' %}">Account</a>
+                    <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                        {% csrf_token %}
+                        <button class="btn" type="submit">Logout</button>
+                    </form>
+                {% else %}
+                    <a class="link" href="{% url 'login' %}">Login</a>
+                    <a class="link" href="{% url 'register' %}">Register</a>
+                {% endif %}
+            </nav>
+        </header>
 
     <main class="page">
         {% block hero %}

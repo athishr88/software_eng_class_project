@@ -1,51 +1,14 @@
-from django.contrib import messages
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.db import transaction
-from django.db.models import Prefetch
-from django.shortcuts import get_object_or_404, redirect, render
-
-from Buyer.cart_helpers import add_book_to_db_cart, clear_db_cart, db_cart_lines
-from Buyer.models import (
-    CartItem,
-    Order,
-    OrderItem,
-    OrderItemBookSnapshot,
-    OrderShippingAddress,
-    ReturnRequest,
-)
-from General.models import Address, Book, Inventory
+from django.contrib import messages
+from General.models import Book
+from .models import ShippingAddress, PaymentMethod, Order, OrderItem
+from django.http import HttpResponse
+import uuid
+from decimal import Decimal
+from datetime import datetime
 
 
-def _addresses_for_user(user):
-    return Address.objects.filter(user=user).order_by("-is_default", "-updated_at")
-
-
-def _cart_lines(session_cart):
-    """Build cart lines from session; returns (lines, subtotal_cents). Each line: book, quantity, line_subtotal_cents."""
-    lines = []
-    subtotal_cents = 0
-    for book_id, item_data in session_cart.items():
-        try:
-            book = Book.objects.select_related("inventory").get(
-                pk=int(book_id), is_active=True
-            )
-        except (Book.DoesNotExist, ValueError, TypeError):
-            continue
-        qty = max(1, int(item_data.get("quantity", 1)))
-        line_cents = book.base_price_cents * qty
-        subtotal_cents += line_cents
-        price = book.base_price_cents / 100.0
-        lines.append(
-            {
-                "id": book.id,
-                "book": book,
-                "quantity": qty,
-                "price": price,
-                "subtotal": line_cents / 100.0,
-                "line_subtotal_cents": line_cents,
-            }
-        )
-    return lines, subtotal_cents
 
 
 def home(request):
@@ -57,51 +20,75 @@ def buyer_dashboard(request):
     """Buyer dashboard."""
     return render(request, "dashboard/buyer_dashboard.html")
 
+@login_required
+def buyer_profile(request):
+    return render(request, "account/buyer_profile.html")
 
 def add_to_cart(request, book_id):
     if request.method == "POST":
-        book = get_object_or_404(Book, pk=book_id, is_active=True)
-        try:
-            quantity = int(request.POST.get("quantity", 1))
-        except (TypeError, ValueError):
-            quantity = 1
-        if quantity < 1:
-            quantity = 1
-        if request.user.is_authenticated:
-            add_book_to_db_cart(request.user, book, quantity)
+        print("ADD TO CART book_id:", book_id)
+
+        book = get_object_or_404(Book, pk=book_id)
+
+        cart = request.session.get("cart", {})
+        quantity = int(request.POST.get("quantity", 1))
+
+        book_id_str = str(book.id)
+
+        if book_id_str in cart:
+            cart[book_id_str]["quantity"] += quantity
         else:
-            cart = request.session.get("cart", {})
-            book_id_str = str(book_id)
-            if book_id_str in cart:
-                cart[book_id_str]["quantity"] += quantity
-            else:
-                cart[book_id_str] = {"quantity": quantity}
-            request.session["cart"] = cart
-            request.session.modified = True
+            cart[book_id_str] = {
+                "quantity": quantity
+            }
+        request.session["cart"] = cart
+        request.session.modified = True
+        messages.success(request, f"{book.title} added to cart.")
     return redirect("cart")
 
 
 def buyer_cart(request):
-    if request.user.is_authenticated:
-        cart_items, subtotal_cents = db_cart_lines(request.user)
-    else:
-        session_cart = request.session.get("cart", {})
-        cart_items, subtotal_cents = _cart_lines(session_cart)
-    cart_subtotal = subtotal_cents / 100.0
-    tax = round(cart_subtotal * 0.07, 2)
-    fees = 0.00
-    cart_total = round(cart_subtotal + tax + fees, 2)
-    total_items = sum(item["quantity"] for item in cart_items)
+    cart = request.session.get("cart", {})
+    cart_items = []
+    cart_subtotal = 0.00
+    total_items = 0
 
+    for book_id, item_data in cart.items():
+        try:
+            book = Book.objects.get(pk=book_id, is_active=True)
+            quantity = item_data.get("quantity", 1)
+            total_items += quantity
+            price = float(book.base_price_cents) / 100
+            subtotal = price * quantity
+
+            cart_items.append({
+                "id": book.id,
+                "book": book,
+                "quantity": quantity,
+                "price": price,
+                "subtotal": subtotal
+            })
+
+            cart_subtotal += subtotal
+        except Book.DoesNotExist:
+            continue
+    tax = round(cart_subtotal * 0.07, 2)
+    fees = 2.99 if cart_items else 0.00
+    cart_total = round(cart_subtotal + tax + fees, 2)
+
+    addresses = ShippingAddress.objects.filter(user=request.user)
+    payment_method = PaymentMethod.objects.filter(user=request.user)
+
+    
     context = {
         "cart_items": cart_items,
+        "total_items": total_items,
         "cart_subtotal": cart_subtotal,
-        "cart_total": cart_subtotal,
+        "cart_total": cart_total,
         "tax": tax,
         "fees": fees,
-        "total_items": total_items,
-        "addresses": [],
-        "payment_methods": [],
+        "addresses": addresses,
+        "payment_method": payment_method,
         "checkout_error": None,
     }
 
@@ -116,161 +103,39 @@ def buyer_checkout(request):
     fees = 2.99 if cart_items else 0.00
     final_total = round(cart_subtotal + tax + fees, 2)
 
-    addresses = list(_addresses_for_user(request.user))
-    selected_address = None
-    if addresses:
-        sel = (request.POST.get("shipping_address_id") if request.method == "POST" else None) or request.GET.get(
-            "shipping_address_id"
-        )
-        if sel:
-            selected_address = next((a for a in addresses if str(a.id) == str(sel)), None)
-        if not selected_address:
-            selected_address = next((a for a in addresses if a.is_default), None) or addresses[0]
+    addresses = ShippingAddress.objects.filter(user=request.user)
+    payment_method = PaymentMethod.objects.filter(user=request.user)
+    selected_payment = payment_method.filter(is_default=True).first() or addresses.first()
+    selected_address = addresses.filter(is_default=True).first() or payment_method.first()
+
+    context = {
+        "cart_items": cart_items,
+        "cart_subtotal": cart_subtotal,
+        "tax": tax,
+        "fees": fees,
+        "final_total": final_total,
+        "addresses": addresses,
+        "payment_method": payment_method,
+        "selected_address": selected_address,
+        "selected_payment": selected_payment,
+        "checkout_error": None,
+    }
+
+    return render(request, "checkout/buyer_checkout.html", context)
 
     if request.method == "POST":
-        if not cart_items:
-            return render(
-                request,
-                "checkout/buyer_checkout.html",
-                {
-                    "cart_items": [],
-                    "cart_subtotal": 0,
-                    "tax": 0,
-                    "fees": 0,
-                    "final_total": 0,
-                    "addresses": addresses,
-                    "selected_address": selected_address,
-                    "checkout_error": "Your cart is empty.",
-                },
-            )
-        addr_id = request.POST.get("shipping_address_id")
-        if not addr_id:
-            return render(
-                request,
-                "checkout/buyer_checkout.html",
-                {
-                    "cart_items": cart_items,
-                    "cart_subtotal": cart_subtotal,
-                    "tax": tax,
-                    "fees": fees,
-                    "final_total": final_total,
-                    "addresses": addresses,
-                    "selected_address": selected_address,
-                    "checkout_error": "Please select a shipping address.",
-                },
-            )
-        try:
-            ship_addr = Address.objects.get(pk=int(addr_id), user=request.user)
-        except (Address.DoesNotExist, ValueError, TypeError):
-            return render(
-                request,
-                "checkout/buyer_checkout.html",
-                {
-                    "cart_items": cart_items,
-                    "cart_subtotal": cart_subtotal,
-                    "tax": tax,
-                    "fees": fees,
-                    "final_total": final_total,
-                    "addresses": addresses,
-                    "selected_address": selected_address,
-                    "checkout_error": "Invalid shipping address.",
-                },
-            )
+        cart = request.session.get("cart", {})
+        item_id_str = str(item_id)
 
-        tax_cents = int(round(subtotal_cents * 0.07))
-        fees_cents = 299 if cart_items else 0
-        total_cents = subtotal_cents + tax_cents + fees_cents
+        if item_id_str in cart:
+            current_quantity = cart[item_id_str].get("quantity", 1)
 
-        try:
-            with transaction.atomic():
-                locked_books = {}
-                for line in cart_items:
-                    inv = (
-                        Inventory.objects.select_for_update()
-                        .select_related("book")
-                        .filter(book_id=line["book"].id)
-                        .first()
-                    )
-                    if not inv:
-                        raise ValueError(
-                            f"No inventory record for “{line['book'].title}”. Ask the seller to restock."
-                        )
-                    if inv.quantity_available < line["quantity"]:
-                        raise ValueError(
-                            f"Not enough stock for “{line['book'].title}” (available {inv.quantity_available})."
-                        )
-                    locked_books[line["book"].id] = (inv, line)
-
-                order = Order.objects.create(
-                    user=request.user,
-                    shipping_address=ship_addr,
-                    steward_contribution=None,
-                    status="paid",
-                    subtotal_cents=subtotal_cents,
-                    discount_cents=0,
-                    total_cents=total_cents,
-                )
-
-                ship_name = (
-                    ship_addr.label
-                    or request.user.get_full_name().strip()
-                    or request.user.email
-                )
-                OrderShippingAddress.objects.create(
-                    order=order,
-                    shipping_name=ship_name[:100] if ship_name else None,
-                    shipping_line1=ship_addr.line1,
-                    shipping_line2=ship_addr.line2,
-                    shipping_city=ship_addr.city,
-                    shipping_state=ship_addr.state,
-                    shipping_postal_code=ship_addr.postal_code,
-                    shipping_country=ship_addr.country,
-                    source_address=ship_addr,
-                )
-
-                for book_id, (inv, line) in locked_books.items():
-                    book = line["book"]
-                    oi = OrderItem.objects.create(
-                        order=order,
-                        book=book,
-                        quantity=line["quantity"],
-                        unit_price_cents=book.base_price_cents,
-                        line_total_cents=line["line_subtotal_cents"],
-                    )
-                    OrderItemBookSnapshot.objects.create(
-                        order_item=oi,
-                        source_book=book,
-                        title=book.title,
-                        author=book.author,
-                        description=book.description,
-                        isbn=book.isbn,
-                        language=book.language,
-                        publisher=book.publisher,
-                        publication_year=book.publication_year,
-                        cover_image_url=book.cover_image_url,
-                        condition=book.condition,
-                    )
-                    inv.quantity_available -= line["quantity"]
-                    inv.save(update_fields=["quantity_available", "updated_at"])
-
-        except ValueError as e:
-            return render(
-                request,
-                "checkout/buyer_checkout.html",
-                {
-                    "cart_items": cart_items,
-                    "cart_subtotal": cart_subtotal,
-                    "tax": tax,
-                    "fees": fees,
-                    "final_total": final_total,
-                    "addresses": addresses,
-                    "selected_address": ship_addr,
-                    "checkout_error": str(e),
-                },
-            )
-
-        clear_db_cart(request.user)
-        request.session["cart"] = {}
+            if current_quantity > 1:
+                cart[item_id_str]["quantity"] = current_quantity - 1
+            else:
+                del cart[item_id_str]
+        
+        request.session["cart"] = cart
         request.session.modified = True
         messages.success(request, "Order placed.")
         return redirect("order_confirmation", order_id=order.id)
@@ -331,103 +196,257 @@ def update_cart_item(request, item_id):
             request.session.modified = True
     return redirect("cart")
 
-
-@login_required(login_url="login")
+@login_required
 def buyer_payments(request):
-    """Payment methods page. Card storage is not wired to a model yet."""
+    payment_method = PaymentMethod.objects.filter(user=request.user)
+    
+    context = {
+        "payment_method": payment_method,
+    }
+    return render(request, "checkout/buyer_payments.html", context)
+
+@login_required
+def save_payment_method(request):
     if request.method == "POST":
-        messages.info(
-            request,
-            "Saved payment methods are not stored in the database in this project yet.",
-        )
-        next_url = (request.POST.get("next") or request.GET.get("next") or "").strip()
-        if next_url and next_url.startswith("/"):
-            return redirect(next_url)
-        return redirect("buyer_payments")
-    return render(
-        request,
-        "checkout/buyer_payments.html",
-        {"payment_methods": []},
-    )
+        cardholder = request.POST.get("cardholder", "").strip()
+        card_number = request.POST.get("card_number", "").replace(" ", "").strip()
+        brand = request.POST.get("brand", "").strip()
+        cvv = request.POST.get("cvv", "").strip()
+        exp_month = request.POST.get("exp_month", "").strip()
+        exp_year = request.POST.get("exp_year", "").strip()
+        next_url = request.POST.get("next")
+
+        if not cardholder or not card_number or not brand or not cvv or not exp_month or not exp_year:
+            messages.error(request, "Please fill in all required fields.")
+            return redirect(next_url or "buyer_payments")
+        
+        if len(card_number) < 4:
+            messages.error(request, "Please enter a valid card number.")
+            return redirect("buyer_payments")
+        
+        last4 = card_number[-4:]
+        processor_token = f"tok_{uuid.uuid4().hex[:12]}"
+        
+        is_first_payment = not PaymentMethod.objects.filter(user=request.user).exists()
 
 
-@login_required(login_url="login")
-def buyer_shipping(request):
-    """Shipping / addresses: list and create Address rows for the logged-in user."""
-    if request.method == "POST":
-        label_raw = (request.POST.get("label") or "").strip()
-        line1 = (request.POST.get("line1") or "").strip()
-        line2_raw = (request.POST.get("line2") or "").strip()
-        city = (request.POST.get("city") or "").strip()
-        state = (request.POST.get("state") or "").strip()
-        postal_code = (request.POST.get("postal_code") or "").strip()
-        country = (request.POST.get("country") or "").strip()
-        is_default = request.POST.get("is_default") == "on"
-
-        if not all([line1, city, state, postal_code, country]):
-            messages.error(
-                request,
-                "Street address, city, state, postal code, and country are required.",
-            )
-            return redirect("buyer_shipping")
-
-        if is_default:
-            Address.objects.filter(user=request.user, is_default=True).update(
-                is_default=False
-            )
-
-        Address.objects.create(
+        PaymentMethod.objects.create(
             user=request.user,
-            label=label_raw or None,
-            line1=line1,
-            line2=line2_raw or None,
-            city=city,
-            state=state,
-            postal_code=postal_code,
-            country=country,
-            is_default=is_default,
+            cardholder=cardholder,
+            processor_token=processor_token,
+            brand=brand,
+            last4=last4,
+            exp_month=int(exp_month),
+            exp_year=int(exp_year),
+            is_default=is_first_payment,
         )
-        messages.success(request, "Address saved.")
 
-        next_url = request.POST.get("next") or request.GET.get("next")
+        messages.success(request, "Payment method saved.")
+
         if next_url:
             return redirect(next_url)
-        return redirect("buyer_shipping")
+        
+        return redirect("buyer_payments")
+    return redirect("buyer_payments")
 
-    return render(
-        request,
-        "checkout/buyer_shipping.html",
-        {"addresses": _addresses_for_user(request.user)},
+@login_required
+def action_delete_payment_method(request, method_id):
+    if request.method == "POST":
+        method = get_object_or_404(PaymentMethod, id=method_id, user=request.user)
+        
+        if Order.objects.filter(payment_method_id=method.id).exists():
+            messages.error(request, "Cannot delete payment method in use.")
+            return redirect("buyer_payments")
+        method.delete()
+        messages.success(request, "Payment method deleted.")
+        return redirect("buyer_payments")
+    
+    messages.error(request, "Invalid request.")
+    return redirect("buyer_payments")
+
+@login_required
+def set_default_payment_method(request, method_id):
+    if request.method == "POST":
+        PaymentMethod.objects.filter(user=request.user).update(is_default=False)
+        method = get_object_or_404(PaymentMethod, id=method_id, user=request.user)
+        method.is_default = True
+        method.save()
+        messages.success(request, "Default payment method updated.")
+    return redirect("buyer_payments")
+
+@login_required
+def buyer_shipping(request):
+    addresses = ShippingAddress.objects.filter(user=request.user)
+
+    return render(request, "checkout/buyer_shipping.html", {
+        "addresses": addresses,
+    })
+
+@login_required
+def save_shipping_address(request):
+    if request.method == "POST":
+        full_name = request.POST.get("full_name", "").strip()
+        address_line_1 = request.POST.get("address_line_1", "").strip()
+        address_line_2 = request.POST.get("address_line_2", "").strip()
+        country = request.POST.get("country", "").strip()
+        city = request.POST.get("city", "").strip()
+        state = request.POST.get("state", "").strip()
+        zip_code = request.POST.get("zip_code", "").strip()
+
+        next_url = request.POST.get("next")
+
+        if not full_name or not address_line_1 or not country or not city or not state or not zip_code:
+            messages.error(request, "Please fill in all required fields.")
+            return redirect("buyer_shipping")
+        
+        has_addresses = ShippingAddress.objects.filter(user=request.user).exists()
+        
+        if not has_addresses:
+            ShippingAddress.objects.filter(user=request.user).update(is_default=False)
+        
+        address = ShippingAddress.objects.create(
+            user=request.user,
+            full_name=full_name,
+            address_line_1=address_line_1,
+            address_line_2=address_line_2,
+            city=city,
+            state=state,
+            zip_code=zip_code,
+            country=country,
+            is_default=not has_addresses,
+        )
+        
+        messages.success(request, "Shipping address saved.")
+
+        if next_url:
+            return redirect(next_url)
+        
+        return redirect("buyer_shipping")
+    return redirect("buyer_shipping")
+
+@login_required
+def action_delete_address(request, addr_id):
+    if request.method == "POST":
+        address = get_object_or_404(ShippingAddress, id=addr_id, user=request.user)
+        address.delete()
+        messages.success(request, "Shipping address deleted.")
+        return redirect("buyer_shipping")
+    messages.error(request, "Invalid request.")
+    return redirect("buyer_shipping")
+
+@login_required
+def set_default_address(request, addr_id):
+    if request.method == "POST":
+        ShippingAddress.objects.filter(user=request.user).update(is_default=False)
+        address = get_object_or_404(ShippingAddress, id=addr_id, user=request.user)
+        address.is_default = True
+        address.save()
+        messages.success(request, "Default shipping address updated.")
+    return redirect("buyer_shipping")
+
+def proccess_payment(token, amount):
+    if token.startswith("tok_"):
+        return True
+    return False
+
+@login_required
+def place_order(request):
+    if request.method != "POST":
+        return redirect("checkout")
+    
+    shipping_address_id = request.POST.get("shipping_address_id")
+    payment_method_id = request.POST.get("payment_method_id")
+
+    if not shipping_address_id or not payment_method_id:
+        messages.error(request, "Please select a shipping address and payment method.")
+        return redirect("checkout")
+    
+    shipping_address = get_object_or_404(
+        ShippingAddress, id=shipping_address_id, user=request.user
+    )
+    payment_method = get_object_or_404(
+        PaymentMethod, id=payment_method_id, user=request.user
     )
 
+    if not payment_method.processor_token or not payment_method.processor_token.startswith("tok_"):
+        messages.error(request, "Payment could not be processed.")
+        return redirect("checkout")
+    cart = request.session.get("cart", {})
+    if not cart:
+        messages.error(request, "Your cart is empty.")
+        return redirect("cart")
+    
+    cart_items = []
+    cart_subtotal = Decimal("0.00")
 
-@login_required(login_url="login")
-def set_default_shipping_address(request, address_id):
-    if request.method != "POST":
-        return redirect("buyer_shipping")
-    addr = get_object_or_404(Address, pk=address_id, user=request.user)
-    Address.objects.filter(user=request.user).update(is_default=False)
-    addr.is_default = True
-    addr.save()
-    messages.success(request, "Default shipping address updated.")
-    return redirect("buyer_shipping")
+    for book_id, item_data in cart.items():
+        try:
+            book = Book.objects.get(pk=book_id, is_active=True)
+            quantity = int(item_data.get("quantity", 1))
+            price = Decimal(book.base_price_cents) / Decimal("100")
+            subtotal = price * quantity
 
+            cart_items.append({
+                "book": book,
+                "quantity": quantity,
+                "price": price,
+                "subtotal": subtotal,
+            })
 
-@login_required(login_url="login")
-def delete_shipping_address(request, address_id):
-    if request.method != "POST":
-        return redirect("buyer_shipping")
-    addr = get_object_or_404(Address, pk=address_id, user=request.user)
-    addr.delete()
-    messages.success(request, "Address removed.")
-    return redirect("buyer_shipping")
+            cart_subtotal += subtotal
+        except Book.DoesNotExist:
+            continue
 
+    if not cart_items:
+        messages.error(request, "Your cart is empty.")
+        return redirect("cart")
+    
+    tax = (cart_subtotal * Decimal("0.07")).quantize(Decimal("0.01"))
+    fees = Decimal("2.99") if cart_items else Decimal("0.00")
+    total = (cart_subtotal + tax + fees).quantize(Decimal("0.01"))
 
-@login_required(login_url="login")
-def buyer_profile(request):
-    """Update User profile fields and password (schema: first_name, last_name, phone)."""
-    user = request.user
-    ctx = {}
+    order = Order.objects.create(
+        user=request.user,
+        shipping_address=shipping_address,
+        payment_method=payment_method,
+        subtotal=cart_subtotal,
+        tax=tax,
+        fees=fees,
+        total=total,
+        status="pending",
+    )
+
+    for item in cart_items:
+        OrderItem.objects.create(
+            order=order,
+            book=item["book"],
+            quantity=item["quantity"],
+            price=item["price"],
+            subtotal=item["subtotal"],
+        )
+
+    request.session["cart"] = {}
+    request.session.modified = True
+
+    messages.success(request, "Order placed successfully.")
+
+    return redirect("order/orderDetail.html", order_id=order.id)
+@login_required
+def buyer_orders(request):
+    order = Order.objects.filter(user=request.user).order_by("-created_at")
+    return render(request, "orders/orderHistory.html", {"orders": orders})
+
+def order_confirmation(request):
+    """Order confirmation after place order."""
+    return render(request, "orders/orderConfirmation.html")
+
+@login_required
+def order_detail(request, order_id=None):
+    """Single order detail."""
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    items = order.items.all()
+    return render(request, "orders/orderDetail.html", {"order": order, "items": items,})
+
 
     if request.method == "POST":
         action = (request.POST.get("action") or "").strip()
@@ -555,22 +574,32 @@ def order_detail(request, order_id):
 
 @login_required(login_url="login")
 def order_history(request):
-    orders = Order.objects.filter(user=request.user).order_by("-created_at")[:200]
+    orders = Order.objects.filter(user=request.user)
+
+    status = request.GET.get("status")
+    from_date = request.GET.get("from")
+    to_date = request.GET.get("to")
+
+    if status:
+        orders=orders.filter(status=status)
+
+    if from_date:
+        try:
+            from_date = datetime.strptime(from_date, "%Y-%m-%d")
+            orders = orders.filter(created_at__date__gte=from_date)
+        except ValueError:
+            pass
+    
+    if to_date:
+        try:
+            to_date = datetime.strptime(to_date, "%Y-%m-%d")
+            orders = orders.filter(created_at__date__lte=to_date)
+        except ValueError:
+            pass
+
+    orders = orders.order_by("-created_at")
     return render(request, "orders/orderHistory.html", {"orders": orders})
 
-
-@login_required(login_url="login")
-def return_request_view(request, order_id):
-    order = get_object_or_404(Order, pk=order_id, user=request.user)
-    if hasattr(order, "returnrequest"):
-        return render(
-            request,
-            "orders/ReturnRequest.html",
-            {
-                "order": order,
-                "return_error": "A return has already been submitted for this order.",
-            },
-        )
 
     if request.method == "POST":
         category = (request.POST.get("reason_category") or "").strip()

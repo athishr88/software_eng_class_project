@@ -16,7 +16,7 @@
         </div>
     {% endif %}
 
-    <form method="post" action="{% url 'checkout' %}" style="max-width:900px;">
+    <form method="post" action="{% url 'place_order' %}" style="max-width:900px;">
         {% csrf_token %}
         <section style="display:grid; grid-template-columns: 1fr 340px; gap:12px; align-items:start;">
             <div style="display:grid; gap:12px;">
@@ -43,14 +43,15 @@
                                             value="{{ addr.id }}"
                                             {% if selected_address and addr.id == selected_address.id %}checked{% endif %}
                                             required
-                                            style="width:auto; margin-top:3px;"
+                                            style="width:auto margin-top:13;"
                                         />
                                         <div style="line-height:1.5;">
-                                            <div><strong>{% if addr.label %}{{ addr.label }}{% else %}Address{% endif %}</strong></div>
-                                            <div>{{ addr.line1 }}</div>
-                                            {% if addr.line2 %}<div>{{ addr.line2 }}</div>{% endif %}
-                                            <div>{{ addr.city }}, {{ addr.state }} {{ addr.postal_code }}</div>
-                                            <div>{{ addr.country }}</div>
+                                            <div><strong>{{ addr.full_name }}</strong></div>
+                                            <div>{{ addr.address_line_1 }}</div>
+                                            {% if addr.address_line_2 %}
+                                                <div>{{ addr.address_line_2 }}</div>
+                                            {% endif %}
+                                            <div>{{ addr.city }}, {{ addr.state }} {{ addr.zip_code }} {{ addr.country }}</div>
                                         </div>
                                     </div>
                                 </label>
@@ -61,8 +62,8 @@
                                     You do not have any saved addresses.
                                 </p>
                                 <div style="margin-top:10px;">
-                                    <a class="btn" href="{% url 'buyer_shipping' %}?next={{ request.path|urlencode }}">
-                                        Add address
+                                    <a class="btn" href="{% url 'buyer_shipping' %}?next={% url 'checkout' %}">
+                                        Add Address
                                     </a>
                                 </div>
                             </div>
@@ -71,7 +72,53 @@
                 </div>
 
                 <div class="card" style="box-shadow:none;">
-                    <h2 style="margin:0; font-size:16px; font-weight:800;">2) Review order</h2>
+                    <div style="display:flex; justify-content:space-between; gap:10px; align-items:end; flex-wrap:wrap;">
+                        <div>
+                            <h2 style="margin:0; font-size:16px; font-weight:800;">2) Payment Method</h2>
+                            <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                                Choose a saved payment method.
+                            </p>
+                        </div>
+                        <a class="link" href="{% url 'buyer_payments' %}">Manage</a>
+                    </div>
+
+                    <div style="margin-top:12px; display:grid; gap:10px;">
+                        {% if payment_method %}
+                            {% for method in payment_method %}
+                                <label style="display:block; border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
+                                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                                        <input
+                                            type="radio"
+                                            name="payment_method_id"
+                                            value="{{ method.id }}"
+                                            {% if selected_payment and method.id == selected_payment.id %}checked{% endif %}
+                                            required
+                                            style="width:auto; margin-top:3px;"
+                                        />
+                                        <div style="display:grid; gap:4px;">
+                                            <strong style="font-size:14px;">{{ method.brand }} **** {{ method.last4 }}</strong>
+                                            <div style="color:var(--muted); font-size:14px;">Expires {{ method.exp_month }}/{{ method.exp_year }}</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            {% endfor %}
+                        {% else %}
+                            <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
+                                <p style="margin:0; color:var(--muted); font-size:14px;">
+                                    You don't have any saved payment methods.
+                                </p>
+                                <div style="margin-top:10px;">
+                                    <a class="btn" href="{% url 'buyer_payments' %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                                        Add Payment Method
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card" style="box-shadow:none;">
+                    <h2 style="margin:0; font-size:16px; font-weight:800;">3) Review Order</h2>
                     <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
                         Confirm items and totals. Placing the order saves your order, line items, and address snapshots.
                     </p>
@@ -138,8 +185,8 @@
                     <button
                         class="btn"
                         type="submit"
-                        {% if not cart_items or not addresses %}disabled{% endif %}>
-                        Place order
+                        {% if not cart_items or not addresses or not payment_method %}disabled{% endif %}>
+                        Place Order
                     </button>
 
                     <a class="link" href="{% url 'cart' %}" style="text-align:center;">
@@ -150,6 +197,10 @@
                 {% if not addresses %}
                     <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">
                         Add a shipping address to place your order.
+                    </p>
+                {% elif not payment_method %}
+                    <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">
+                        Add a payment method to place your order.
                     </p>
                 {% elif not cart_items %}
                     <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">

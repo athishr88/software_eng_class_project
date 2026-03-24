@@ -240,9 +240,9 @@ def catalog(request):
     )
 
 
-def book_detail(request, pk=None):
+def book_detail(request, book_id):
     """Single book detail by pk."""
-    book = get_object_or_404(Book.objects.filter(is_active=True ), pk=pk)
+    book = get_object_or_404(Book, pk=book_id)
     seller_display_name = (
         f"{book.seller_user.first_name} {book.seller_user.last_name}".strip()
         if book.seller_user else "—"
@@ -262,6 +262,8 @@ def book_detail(request, pk=None):
             "reviews": [],
         },
     )
+    
+
 
 def cart(request):
     """TEMP BUYER CART PAGE"""
