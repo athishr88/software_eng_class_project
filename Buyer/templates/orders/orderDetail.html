@@ -39,7 +39,7 @@
 
                 <div style="color:var(--muted); font-size:14px; line-height:1.45;">
                     Placed: <strong style="color:var(--text);">{{ order.created_at }}</strong><br>
-                    Total: <strong style="color:var(--text);">{{ order.total }}</strong>
+                    Total: <strong style="color:var(--text);">${{ order_total_display }}</strong>
                 </div>
             </div>
 
@@ -64,13 +64,20 @@
     <section class="card" style="box-shadow:none; max-width:900px; margin-top:12px;">
         <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Shipping Address</h2>
         
-        {% if order.shipping_address %}
+        {% if shipping %}
             <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; color:var(--muted); font-size:14px; line-height:1.45;">
-                <strong style="color:var(--text);">{{ order.shipping_address.full_name }}</strong><br>
-            {{ order.shipping_address.address_line_1 }}{% if order.shipping_address.address_line_2 %},{{ order.shipping_address.address_line_2 }}{% endif %}<br>
-            {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.zip_code }}
-            {{ order.shipping_address.country }}
-        </div>
+                {% if shipping.shipping_name %}<strong style="color:var(--text);">{{ shipping.shipping_name }}</strong><br>{% endif %}
+                {{ shipping.shipping_line1 }}{% if shipping.shipping_line2 %}, {{ shipping.shipping_line2 }}{% endif %}<br>
+                {{ shipping.shipping_city }}, {{ shipping.shipping_state }} {{ shipping.shipping_postal_code }}<br>
+                {{ shipping.shipping_country }}
+            </div>
+        {% elif order.shipping_address %}
+            <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; color:var(--muted); font-size:14px; line-height:1.45;">
+                <strong style="color:var(--text);">{% if order.shipping_address.label %}{{ order.shipping_address.label }}{% else %}Address{% endif %}</strong><br>
+                {{ order.shipping_address.line1 }}{% if order.shipping_address.line2 %}, {{ order.shipping_address.line2 }}{% endif %}<br>
+                {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.postal_code }}<br>
+                {{ order.shipping_address.country }}
+            </div>
         {% else %}
             <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; color:var(--muted); font-size:14px;">
                 No shipping address available
@@ -83,34 +90,25 @@
             <div>
                 <h2 style="margin:0; font-size:16px; font-weight:800;">Items</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-                    {% if items %}{{ items|length }} item(s) in this order.{% endif %}
+                    {% if order_items %}{{ order_items|length }} item(s) in this order.{% endif %}
                 </p>
             </div>
         </div>
 
-        {% if items %}
+        {% if order_items %}
             <div style="padding:18px; display:grid; gap:10px;">
-                {% for item in items %}
+                {% for item in order_items %}
                     <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
                         <div>
-                            <strong style="font-size:14px;">
-                                {% if item.book %}
-                                    {{ item.book.title }}
-                                {% else %}
-                                    Book unavailable
-                                {% endif %}
-                            </strong>
+                            <strong style="font-size:14px;">{{ item.title }}</strong>
                             <div style="margin-top:4px; color:var(--muted); font-size:13px;">
                                 Qty {{ item.quantity }}
-                            </div>
-                            <div style="margin-top:4pxl color:var(--muted); font-size:13;">
-                                Price each: ${{ item.price }}
                             </div>
                         </div>
 
                         <div style="text-align:right;">
-                            <div style="color:var(--muted); font-size:13px;">Line Total</div>
-                            <div style="font-weight:900;">${{ item.subtotal }}</div>
+                            <div style="color:var(--muted); font-size:13px;">Line total</div>
+                            <div style="font-weight:900;">${{ item.line_total|floatformat:2 }}</div>
                         </div>
                     </div>
                 {% endfor %}
@@ -128,10 +126,9 @@
         <div class="card" style="box-shadow:none;">
             <h3 style="margin:0 0 6px; font-size:14px; font-weight:900;">Order Summary</h3>
             <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
-                Subtotal: ${{ order.subtotal }}<br>
-                Tax: ${{ order.tax }}<br>
-                Fees: ${{ order.fees }}<br>
-                <strong style="color:var(--text);">Total: ${{ order.total }}</strong>
+                Subtotal (items): ${{ order_subtotal_display }}<br>
+                Discount: ${{ order.discount_dollars|floatformat:2 }}<br>
+                <strong style="color:var(--text);">Total charged: ${{ order_total_display }}</strong>
             </p>
         </div>
 

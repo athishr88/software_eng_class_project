@@ -63,6 +63,14 @@ class Order(models.Model):
     def __str__(self):
         return f"Order {self.id} - {self.user.email}"
 
+    @property
+    def total_dollars(self):
+        return self.total_cents / 100.0
+
+    @property
+    def discount_dollars(self):
+        return self.discount_cents / 100.0
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)

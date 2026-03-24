@@ -11,83 +11,85 @@
     </header>
 
     <section class="card" style="box-shadow:none; max-width:900px;">
-        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Add Payment Method</h2>
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Add payment method</h2>
         <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
-            Use your payment processor to generatge a token
+            Use your payment processor to generate a token. (Demo form — submissions are not persisted yet.)
         </p>
 
-        <form method="POST" action="{% url 'save_payment_method' %}" style="display:grid; gap:12px; max-width:520px;">
+        <form method="POST" action="{% url 'buyer_payments' %}" style="display:grid; gap:12px; max-width:520px;">
             {% csrf_token %}
 
-            <input type="hidden" name="next" value="{{ request.GET.next }}">
-            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
-                Cardholder Name
-                <input 
-                    type="text" 
-                    name="cardholder" 
+            <input type="hidden" name="next" value="{{ request.GET.next|default:'' }}">
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Cardholder name
+                <input
+                    type="text"
+                    name="cardholder"
                     placeholder="Name on card"
                     required
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
             </label>
-            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
-                Card Number
-                <input 
-                    type="text" 
-                    name="card_number" 
-                    placeholder="1234 5678 9012 3456" 
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Card number
+                <input
+                    type="text"
+                    name="card_number"
+                    placeholder="1234 5678 9012 3456"
                     required
+                    autocomplete="off"
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
             </label>
-            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                 Brand
-                <input 
-                    type="text" 
-                    name="brand" 
+                <input
+                    type="text"
+                    name="brand"
                     placeholder="e.g. Visa"
                     required
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
             </label>
-            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                 CVV
-                <input 
-                    type="text" 
-                    name="cvv" 
-                    placeholder="123" 
+                <input
+                    type="text"
+                    name="cvv"
+                    placeholder="123"
+                    required
+                    autocomplete="off"
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Expiration month
+                <input
+                    type="text"
+                    name="exp_month"
+                    placeholder="MM"
                     required
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
             </label>
-            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
-                Expiration Month
-                <input 
-                    type="text" 
-                    name="exp_month" 
-                    placeholder="MM" 
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Expiration year
+                <input
+                    type="text"
+                    name="exp_year"
+                    placeholder="YYYY"
                     required
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
             </label>
-            <label style='display:grid; gap:6px; font-size:14px; font-weight:700;'>
-                Expiration Year
-                <input 
-                    type="text" 
-                    name="exp_year" 
-                    placeholder="YYYY" 
-                    required
-                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
-                />
-            </label>
-            <button class="btn" type="submit">Save Payment Method</button>
+            <button class="btn" type="submit">Save payment method</button>
         </form>
     </section>
 
     <section style="margin-top:14px;">
-        <div style="display:flex; align-items:end; justify-content:space-between; gap:10px;;">
+        <div style="display:flex; align-items:end; justify-content:space-between; gap:10px;">
             <div>
-                <h2 style="margin:0; font-size:16px; font-weight:800;">Saved Payment Methods</h2>
+                <h2 style="margin:0; font-size:16px; font-weight:800;">Saved payment methods</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
                     View and manage your saved payment methods.
                 </p>
@@ -95,13 +97,13 @@
         </div>
 
         <div class="card" style="box-shadow:none; margin-top:12px; padding:0; overflow:hidden;">
-            {% if payment_method %}
+            {% if payment_methods %}
                 <div style="padding:18px; display:grid; gap:12px;">
-                    {% for method in payment_method %}
+                    {% for method in payment_methods %}
                         <article style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
                             <div style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
                                 <div style="display:flex; flex-direction:column;">
-                                    <div style="display:flex, gap:8px; align-items:center; flex-wrap:wrap;">
+                                    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                                         <strong style="font-size:14px;">{{ method.cardholder }}</strong>
                                         {% if method.is_default %}
                                             <span style="font-size:12px; font-weight:800; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 8px; border-radius:999px;">
@@ -113,25 +115,6 @@
                                         <div>{{ method.brand }} ending in {{ method.last4 }}</div>
                                         <div>Expires {{ method.exp_month }}/{{ method.exp_year }}</div>
                                     </div>
-                                </div>
-
-                                <div style="display:flex; gap:10px; align-items:center;">
-                                        {% if not method.is_default %}
-                                            <form method="post" action="{% url 'set_default_payment_method' method.id %}" style="margin:0;">
-                                                {% csrf_token %}
-                                                <input type="hidden" action="paymeny_method_id" value="{{ method.id }}">
-                                                <button class="btn" type="submit" style="background:#16a34a;">
-                                                    Set Default
-                                                </button>
-                                            </form>
-                                        {% endif %}
-            
-                                        <form method="post" action="{% url 'action_delete_payment_method' method.id%}" style="margin:0;">
-                                            {% csrf_token %}
-                                            <button class="btn" type="submit" style="background:#ef4444;">
-                                                Delete
-                                        </button>
-                                    </form>
                                 </div>
                             </div>
                         </article>
@@ -146,18 +129,16 @@
             {% endif %}
         </div>
     </section>
-                    
-                                        
 
     <style>
         input:focus{
             border-color: #c0a5fa !important;
-            box-shadow: 0 0 0 4px rgba(96,165,250,0.3) !important;  
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.3) !important;
         }
 
         @media (max-width: 820px) {
             div[style*="grid-template-columns: 1fr 1fr"]{
-                grid-template-columns: 1fr !important;  
+                grid-template-columns: 1fr !important;
             }
         }
     </style>

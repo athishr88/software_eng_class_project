@@ -11,10 +11,28 @@ urlpatterns = [
     path("checkout/", views.buyer_checkout, name="checkout"),
     path("checkout/payments/", views.buyer_payments, name="buyer_payments"),
     path("checkout/shipping/", views.buyer_shipping, name="buyer_shipping"),
+    path(
+        "checkout/shipping/set-default/<int:address_id>/",
+        views.set_default_shipping_address,
+        name="set_default_address",
+    ),
+    path(
+        "checkout/shipping/delete/<int:address_id>/",
+        views.delete_shipping_address,
+        name="delete_address",
+    ),
     path("profile/", views.buyer_profile, name="buyer_profile"),
     path("orders/", views.order_history, name="order_history"),
-    path("orders/confirmation/", views.order_confirmation, name="order_confirmation"),
+    path(
+        "orders/confirmation/<int:order_id>/",
+        views.order_confirmation,
+        name="order_confirmation",
+    ),
     path("orders/<int:order_id>/", views.order_detail, name="order_detail"),
-    path("orders/return/", views.return_request, name="return_request"),
+    path(
+        "orders/<int:order_id>/return/",
+        views.return_request_view,
+        name="return_request",
+    ),
     path("reviews/submit/", views.review_submission, name="review_submission"),
 ]

@@ -1,13 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pass It On Books</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800;900&display=swap">
+    <link rel="stylesheet" href="{% static 'css/site_header.css' %}">
     <style>
         :root { --bg: #f6f7fb; --card: #fff; --text: #121826; --muted: #6b7280; --primary: #2563eb; --radius: 14px; }
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
+        body { margin: 0; font-family: 'Roboto', sans-serif; color: var(--text); background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; }
+        .landing-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; }
         .landing { text-align: center; max-width: 440px; }
         .landing h1 { margin: 0 0 8px; font-size: 28px; font-weight: 800; }
         .landing p { margin: 0 0 32px; color: var(--muted); font-size: 16px; }
@@ -17,13 +21,16 @@
     </style>
 </head>
 <body>
-    <main class="landing">
-        <h1>Pass It On Books</h1>
-        <p>Buy, share, and pass it on.</p>
-        <p style="margin-bottom: 20px; font-size: 14px;">Continue as</p>
-        <div class="portals">
-            <a href="{% url 'login' %}">Customer</a>
-            <a href="{% url 'staff_login' %}">Admin</a>
+    {% include "includes/site_header.html" with show_search=0 portal="home" %}
+    <main class="landing-wrap">
+        <div class="landing">
+            <h1>Pass It On Books</h1>
+            <p>Buy, share, and pass it on.</p>
+            <p style="margin-bottom: 20px; font-size: 14px;">Continue as</p>
+            <div class="portals">
+                <a href="{% url 'login' %}">Customer</a>
+                <a href="{% url 'staff_login' %}">Admin</a>
+            </div>
         </div>
     </main>
 </body>

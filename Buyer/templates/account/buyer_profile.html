@@ -4,91 +4,86 @@
 {% block content %}
     <header style="margin-bottom:16px;">
         <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
-            Profile Settings
+            Profile settings
         </h1>
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-            Manage your personal information and account details.
+            Update your name, phone, optional steward city, and password.
         </p>
     </header>
 
     <section class="card" style="box-shadow:none; max-width:900px;">
-        <h2 style="margin:0 0 6px; font-size: 16px; font-weight:800;">Update Email</h2>
+        <h2 style="margin:0 0 6px; font-size: 16px; font-weight:800;">Profile</h2>
         <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
-            Email changes require varification via a link sent to your new email address.
+            Email is your login id; change it from the admin or a future verified-email flow.
         </p>
 
         <form method="post" action="{% url 'buyer_profile' %}" style="display:grid; gap:12px; max-width:520px;">
             {% csrf_token %}
+            <input type="hidden" name="action" value="profile">
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    First name <span style="color:#991b1b;">*</span>
+                    <input type="text" name="first_name" required maxlength="100" autocomplete="given-name"
+                           value="{{ profile_user.first_name|default:request.user.first_name }}">
+                </label>
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    Last name <span style="color:#991b1b;">*</span>
+                    <input type="text" name="last_name" required maxlength="100" autocomplete="family-name"
+                           value="{{ profile_user.last_name|default:request.user.last_name }}">
+                </label>
+            </div>
 
             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                New Email
-                <input
-                    type="email"
-                    name="new_email"
-                    required
-                    autocomplete="email"
-                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;"
-                />
+                Phone (optional)
+                <input type="tel" name="phone" maxlength="50" autocomplete="tel"
+                       value="{{ profile_user.phone|default_if_none:'' }}">
             </label>
 
-            {% if email_error %}
-                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
-                    {{ email_error }}
-                </div>
-            {% endif %}
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Steward city (optional)
+                <input type="text" name="steward_city" maxlength="120" placeholder="If you participate as a steward"
+                       value="{{ profile_user.steward_city|default_if_none:'' }}">
+            </label>
 
-            {% if email_success %}
-                <div style="border:1px solid #22c55e; background:#f0fdf4; color:#166534; border-radius:10px; padding:10px 12px; font-size:14px;">
-                    {{ email_success }}
+            {% if profile_error %}
+                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ profile_error }}
                 </div>
             {% endif %}
 
             <div style="display:flex; justify-content:flex-end;">
-                <button class="btn" type="submit">Send Verification Link</button>
+                <button class="btn" type="submit">Save profile</button>
             </div>
         </form>
     </section>
 
     <section class="card" style="box-shadow:none; max-width:900px; margin-top:14px;">
-        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Change Password</h2>
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Change password</h2>
         <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
-            Choose a strong password to keep your account secure. Password must be at least 8 characters and include a mix of letters and numbers.
+            At least 8 characters.
         </p>
 
         <form method="post" action="{% url 'buyer_profile' %}" style="display:grid; gap:12px; max-width:520px;">
             {% csrf_token %}
+            <input type="hidden" name="action" value="password">
 
-            <label style="display:flex; gap:6px; font-size:14px; font-weight:700;">
-                Current Password
-                <input
-                    type="password"
-                    name="current_password"
-                    required
-                    autocomplete="current-password"
-                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;"
-                />
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Current password
+                <input type="password" name="current_password" required autocomplete="current-password"
+                       style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;">
             </label>
 
             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                New Password
-                <input
-                    type="password"
-                    name="new_password"
-                    required
-                    autocomplete="new-password"
-                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;"
-                />
+                New password
+                <input type="password" name="new_password" required autocomplete="new-password" minlength="8"
+                       style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;">
             </label>
 
             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
-                Confirm New Password
-                <input
-                    type="password"
-                    name="confirm_password"
-                    required
-                    autocomplete="new-password"
-                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;"
-                />
+                Confirm new password
+                <input type="password" name="confirm_password" required autocomplete="new-password" minlength="8"
+                       style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none;">
             </label>
 
             {% if password_error %}
@@ -97,14 +92,8 @@
                 </div>
             {% endif %}
 
-            {% if password_success %}
-                <div style="border:1px solid #22c55e; background:#f0fdf4; color:#166534; border-radius:10px; padding:10px 12px; font-size:14px;">
-                    {{ password_success }}
-                </div>
-            {% endif %}
-
             <div style="display:flex; justify-content:flex-end;">
-                <button class="btn" type="submit">Update Password</button>
+                <button class="btn" type="submit">Update password</button>
             </div>
         </form>
     </section>

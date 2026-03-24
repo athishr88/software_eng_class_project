@@ -1,8 +1,10 @@
 from pathlib import Path
 from urllib.parse import quote
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import FileResponse, Http404
 from django.contrib.auth import authenticate, login, logout
@@ -11,7 +13,8 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Book
+from Admin.models import FlagReport
+from .models import Book, StewardContribution
 
 User = get_user_model()
 
@@ -95,6 +98,9 @@ def login_page(request):
         user = authenticate(request, username=email, password=password)
         if user is not None and user.is_active:
             login(request, user)
+            from Buyer.cart_helpers import merge_session_cart_into_db
+
+            merge_session_cart_into_db(user, request.session)
             if next_url and next_url.startswith("/"):
                 response = redirect(next_url)
             elif user.role == "admin":
@@ -124,6 +130,7 @@ def register(request):
         if role not in ("buyer", "seller"):
             role = "buyer"
         phone = (request.POST.get("phone") or "").strip() or None
+        store_name = (request.POST.get("store_name") or "").strip() or None
         errors = []
         if not email:
             errors.append("Email is required.")
@@ -151,7 +158,17 @@ def register(request):
             role=role,
             phone=phone,
         )
+        if role == "seller":
+            from Seller.models import SellerProfile
+
+            SellerProfile.objects.update_or_create(
+                user=user,
+                defaults={"store_name": store_name},
+            )
         login(request, user)
+        from Buyer.cart_helpers import merge_session_cart_into_db
+
+        merge_session_cart_into_db(user, request.session)
         if user.role == "seller":
             response = redirect("seller_home")
         else:
@@ -288,3 +305,65 @@ def logout_view(request):
     response.delete_cookie("access_token")
     response.delete_cookie("refresh_token")
     return response
+
+
+@login_required(login_url="login")
+def steward_contribute(request):
+    """Record a steward contribution (General.StewardContribution)."""
+    if request.method == "POST":
+        name = (request.POST.get("contributor_name") or "").strip()
+        city = (request.POST.get("contributor_city") or "").strip()
+        amount_raw = (request.POST.get("amount_dollars") or "").strip()
+        message = (request.POST.get("message") or "").strip() or None
+        errs = []
+        if not name:
+            errs.append("Contributor name is required.")
+        if not city:
+            errs.append("City is required.")
+        try:
+            amt = Decimal(amount_raw or "0")
+            amount_cents = int((amt * 100).quantize(0, ROUND_HALF_UP))
+            if amount_cents <= 0:
+                errs.append("Enter a contribution amount greater than zero.")
+        except (InvalidOperation, TypeError):
+            errs.append("Enter a valid dollar amount.")
+        if errs:
+            for e in errs:
+                messages.error(request, e)
+            return render(
+                request,
+                "steward/steward_contribute.html",
+                {"post": request.POST},
+            )
+        StewardContribution.objects.create(
+            steward_user=request.user,
+            contributor_name=name[:120],
+            contributor_city=city[:120],
+            amount_cents=amount_cents,
+            message=message[:255] if message else None,
+        )
+        messages.success(request, "Thank you — your contribution was recorded.")
+        return redirect("steward_contribute")
+
+    return render(request, "steward/steward_contribute.html")
+
+
+@login_required(login_url="login")
+def flag_book(request, pk):
+    """Create Admin.FlagReport for a listing (POST)."""
+    if request.method != "POST":
+        return redirect("book_detail", pk=pk)
+
+    book = get_object_or_404(Book.objects.filter(is_active=True), pk=pk)
+    flag_type = (request.POST.get("flag_type") or "other").strip()[:80]
+    details = (request.POST.get("details") or "").strip() or None
+
+    FlagReport.objects.create(
+        reporter_user=request.user,
+        target_user=book.seller_user,
+        target_book=book,
+        flag_type=flag_type or "other",
+        details=details,
+    )
+    messages.success(request, "Thanks — your report was submitted for review.")
+    return redirect("book_detail", pk=pk)
