@@ -1,4 +1,4 @@
-{% load static %}
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,8 +6,6 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1"/>
     <title>Pass-It-On Books - Login</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800;900&display=swap">
-    <link rel="stylesheet" href="{% static 'css/site_header.css' %}">
     <style>
         :root{
             --bg: #f6f7fb;
@@ -22,16 +20,10 @@
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text);
             background: var(--bg);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-        }
-        .legacy-login-shell {
-            flex: 1;
             display: grid;
             place-items: center;
             padding: 24px;
@@ -165,8 +157,6 @@
     </style>
 </head>
 <body>
-    {% include "includes/site_header.html" with show_search=0 portal="home" %}
-    <div class="legacy-login-shell">
     <main class="page">
         <header class="title" aria-label="Welcome Section">
             <h1>Welcome to<br/>PASS_IT_ON BOOKS</h1>
@@ -198,7 +188,6 @@
                 </div>
             </section>
         </main>
-    </div>
     </body>
 </html>
 

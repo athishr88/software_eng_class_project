@@ -94,7 +94,7 @@
     </section>
 
     <section style="margin-top:14px;">
-        <div style="display:flex; align-items:end; justify-content:space-between; gap:10px;">
+        <div style="display:flex; align-items:end; justify-content:space-between; gap:10px;;">
             <div>
                 <h2 style="margin:0; font-size:16px; font-weight:800;">Saved Addresses</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
@@ -118,7 +118,7 @@
                                             </span>
                                         {% endif %}
                                     </div>
-
+                                    
                                     <div style="margin-top:6px; color:var(--muted); font-size:14px; line-height:1.4;">
                                         <div>{{ addr.address_line_1 }}</div>
                                         {% if addr.address_line_2 %}<div>{{ addr.address_line_2 }}</div>{% endif %}
@@ -137,7 +137,7 @@
                                         </form>
                                     {% endif %}
 
-                                    <form method="post" action="{% url 'delete_address' addr.id %}" style="margin:0;">
+                                    <form method="post" action="{% url 'action_delete_address' addr.id%}" style="margin:0;">
                                         {% csrf_token %}
                                         <button class="btn" type="submit" style="background:#ef4444;">
                                             Delete
@@ -158,7 +158,7 @@
         </div>
     </section>
 
-    <style>
+    <style> 
         input:focus{
             border-color: #60a5fa !important;
             box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
@@ -172,3 +172,8 @@
     </style>
 
 {% endblock %}
+        
+        
+        
+
+        

@@ -5,8 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Pass It On Books{% endblock %}</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800;900&display=swap">
-    <link rel="stylesheet" href="{% static 'css/site_header.css' %}">
 
     <style>
         :root{
@@ -23,32 +21,90 @@
 
         body{
             margin: 0;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text);
             background: var(--bg);
             min-height: 100vh;
-            display: block;
-            padding: 0;
+            display: grid;
+            place-items: center;
+            padding: 24px;
         }
 
         .page{
             width: 100%;
-            max-width: none;
-            min-height: 0;
+            max-width: 900px;
+            min-height: 520px;
             background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
-            border-radius: 0;
-            padding: 28px 28px 48px;
+            border-radius: 18px;
+            padding: 48px 28px;
             display: grid;
             align-content: start;
             gap: 22px;
             position: relative;
         }
 
+        .topbar{
+            max-width: 520px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand{
+            display: grid;
+            gap: 4px;
+        }
+
+        .brand h1{
+            margin: 0;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 0.25px;
+            line-height: 1.1;
+        }
+
+        .brand p{
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .navlinks{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .link{
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 14px;
+            width: fit-content;
+        }
+        .link:hover{ text-decoration: underline; }
+
+        .btn{
+            border: none;
+            border-radius: 10px;
+            padding: 10px 12px;
+            font-size: 14px;
+            font-weight: 800;
+            background: var(--primary);
+            color: #fff;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn:hover{ background: var(--primaryHover); }
+
         .title{
             text-align: left;
-            width: 100%;
-            max-width: none;
-            margin: 0;
+            max-width: 520px;
+            margin: 0 auto;
         }
 
         .title h2{
@@ -68,20 +124,13 @@
 
         .content-wrap{
             display: grid;
-            align-items: start;
-            justify-items: stretch;
-            padding-top: 0;
-            width: 100%;
-        }
-
-        .content-wrap form {
-            display: grid;
-            gap: 12px;
+            place-items: center;
+            padding-top: 6px;
         }
 
         .card{
             width: 100%;
-            max-width: none;
+            max-width: 820px;
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: var(--radius);
@@ -91,7 +140,7 @@
 
         .messages{
             width: 100%;
-            max-width: none;
+            max-width: 820px;
             display: grid;
             gap: 8px;
             margin-bottom: 10px;
@@ -111,38 +160,7 @@
             color: #991b1b;
         }
 
-        /* Default link style in main content (not header) */
-        .page .link,
-        .content-wrap .link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 14px;
-            width: fit-content;
-        }
-        .page .link:hover,
-        .content-wrap .link:hover {
-            text-decoration: underline;
-        }
-
-        .page .btn,
-        .content-wrap .btn {
-            border: none;
-            border-radius: 10px;
-            padding: 10px 12px;
-            font-size: 14px;
-            font-weight: 800;
-            background: var(--primary);
-            color: #fff;
-            cursor: pointer;
-            white-space: nowrap;
-            font-family: inherit;
-        }
-        .page .btn:hover,
-        .content-wrap .btn:hover {
-            background: var(--primaryHover);
-        }
-
+        form{ display: grid; gap: 12px; }
         label{
             display: grid;
             gap: 6px;
@@ -151,9 +169,7 @@
             font-weight: 700;
         }
 
-        .content-wrap input,
-        .content-wrap select,
-        .content-wrap textarea{
+        input, select, textarea{
             width: 100%;
             border: 1px solid var(--border);
             border-radius: 10px;
@@ -163,11 +179,13 @@
             background: #fff;
             font-family: inherit;
         }
-        .content-wrap input:focus,
-        .content-wrap select:focus,
-        .content-wrap textarea:focus{
+        input:focus, select:focus, textarea:focus{
             border-color: #60a5fa;
             box-shadow: 0 0 0 4px rgba(96,165,250,0.25);
+        }
+
+        @media (min-width: 700px){
+            .topbar, .title, .content-wrap { margin-left: 120px; margin-right: auto; }
         }
     </style>
 </head>
@@ -198,16 +216,15 @@
             </nav>
         </header>
 
-    <main class="page">
         {% block hero %}
-            <section class="title" aria-label="Page header">
+            <section class="title" aria-label="Page Header">
                 <h2>{% block hero_title %}Welcome to<br/>Pass It On Books{% endblock hero_title %}</h2>
                 <p>{% block hero_subtitle %}Find affordable books and support the community.{% endblock hero_subtitle %}</p>
             </section>
-
-        <section class="content-wrap" aria-label="Public content">
+        
+        <section class="content-wrap" aria-label="Public Content">
             {% if messages %}
-                <div class="messages" aria-label="System messages">
+                <div class="messages" aria-label="System Messages">
                     {% for message in messages %}
                         <div class="message {% if message.tags %}{{ message.tags }}{% endif %}">
                             {{ message }}

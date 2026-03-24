@@ -10,8 +10,6 @@ class UserAdmin(BaseUserAdmin):
     search_fields = ("email", "first_name", "last_name")
     ordering = ("email",)
     filter_horizontal = ("groups", "user_permissions")
-    # auto_now_add / auto_now fields are not editable; they must be readonly to appear on the form.
-    readonly_fields = ("last_login", "created_at", "updated_at")
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),

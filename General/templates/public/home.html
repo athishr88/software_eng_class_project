@@ -5,8 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>Pass-It-On Books</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800;900&display=swap">
-    <link rel="stylesheet" href="{% static 'css/site_header.css' %}">
 
     <style>
         :root{
@@ -23,18 +21,12 @@
         
         body {
             margin: 0;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: var(--text);
             background: var(--bg);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            padding: 0;
-        }
-        .public-home-shell {
-            flex: 1;
-            display: flex;
-            justify-content: center;
+            display: grid;
+            place-items: center;
             padding: 24px;
         }
 
@@ -297,9 +289,29 @@
 </head>
 
 <body>
-    {% include "includes/site_header.html" with show_search=0 portal="public" %}
-    <div class="public-home-shell">
     <main class="page">
+
+        <header class="topbar" aria-label="Top Navigation"></header>
+            <div class="brand">
+                <h1>Pass-It-On Books</h1>
+                <p>Buy, share, and pass on books in your community</p>
+            </div>
+
+            <nav class="navlinks" aria-label="Primary Navigation">
+                <a href="{% url 'catalog' %}">Browse</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'buyer_dashboard' %}">Account</a>
+                <a href="{% url 'cart' %}">Cart</a>
+                <form method="post" action="{% url 'logout' %}" style="margin:0;">
+                    {% csrf_token %}
+                    <button type="submit" style="min-width:unset; padding:10px 12px;">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+                <a href="{% url 'register' %}">Register</a>
+            {% endif %}
+            </nav>
+        </header>
 
         <section class="search-wrap" aria-label="Search Section">
             <div class="search-card">
@@ -372,7 +384,6 @@
             </div>
         </section>
     </main>
-    </div>
 </body>
 </html>
 

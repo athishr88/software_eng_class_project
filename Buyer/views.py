@@ -95,10 +95,30 @@ def buyer_cart(request):
     return render(request, "cart/buyer_cart.html", context)
 
 
-@login_required(login_url="login")
 def buyer_checkout(request):
-    cart_items, subtotal_cents = db_cart_lines(request.user)
-    cart_subtotal = subtotal_cents / 100.0
+    cart = request.session.get("cart", {})
+    cart_items = []
+    cart_subtotal = 0.00
+
+    for book_id, item_data in cart.items():
+        try:
+            book = Book.objects.get(pk=book_id, is_active=True)
+            quantity = item_data.get("quantity", 1)
+            price = float(book.base_price_cents) / 100
+            subtotal = price * quantity
+
+            cart_items.append({
+                "id": book.id,
+                "book": book,
+                "quantity": quantity,
+                "price": price,
+                "subtotal": subtotal,
+            })
+
+            cart_subtotal += subtotal
+        except Book.DoesNotExist:
+            continue
+    
     tax = round(cart_subtotal * 0.07, 2)
     fees = 2.99 if cart_items else 0.00
     final_total = round(cart_subtotal + tax + fees, 2)
@@ -123,6 +143,7 @@ def buyer_checkout(request):
 
     return render(request, "checkout/buyer_checkout.html", context)
 
+def remove_cart_item(request, item_id):
     if request.method == "POST":
         cart = request.session.get("cart", {})
         item_id_str = str(item_id)
@@ -137,41 +158,13 @@ def buyer_checkout(request):
         
         request.session["cart"] = cart
         request.session.modified = True
-        messages.success(request, "Order placed.")
-        return redirect("order_confirmation", order_id=order.id)
-
-    return render(
-        request,
-        "checkout/buyer_checkout.html",
-        {
-            "cart_items": cart_items,
-            "cart_subtotal": cart_subtotal,
-            "tax": tax,
-            "fees": fees,
-            "final_total": final_total,
-            "addresses": addresses,
-            "selected_address": selected_address,
-            "checkout_error": None,
-        },
-    )
-
-
-def remove_cart_item(request, item_id):
-    if request.method == "POST":
-        if request.user.is_authenticated:
-            CartItem.objects.filter(cart__user=request.user, book_id=item_id).delete()
-        else:
-            cart = request.session.get("cart", {})
-            item_id_str = str(item_id)
-            if item_id_str in cart:
-                del cart[item_id_str]
-            request.session["cart"] = cart
-            request.session.modified = True
     return redirect("cart")
-
 
 def update_cart_item(request, item_id):
     if request.method == "POST":
+        cart = request.session.get("cart", {})
+        item_id_str = str(item_id)
+
         try:
             quantity = int(request.POST.get("quantity", 1))
             if quantity < 1:
@@ -179,21 +172,11 @@ def update_cart_item(request, item_id):
         except (TypeError, ValueError):
             quantity = 1
 
-        if request.user.is_authenticated:
-            ci = CartItem.objects.filter(
-                cart__user=request.user, book_id=item_id
-            ).select_related("book").first()
-            if ci:
-                ci.quantity = quantity
-                ci.unit_price_cents = ci.book.base_price_cents
-                ci.save(update_fields=["quantity", "unit_price_cents", "updated_at"])
-        else:
-            cart = request.session.get("cart", {})
-            item_id_str = str(item_id)
-            if item_id_str in cart:
-                cart[item_id_str]["quantity"] = quantity
-            request.session["cart"] = cart
-            request.session.modified = True
+        if item_id_str in cart:
+            cart[item_id_str]["quantity"] = quantity
+        
+        request.session["cart"] = cart
+        request.session.modified = True
     return redirect("cart")
 
 @login_required
@@ -448,131 +431,6 @@ def order_detail(request, order_id=None):
     return render(request, "orders/orderDetail.html", {"order": order, "items": items,})
 
 
-    if request.method == "POST":
-        action = (request.POST.get("action") or "").strip()
-
-        if action == "profile":
-            fn = (request.POST.get("first_name") or "").strip()
-            ln = (request.POST.get("last_name") or "").strip()
-            phone = (request.POST.get("phone") or "").strip() or None
-            steward_city = (request.POST.get("steward_city") or "").strip() or None
-            errs = []
-            if not fn:
-                errs.append("First name is required.")
-            if not ln:
-                errs.append("Last name is required.")
-            if errs:
-                ctx["profile_error"] = " ".join(errs)
-            else:
-                user.first_name = fn[:100]
-                user.last_name = ln[:100]
-                user.phone = phone[:50] if phone else None
-                user.steward_city = steward_city[:120] if steward_city else None
-                user.save()
-                messages.success(request, "Profile updated.")
-                return redirect("buyer_profile")
-
-        elif action == "password":
-            current = request.POST.get("current_password") or ""
-            new_pw = request.POST.get("new_password") or ""
-            confirm = request.POST.get("confirm_password") or ""
-            errs = []
-            if not user.check_password(current):
-                errs.append("Current password is incorrect.")
-            if len(new_pw) < 8:
-                errs.append("New password must be at least 8 characters.")
-            if new_pw != confirm:
-                errs.append("New passwords do not match.")
-            if errs:
-                ctx["password_error"] = " ".join(errs)
-            else:
-                user.set_password(new_pw)
-                user.save()
-                messages.success(request, "Password updated.")
-                from django.contrib.auth import update_session_auth_hash
-
-                update_session_auth_hash(request, user)
-                return redirect("buyer_profile")
-
-    ctx["profile_user"] = user
-    return render(request, "account/buyer_profile.html", ctx)
-
-
-@login_required(login_url="login")
-def order_confirmation(request, order_id):
-    order = get_object_or_404(
-        Order.objects.select_related("shipping_snapshot"),
-        pk=order_id,
-        user=request.user,
-    )
-    shipping = getattr(order, "shipping_snapshot", None)
-    order_items = []
-    for oi in order.orderitem_set.all().select_related("book"):
-        snap = getattr(oi, "book_snapshot", None)
-        order_items.append(
-            {
-                "title": snap.title if snap else oi.book.title,
-                "quantity": oi.quantity,
-                "line_total": f"{oi.line_total_cents / 100:.2f}",
-            }
-        )
-    return render(
-        request,
-        "orders/orderConfirmation.html",
-        {
-            "order": order,
-            "shipping": shipping,
-            "order_items": order_items,
-            "order_total_display": f"{order.total_cents / 100:.2f}",
-        },
-    )
-
-
-@login_required(login_url="login")
-def order_detail(request, order_id):
-    order = get_object_or_404(
-        Order.objects.select_related(
-            "shipping_address",
-            "shipping_snapshot",
-        ).prefetch_related(
-            Prefetch(
-                "orderitem_set",
-                queryset=OrderItem.objects.select_related("book", "book_snapshot"),
-            )
-        ),
-        pk=order_id,
-        user=request.user,
-    )
-    shipping = getattr(order, "shipping_snapshot", None)
-    items = []
-    for oi in order.orderitem_set.all():
-        snap = getattr(oi, "book_snapshot", None)
-        items.append(
-            {
-                "title": snap.title if snap else oi.book.title,
-                "quantity": oi.quantity,
-                "line_total": oi.line_total_cents / 100.0,
-            }
-        )
-    has_return = hasattr(order, "returnrequest")
-    can_request_return = order.status in ("paid", "shipped", "delivered") and not has_return
-
-    return render(
-        request,
-        "orders/orderDetail.html",
-        {
-            "order": order,
-            "shipping": shipping,
-            "order_items": items,
-            "order_total_display": f"{order.total_cents / 100:.2f}",
-            "order_subtotal_display": f"{order.subtotal_cents / 100:.2f}",
-            "can_request_return": can_request_return,
-            "can_leave_review": False,
-        },
-    )
-
-
-@login_required(login_url="login")
 def order_history(request):
     orders = Order.objects.filter(user=request.user)
 
@@ -601,31 +459,12 @@ def order_history(request):
     return render(request, "orders/orderHistory.html", {"orders": orders})
 
 
-    if request.method == "POST":
-        category = (request.POST.get("reason_category") or "").strip()
-        details = (request.POST.get("reason_details") or "").strip()
-        parts = []
-        if category:
-            parts.append(f"[{category}]")
-        if details:
-            parts.append(details)
-        reason = "\n".join(parts).strip()
-        if not reason:
-            return render(
-                request,
-                "orders/ReturnRequest.html",
-                {
-                    "order": order,
-                    "return_error": "Please describe your return reason.",
-                },
-            )
-        ReturnRequest.objects.create(order=order, reason=reason[:4000])
-        messages.success(request, "Return request submitted.")
-        return redirect("order_detail", order_id=order.id)
-
-    return render(request, "orders/ReturnRequest.html", {"order": order})
+def return_request(request):
+    """Request a return."""
+    return render(request, "orders/ReturnRequest.html")
 
 
 def review_submission(request):
-    """Submit a review (no Review model in project schema yet)."""
+    """Submit a review."""
     return render(request, "reviews/reviewSubmission.html")
+

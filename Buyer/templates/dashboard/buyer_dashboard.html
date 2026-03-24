@@ -40,7 +40,7 @@
             </p>
             
             <div style="margin-top:10px;">
-                {% if user.is_authenticated and user.is_steward %}
+                {% if is_steward %}
                     <a class="link" href="{% url 'catalog' %}">View Wallet</a>
                 {% else %}
                     <a class="link" href="{% url 'catalog' %}">Learn about Stewardship</a>

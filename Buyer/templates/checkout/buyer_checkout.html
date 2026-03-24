@@ -6,7 +6,7 @@
             Checkout
         </h1>
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-            Choose shipping, review your order, then place it. Payment details are not stored in the database yet.
+            Choose shipping + payment, review your order, then place it.
         </p>
     </header>
 
@@ -24,12 +24,12 @@
                 <div class="card" style="box-shadow:none;">
                     <div style="display:flex; justify-content:space-between; gap:10px; align-items:end; flex-wrap:wrap;">
                         <div>
-                            <h2 style="margin:0; font-size:16px; font-weight:800;">1) Shipping address</h2>
+                            <h2 style="margin:0; font-size:16px; font-weight:800;">1) Shipping Address</h2>
                             <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
                                 Select a saved address for delivery.
                             </p>
                         </div>
-                        <a class="link" href="{% url 'buyer_shipping' %}?next={{ request.path|urlencode }}">Manage</a>
+                        <a class="link" href="{% url 'buyer_shipping' %}">Manage</a>
                     </div>
 
                     <div style="margin-top:12px; display:grid; gap:10px;">
@@ -59,7 +59,7 @@
                         {% else %}
                             <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
                                 <p style="margin:0; color:var(--muted); font-size:14px;">
-                                    You do not have any saved addresses.
+                                    You dont have any saved addresses.
                                 </p>
                                 <div style="margin-top:10px;">
                                     <a class="btn" href="{% url 'buyer_shipping' %}?next={% url 'checkout' %}">
@@ -120,7 +120,7 @@
                 <div class="card" style="box-shadow:none;">
                     <h2 style="margin:0; font-size:16px; font-weight:800;">3) Review Order</h2>
                     <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-                        Confirm items and totals. Placing the order saves your order, line items, and address snapshots.
+                        Confirm items and totals before placing your order.
                     </p>
 
                     <div style="margin-top:12px; display:grid; gap:10px;">
@@ -132,10 +132,15 @@
                                         <div style="color:var(--muted); font-size:13px; margin-top:4px;">
                                             Qty {{ item.quantity }}
                                         </div>
+                                        {% if item.book.deposit_required %}
+                                            <div style="color:var(--muted); font-size:13px; margin-top:4px;">
+                                                Deposit: ${{ item.book.deposit_amount }}
+                                            </div>
+                                        {% endif %}
                                     </div>
                                     <div style="text-align:right;">
                                         <div style="color:var(--muted); font-size:13px;">Subtotal</div>
-                                        <div style="font-weight:900;">${{ item.subtotal|floatformat:2 }}</div>
+                                        <div style="font-weight:900;">${{ item.subtotal }}</div>
                                     </div>
                                 </div>
                             {% endfor %}
@@ -145,20 +150,20 @@
                                     Your cart is empty.
                                 </p>
                                 <div style="margin-top:10px;">
-                                    <a class="link" href="{% url 'catalog' %}">Browse books</a>
+                                    <a class="link" href="{% url 'catalog' %}">Browse Books</a>
                                 </div>
                             </div>
                         {% endif %}
                     </div>
 
                     <div style="margin-top:10px; color:var(--muted); font-size:13px; line-height:1.4;">
-                        Stock is checked when you place the order; inventory is decremented on success.
+                        Stock is revalidated at checkout. If any item is unavailable, you'll be prompted to adjust your cart.
                     </div>
                 </div>
             </div>
 
             <aside class="card" style="box-shadow:none; position:sticky; top:18px;">
-                <h2 style="margin:0 0 10px;  font-size:16px; font-weight:800;">Order summary</h2>
+                <h2 style="margin:0 0 10px;  font-size:16px; font-weight:800;">Order Summary</h2>
 
                 <div style="display:grid; gap:8px; font-size:14px;">
                     <div style="display:flex; justify-content:space-between; gap:10px;">
@@ -173,7 +178,7 @@
                         <span style="color:var(--muted);">Tax</span>
                         <strong>${{ tax|floatformat:2 }}</strong>
                     </div>
-                    <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
+                    <hr style="border:none, border-top:1px solid var(--border); margin:4px 0;">
 
                     <div style="display:flex; justify-content:space-between; gap:10px;">
                         <span style="color:var(--muted)">Total</span>
@@ -190,7 +195,7 @@
                     </button>
 
                     <a class="link" href="{% url 'cart' %}" style="text-align:center;">
-                        Back to cart
+                        Back to Cart
                     </a>
                 </div>
 
@@ -206,7 +211,7 @@
                     <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">
                         Your cart is empty.
                     </p>
-                {% endif %}
+                {% endif %}      
             </aside>
         </section>
     </form>
@@ -230,3 +235,5 @@
         }
     </style>
 {% endblock %}
+                    
+               
