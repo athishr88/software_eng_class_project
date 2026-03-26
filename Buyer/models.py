@@ -31,6 +31,34 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.book.title} x {self.quantity}"
 
+
+class PaymentMethod(models.Model):
+    """
+    Saved card display data for checkout. Only last4 + meta are stored — never full PAN or CVV.
+    """
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="payment_methods",
+    )
+    cardholder_name = models.CharField(max_length=120)
+    brand = models.CharField(max_length=40)
+    last4 = models.CharField(max_length=4)
+    exp_month = models.PositiveSmallIntegerField()
+    exp_year = models.PositiveSmallIntegerField()
+    is_default = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-is_default", "-updated_at"]
+
+    def __str__(self):
+        return f"{self.brand} *{self.last4} ({self.user.email})"
+
+
 class Order(models.Model):
     STATUS_CHOICES = [
         ("pending", "Pending"),
@@ -48,6 +76,13 @@ class Order(models.Model):
         on_delete=models.SET_NULL,
         blank=True,
         null=True
+    )
+    payment_method = models.ForeignKey(
+        PaymentMethod,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        related_name="orders",
     )
 
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default="pending")

@@ -6,11 +6,13 @@ from .models import (
     OrderItem,
     OrderItemBookSnapshot,
     OrderShippingAddress,
+    PaymentMethod,
     ReturnRequest,
 )
 
 admin.site.register(Cart)
 admin.site.register(CartItem)
+admin.site.register(PaymentMethod)
 admin.site.register(Order)
 admin.site.register(OrderItem)
 admin.site.register(OrderShippingAddress)

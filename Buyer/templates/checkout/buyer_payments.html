@@ -6,14 +6,14 @@
             Payment Methods
         </h1>
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-            Add or manage your saved payment methods and billing information.
+            Saved cards store cardholder name, brand, last four digits, and expiry only — not full card numbers or CVV.
         </p>
     </header>
 
     <section class="card" style="box-shadow:none; max-width:900px;">
         <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Add payment method</h2>
         <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
-            Use your payment processor to generate a token. (Demo form — submissions are not persisted yet.)
+            For production, tokenize cards with your payment processor instead of posting PAN to your server.
         </p>
 
         <form method="POST" action="{% url 'buyer_payments' %}" style="display:grid; gap:12px; max-width:520px;">
@@ -24,9 +24,10 @@
                 Cardholder name
                 <input
                     type="text"
-                    name="cardholder"
+                    name="cardholder_name"
                     placeholder="Name on card"
                     required
+                    maxlength="120"
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
             </label>
@@ -48,13 +49,14 @@
                     name="brand"
                     placeholder="e.g. Visa"
                     required
+                    maxlength="40"
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
             </label>
             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                 CVV
                 <input
-                    type="text"
+                    type="password"
                     name="cvv"
                     placeholder="123"
                     required
@@ -65,9 +67,11 @@
             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                 Expiration month
                 <input
-                    type="text"
+                    type="number"
                     name="exp_month"
-                    placeholder="MM"
+                    placeholder="1–12"
+                    min="1"
+                    max="12"
                     required
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
@@ -75,12 +79,18 @@
             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                 Expiration year
                 <input
-                    type="text"
+                    type="number"
                     name="exp_year"
                     placeholder="YYYY"
+                    min="2020"
+                    max="2100"
                     required
                     style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
                 />
+            </label>
+            <label style="display:flex; gap:10px; align-items:center; font-size:14px; font-weight:700; cursor:pointer;">
+                <input type="checkbox" name="is_default" style="width:18px; height:18px;">
+                Set as default
             </label>
             <button class="btn" type="submit">Save payment method</button>
         </form>
@@ -91,7 +101,7 @@
             <div>
                 <h2 style="margin:0; font-size:16px; font-weight:800;">Saved payment methods</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-                    View and manage your saved payment methods.
+                    Manage cards used at checkout.
                 </p>
             </div>
         </div>
@@ -101,10 +111,10 @@
                 <div style="padding:18px; display:grid; gap:12px;">
                     {% for method in payment_methods %}
                         <article style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
-                            <div style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
                                 <div style="display:flex; flex-direction:column;">
                                     <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-                                        <strong style="font-size:14px;">{{ method.cardholder }}</strong>
+                                        <strong style="font-size:14px;">{{ method.cardholder_name }}</strong>
                                         {% if method.is_default %}
                                             <span style="font-size:12px; font-weight:800; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 8px; border-radius:999px;">
                                                 Default
@@ -116,6 +126,23 @@
                                         <div>Expires {{ method.exp_month }}/{{ method.exp_year }}</div>
                                     </div>
                                 </div>
+
+                                <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                                    {% if not method.is_default %}
+                                        <form method="post" action="{% url 'set_default_payment_method' method.id %}" style="margin:0;">
+                                            {% csrf_token %}
+                                            <button class="btn" type="submit" style="background:#16a34a; min-width:unset;">
+                                                Set default
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                    <form method="post" action="{% url 'delete_payment_method' method.id %}" style="margin:0;">
+                                        {% csrf_token %}
+                                        <button class="btn" type="submit" style="background:#ef4444; min-width:unset;">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         </article>
                     {% endfor %}
@@ -123,7 +150,7 @@
             {% else %}
                 <div style="padding:14px;">
                     <p style="margin:0; color:var(--muted); font-size:14px;">
-                        No saved payments yet.
+                        No saved payment methods yet.
                     </p>
                 </div>
             {% endif %}

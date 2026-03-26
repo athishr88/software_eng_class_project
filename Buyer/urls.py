@@ -10,6 +10,16 @@ urlpatterns = [
     path("cart/update/<int:item_id>/", views.update_cart_item, name="update_cart_item"),
     path("checkout/", views.buyer_checkout, name="checkout"),
     path("checkout/payments/", views.buyer_payments, name="buyer_payments"),
+    path(
+        "checkout/payments/set-default/<int:payment_method_id>/",
+        views.set_default_payment_method,
+        name="set_default_payment_method",
+    ),
+    path(
+        "checkout/payments/delete/<int:payment_method_id>/",
+        views.delete_payment_method,
+        name="delete_payment_method",
+    ),
     path("checkout/shipping/", views.buyer_shipping, name="buyer_shipping"),
     path(
         "checkout/shipping/set-default/<int:address_id>/",

@@ -6,7 +6,7 @@
             Checkout
         </h1>
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-            Choose shipping, review your order, then place it. Payment details are not stored in the database yet.
+            Choose shipping, payment, and review your order.
         </p>
     </header>
 
@@ -71,9 +71,60 @@
                 </div>
 
                 <div class="card" style="box-shadow:none;">
-                    <h2 style="margin:0; font-size:16px; font-weight:800;">2) Review order</h2>
+                    <div style="display:flex; justify-content:space-between; gap:10px; align-items:end; flex-wrap:wrap;">
+                        <div>
+                            <h2 style="margin:0; font-size:16px; font-weight:800;">2) Payment method</h2>
+                            <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                                Select a saved card.
+                            </p>
+                        </div>
+                        <a class="link" href="{% url 'buyer_payments' %}?next={{ request.path|urlencode }}">Manage</a>
+                    </div>
+
+                    <div style="margin-top:12px; display:grid; gap:10px;">
+                        {% if payment_methods %}
+                            {% for pm in payment_methods %}
+                                <label style="display:block; border:1px solid var(--border); border-radius: var(--radius); padding:12px; background:#fff;">
+                                    <div style="display:flex; gap:10px; align-items:flex-start;">
+                                        <input
+                                            type="radio"
+                                            name="payment_method_id"
+                                            value="{{ pm.id }}"
+                                            {% if selected_payment and pm.id == selected_payment.id %}checked{% endif %}
+                                            required
+                                            style="width:auto; margin-top:3px;"
+                                        />
+                                        <div style="line-height:1.5;">
+                                            <div><strong>{{ pm.cardholder_name }}</strong>
+                                                {% if pm.is_default %}
+                                                    <span style="font-size:11px; font-weight:800; color:#166534; margin-left:6px;">Default</span>
+                                                {% endif %}
+                                            </div>
+                                            <div style="color:var(--muted); font-size:14px;">{{ pm.brand }} ···· {{ pm.last4 }}</div>
+                                            <div style="color:var(--muted); font-size:13px;">Expires {{ pm.exp_month }}/{{ pm.exp_year }}</div>
+                                        </div>
+                                    </div>
+                                </label>
+                            {% endfor %}
+                        {% else %}
+                            <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
+                                <p style="margin:0; color:var(--muted); font-size:14px;">
+                                    No saved payment methods.
+                                </p>
+                                <div style="margin-top:10px;">
+                                    <a class="btn" href="{% url 'buyer_payments' %}?next={{ request.path|urlencode }}">
+                                        Add payment method
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="card" style="box-shadow:none;">
+                    <h2 style="margin:0; font-size:16px; font-weight:800;">3) Review order</h2>
                     <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-                        Confirm items and totals. Placing the order saves your order, line items, and address snapshots.
+                        Confirm items and totals. Placing the order saves your order, line items, and address snapshot.
                     </p>
 
                     <div style="margin-top:12px; display:grid; gap:10px;">
@@ -138,7 +189,7 @@
                     <button
                         class="btn"
                         type="submit"
-                        {% if not cart_items or not addresses %}disabled{% endif %}>
+                        {% if not cart_items or not addresses or not payment_methods %}disabled{% endif %}>
                         Place order
                     </button>
 
@@ -150,6 +201,10 @@
                 {% if not addresses %}
                     <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">
                         Add a shipping address to place your order.
+                    </p>
+                {% elif not payment_methods %}
+                    <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">
+                        Add a payment method to place your order.
                     </p>
                 {% elif not cart_items %}
                     <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">

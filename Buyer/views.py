@@ -1,3 +1,6 @@
+import re
+from datetime import date
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
@@ -11,6 +14,7 @@ from Buyer.models import (
     OrderItem,
     OrderItemBookSnapshot,
     OrderShippingAddress,
+    PaymentMethod,
     ReturnRequest,
 )
 from General.models import Address, Book, Inventory
@@ -18,6 +22,42 @@ from General.models import Address, Book, Inventory
 
 def _addresses_for_user(user):
     return Address.objects.filter(user=user).order_by("-is_default", "-updated_at")
+
+
+def _payment_methods_for_user(user):
+    return PaymentMethod.objects.filter(user=user).order_by("-is_default", "-updated_at")
+
+
+def _checkout_page_context(
+    user,
+    cart_items,
+    cart_subtotal,
+    tax,
+    fees,
+    final_total,
+    *,
+    addresses=None,
+    selected_address=None,
+    payment_methods=None,
+    selected_payment=None,
+    checkout_error=None,
+):
+    if addresses is None:
+        addresses = list(_addresses_for_user(user))
+    if payment_methods is None:
+        payment_methods = list(_payment_methods_for_user(user))
+    return {
+        "cart_items": cart_items,
+        "cart_subtotal": cart_subtotal,
+        "tax": tax,
+        "fees": fees,
+        "final_total": final_total,
+        "addresses": addresses,
+        "selected_address": selected_address,
+        "payment_methods": payment_methods,
+        "selected_payment": selected_payment,
+        "checkout_error": checkout_error,
+    }
 
 
 def _cart_lines(session_cart):
@@ -117,6 +157,8 @@ def buyer_checkout(request):
     final_total = round(cart_subtotal + tax + fees, 2)
 
     addresses = list(_addresses_for_user(request.user))
+    payment_methods = list(_payment_methods_for_user(request.user))
+
     selected_address = None
     if addresses:
         sel = (request.POST.get("shipping_address_id") if request.method == "POST" else None) or request.GET.get(
@@ -127,37 +169,55 @@ def buyer_checkout(request):
         if not selected_address:
             selected_address = next((a for a in addresses if a.is_default), None) or addresses[0]
 
+    selected_payment = None
+    if payment_methods:
+        sel_pm = (request.POST.get("payment_method_id") if request.method == "POST" else None) or request.GET.get(
+            "payment_method_id"
+        )
+        if sel_pm:
+            selected_payment = next((p for p in payment_methods if str(p.id) == str(sel_pm)), None)
+        if not selected_payment:
+            selected_payment = next((p for p in payment_methods if p.is_default), None) or payment_methods[0]
+
+    pay_method = None
+
     if request.method == "POST":
         if not cart_items:
             return render(
                 request,
                 "checkout/buyer_checkout.html",
-                {
-                    "cart_items": [],
-                    "cart_subtotal": 0,
-                    "tax": 0,
-                    "fees": 0,
-                    "final_total": 0,
-                    "addresses": addresses,
-                    "selected_address": selected_address,
-                    "checkout_error": "Your cart is empty.",
-                },
+                _checkout_page_context(
+                    request.user,
+                    [],
+                    0,
+                    0,
+                    0,
+                    0,
+                    addresses=addresses,
+                    selected_address=selected_address,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Your cart is empty.",
+                ),
             )
         addr_id = request.POST.get("shipping_address_id")
         if not addr_id:
             return render(
                 request,
                 "checkout/buyer_checkout.html",
-                {
-                    "cart_items": cart_items,
-                    "cart_subtotal": cart_subtotal,
-                    "tax": tax,
-                    "fees": fees,
-                    "final_total": final_total,
-                    "addresses": addresses,
-                    "selected_address": selected_address,
-                    "checkout_error": "Please select a shipping address.",
-                },
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    cart_subtotal,
+                    tax,
+                    fees,
+                    final_total,
+                    addresses=addresses,
+                    selected_address=selected_address,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Please select a shipping address.",
+                ),
             )
         try:
             ship_addr = Address.objects.get(pk=int(addr_id), user=request.user)
@@ -165,16 +225,59 @@ def buyer_checkout(request):
             return render(
                 request,
                 "checkout/buyer_checkout.html",
-                {
-                    "cart_items": cart_items,
-                    "cart_subtotal": cart_subtotal,
-                    "tax": tax,
-                    "fees": fees,
-                    "final_total": final_total,
-                    "addresses": addresses,
-                    "selected_address": selected_address,
-                    "checkout_error": "Invalid shipping address.",
-                },
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    cart_subtotal,
+                    tax,
+                    fees,
+                    final_total,
+                    addresses=addresses,
+                    selected_address=selected_address,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Invalid shipping address.",
+                ),
+            )
+
+        pm_id = request.POST.get("payment_method_id")
+        if not pm_id:
+            return render(
+                request,
+                "checkout/buyer_checkout.html",
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    cart_subtotal,
+                    tax,
+                    fees,
+                    final_total,
+                    addresses=addresses,
+                    selected_address=ship_addr,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Please select a payment method.",
+                ),
+            )
+        try:
+            pay_method = PaymentMethod.objects.get(pk=int(pm_id), user=request.user)
+        except (PaymentMethod.DoesNotExist, ValueError, TypeError):
+            return render(
+                request,
+                "checkout/buyer_checkout.html",
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    cart_subtotal,
+                    tax,
+                    fees,
+                    final_total,
+                    addresses=addresses,
+                    selected_address=ship_addr,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Invalid payment method.",
+                ),
             )
 
         tax_cents = int(round(subtotal_cents * 0.07))
@@ -204,6 +307,7 @@ def buyer_checkout(request):
                 order = Order.objects.create(
                     user=request.user,
                     shipping_address=ship_addr,
+                    payment_method=pay_method,
                     steward_contribution=None,
                     status="paid",
                     subtotal_cents=subtotal_cents,
@@ -257,16 +361,19 @@ def buyer_checkout(request):
             return render(
                 request,
                 "checkout/buyer_checkout.html",
-                {
-                    "cart_items": cart_items,
-                    "cart_subtotal": cart_subtotal,
-                    "tax": tax,
-                    "fees": fees,
-                    "final_total": final_total,
-                    "addresses": addresses,
-                    "selected_address": ship_addr,
-                    "checkout_error": str(e),
-                },
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    cart_subtotal,
+                    tax,
+                    fees,
+                    final_total,
+                    addresses=addresses,
+                    selected_address=ship_addr,
+                    payment_methods=payment_methods,
+                    selected_payment=pay_method or selected_payment,
+                    checkout_error=str(e),
+                ),
             )
 
         clear_db_cart(request.user)
@@ -278,16 +385,19 @@ def buyer_checkout(request):
     return render(
         request,
         "checkout/buyer_checkout.html",
-        {
-            "cart_items": cart_items,
-            "cart_subtotal": cart_subtotal,
-            "tax": tax,
-            "fees": fees,
-            "final_total": final_total,
-            "addresses": addresses,
-            "selected_address": selected_address,
-            "checkout_error": None,
-        },
+        _checkout_page_context(
+            request.user,
+            cart_items,
+            cart_subtotal,
+            tax,
+            fees,
+            final_total,
+            addresses=addresses,
+            selected_address=selected_address,
+            payment_methods=payment_methods,
+            selected_payment=selected_payment,
+            checkout_error=None,
+        ),
     )
 
 
@@ -334,21 +444,98 @@ def update_cart_item(request, item_id):
 
 @login_required(login_url="login")
 def buyer_payments(request):
-    """Payment methods page. Card storage is not wired to a model yet."""
+    """List and create PaymentMethod rows (last4 + meta only; full card number and CVV are not stored)."""
     if request.method == "POST":
-        messages.info(
-            request,
-            "Saved payment methods are not stored in the database in this project yet.",
+        cardholder_name = (request.POST.get("cardholder_name") or "").strip()
+        card_number = (request.POST.get("card_number") or "").strip()
+        brand = (request.POST.get("brand") or "").strip()
+        cvv = (request.POST.get("cvv") or "").strip()
+        exp_month_raw = (request.POST.get("exp_month") or "").strip()
+        exp_year_raw = (request.POST.get("exp_year") or "").strip()
+        is_default = request.POST.get("is_default") == "on"
+
+        errs = []
+        if not cardholder_name:
+            errs.append("Cardholder name is required.")
+        if not brand:
+            errs.append("Brand is required.")
+        if not cvv or len(cvv) < 3:
+            errs.append("CVV is required (not stored).")
+        digits = re.sub(r"\D", "", card_number)
+        if len(digits) < 13:
+            errs.append("Enter a valid card number (full number is not stored; only last 4 digits are saved).")
+        try:
+            exp_month = int(exp_month_raw)
+            if not 1 <= exp_month <= 12:
+                raise ValueError
+        except (TypeError, ValueError):
+            errs.append("Enter a valid expiration month (1–12).")
+        try:
+            exp_year = int(exp_year_raw)
+            if exp_year < 2000 or exp_year > 2100:
+                raise ValueError
+        except (TypeError, ValueError):
+            errs.append("Enter a valid 4-digit expiration year.")
+        today = date.today()
+        if not errs:
+            if exp_year < today.year or (exp_year == today.year and exp_month < today.month):
+                errs.append("This card appears to be expired.")
+
+        if errs:
+            for e in errs:
+                messages.error(request, e)
+            return render(
+                request,
+                "checkout/buyer_payments.html",
+                {"payment_methods": list(_payment_methods_for_user(request.user))},
+            )
+
+        last4 = digits[-4:]
+        if is_default:
+            PaymentMethod.objects.filter(user=request.user, is_default=True).update(is_default=False)
+
+        PaymentMethod.objects.create(
+            user=request.user,
+            cardholder_name=cardholder_name[:120],
+            brand=brand[:40],
+            last4=last4,
+            exp_month=exp_month,
+            exp_year=exp_year,
+            is_default=is_default,
         )
+        messages.success(request, "Payment method saved.")
         next_url = (request.POST.get("next") or request.GET.get("next") or "").strip()
         if next_url and next_url.startswith("/"):
             return redirect(next_url)
         return redirect("buyer_payments")
+
     return render(
         request,
         "checkout/buyer_payments.html",
-        {"payment_methods": []},
+        {"payment_methods": list(_payment_methods_for_user(request.user))},
     )
+
+
+@login_required(login_url="login")
+def set_default_payment_method(request, payment_method_id):
+    if request.method != "POST":
+        return redirect("buyer_payments")
+    pm = get_object_or_404(PaymentMethod, pk=payment_method_id, user=request.user)
+    PaymentMethod.objects.filter(user=request.user).update(is_default=False)
+    pm.is_default = True
+    pm.save(update_fields=["is_default", "updated_at"])
+    messages.success(request, "Default payment method updated.")
+    return redirect("buyer_payments")
+
+
+@login_required(login_url="login")
+def delete_payment_method(request, payment_method_id):
+    if request.method != "POST":
+        return redirect("buyer_payments")
+    pm = get_object_or_404(PaymentMethod, pk=payment_method_id, user=request.user)
+    pm.delete()
+    messages.success(request, "Payment method removed.")
+    return redirect("buyer_payments")
 
 
 @login_required(login_url="login")
