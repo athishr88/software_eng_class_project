@@ -75,6 +75,53 @@
     <section style="margin-top:14px; max-width:900px;">
         <div style="display:flex; align-items:end; justify-content:space-between; gap:10px; flex-wrap:wrap;">
             <div>
+                <h2 style="margin:0; font-size:16px; font-weight:900;">Return requests</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    {% if stats.pending_returns_count|default:0 %}
+                        {{ stats.pending_returns_count|default:0 }} open request(s) need you to confirm the book was received.
+                    {% else %}
+                        No open return requests for your listings.
+                    {% endif %}
+                </p>
+            </div>
+            <a class="link" href="{% url 'seller_return_requests' %}">View all</a>
+        </div>
+
+        <div class="card" style="box-shadow:none; margin-top:12px; padding:0; overflow:hidden;">
+            {% if return_requests_preview %}
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f8fafc;">
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Return</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Order</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Buyer</th>
+                            <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rr in return_requests_preview %}
+                            <tr>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-weight:800;">#{{ rr.id }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee;">#{{ rr.order_id }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ rr.order.user.email }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
+                                    <a class="link" href="{% url 'seller_return_request_detail' rr.id %}">Open</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="padding:18px;">
+                    <p style="margin:0; color:var(--muted); font-size:14px;">Nothing to show here right now.</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <section style="margin-top:14px; max-width:900px;">
+        <div style="display:flex; align-items:end; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+            <div>
                 <h2 style="margin:0; font-size:16px; font-weight:900;">Recent Orders</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
                     Orders needing your attention (payment-confirmed orders inculde shipping details).

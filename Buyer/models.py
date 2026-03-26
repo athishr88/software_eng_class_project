@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.db import models
+
 from General.models import User, Book, Address, StewardContribution
 
 
@@ -226,3 +228,37 @@ class ReturnRequest(models.Model):
 
     def __str__(self):
         return f"ReturnRequest for Order {self.order_id}"
+
+
+class SellerReturnReceipt(models.Model):
+    """
+    Records that a seller received returned inventory for an order and triggered
+    buyer credit + removal of that seller's lines from their sales totals.
+    """
+
+    return_request = models.ForeignKey(
+        ReturnRequest,
+        on_delete=models.CASCADE,
+        related_name="seller_receipts",
+    )
+    seller = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="return_receipts_given",
+    )
+    amount_credited_cents = models.PositiveIntegerField(
+        help_text="Sum of this seller's line totals for the order (credited to buyer).",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["return_request", "seller"],
+                name="unique_seller_return_receipt_per_return",
+            )
+        ]
+
+    def __str__(self):
+        return f"SellerReturnReceipt rr={self.return_request_id} seller={self.seller_id}"

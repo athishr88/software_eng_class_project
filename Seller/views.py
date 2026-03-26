@@ -6,11 +6,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Q, Sum
+from django.db.models import Exists, OuterRef, Q, Subquery, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 
-from Buyer.models import Order, OrderItem
-from General.models import Book, Inventory
+from Buyer.models import Order, OrderItem, ReturnRequest, SellerReturnReceipt
+from General.models import Book, Inventory, User
 
 # Line revenue counted toward “total sales” for sellers.
 _SALE_RECOGNIZED_STATUSES = ("paid", "shipped", "delivered")
@@ -45,6 +45,51 @@ def _get_book_images_dir() -> Path:
     return d
 
 
+def _order_distinct_seller_user_ids(order):
+    return set(
+        OrderItem.objects.filter(order=order, book__seller_user__isnull=False)
+        .values_list("book__seller_user_id", flat=True)
+        .distinct()
+    )
+
+
+def _seller_line_total_cents_for_order(order, seller_user) -> int:
+    total = (
+        OrderItem.objects.filter(order=order, book__seller_user=seller_user).aggregate(
+            s=Sum("line_total_cents")
+        ).get("s")
+    )
+    return int(total or 0)
+
+
+def _maybe_finalize_buyer_return(return_request):
+    """Set return to refunded (buyer: Return complete) when every seller in the order has acknowledged."""
+    if return_request.status == "rejected":
+        return
+    order = return_request.order
+    needed = _order_distinct_seller_user_ids(order)
+    if not needed:
+        return
+    acknowledged = set(return_request.seller_receipts.values_list("seller_id", flat=True))
+    if needed <= acknowledged and return_request.status != "refunded":
+        return_request.status = "refunded"
+        return_request.save(update_fields=["status", "updated_at"])
+
+
+def _pending_return_requests_qs(seller_user):
+    return (
+        ReturnRequest.objects.filter(
+            order__orderitem__book__seller_user=seller_user,
+        )
+        .exclude(status="rejected")
+        .exclude(seller_receipts__seller=seller_user)
+        .select_related("order", "order__user")
+        .prefetch_related("order__orderitem__book")
+        .distinct()
+        .order_by("-created_at")
+    )
+
+
 def _seller_dashboard_stats(seller_user):
     seller_books = Book.objects.filter(seller_user=seller_user)
 
@@ -56,7 +101,8 @@ def _seller_dashboard_stats(seller_user):
     low_stock_count = seller_inventory.filter(quantity_available__lte=3, quantity_available__gt=0).count()
     out_of_stock_count = seller_inventory.filter(quantity_available=0).count()
 
-    # Order stats depend on seller order views; keep dashboard stable for now.
+    pending_returns = _pending_return_requests_qs(seller_user).count()
+
     return {
         "published_books": published_books,
         "unpublished_books": unpublished_books,
@@ -64,6 +110,7 @@ def _seller_dashboard_stats(seller_user):
         "out_of_stock_count": out_of_stock_count,
         "open_order": 0,
         "shipped_orders": 0,
+        "pending_returns_count": pending_returns,
     }
 
 
@@ -74,10 +121,15 @@ def home(request):
         messages.error(request, "A seller account is required.")
         return redirect("buyer_home")
 
+    stats = _seller_dashboard_stats(request.user)
     return render(
         request,
         "dashboard/dashboard.html",
-        {"stats": _seller_dashboard_stats(request.user), "recent_orders": []},
+        {
+            "stats": stats,
+            "recent_orders": [],
+            "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
+        },
     )
 
 
@@ -88,10 +140,15 @@ def dashboard(request):
         messages.error(request, "A seller account is required.")
         return redirect("buyer_home")
 
+    stats = _seller_dashboard_stats(request.user)
     return render(
         request,
         "dashboard/dashboard.html",
-        {"stats": _seller_dashboard_stats(request.user), "recent_orders": []},
+        {
+            "stats": stats,
+            "recent_orders": [],
+            "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
+        },
     )
 
 
@@ -313,11 +370,17 @@ def manage_inventory(request):
 
 
 def _seller_sales_total_cents(seller_user) -> int:
+    seller_returned_order = SellerReturnReceipt.objects.filter(
+        seller=seller_user,
+        return_request__order_id=OuterRef("order_id"),
+    )
     total = (
         OrderItem.objects.filter(
             book__seller_user=seller_user,
             order__status__in=_SALE_RECOGNIZED_STATUSES,
-        ).aggregate(s=Sum("line_total_cents"))
+        )
+        .exclude(Exists(seller_returned_order))
+        .aggregate(s=Sum("line_total_cents"))
         .get("s")
     )
     return int(total or 0)
@@ -336,12 +399,27 @@ def sales_overview(request):
 
     total_cents = _seller_sales_total_cents(request.user)
 
+    excluded_item_ids = (
+        OrderItem.objects.filter(book__seller_user=request.user)
+        .annotate(
+            _returned=Exists(
+                SellerReturnReceipt.objects.filter(
+                    seller=request.user,
+                    return_request__order_id=OuterRef("order_id"),
+                )
+            )
+        )
+        .filter(_returned=True)
+        .values("id")
+    )
+
     recent_sales_orders = (
         Order.objects.filter(orderitem__book__seller_user=request.user)
         .annotate(
             seller_revenue_cents=Sum(
                 "orderitem__line_total_cents",
-                filter=Q(orderitem__book__seller_user=request.user),
+                filter=Q(orderitem__book__seller_user=request.user)
+                & ~Q(orderitem__id__in=Subquery(excluded_item_ids)),
             )
         )
         .select_related("user")
@@ -371,3 +449,100 @@ def orders(request):
 def order_details(request, order_id=None):
     """Single order detail."""
     return render(request, "orders/orderDetails.html")
+
+
+@login_required(login_url="login")
+def return_requests_list(request):
+    if not _require_seller(request.user):
+        messages.error(request, "A seller account is required.")
+        return redirect("buyer_home")
+
+    pending = _pending_return_requests_qs(request.user)
+    return render(
+        request,
+        "returns/return_requests_list.html",
+        {"return_requests": pending},
+    )
+
+
+@login_required(login_url="login")
+def return_request_detail(request, return_id):
+    if not _require_seller(request.user):
+        messages.error(request, "A seller account is required.")
+        return redirect("buyer_home")
+
+    rr = get_object_or_404(
+        ReturnRequest.objects.select_related("order", "order__user").prefetch_related(
+            "order__orderitem__book", "seller_receipts"
+        ),
+        pk=return_id,
+    )
+    order = rr.order
+    seller_total = _seller_line_total_cents_for_order(order, request.user)
+    if seller_total <= 0:
+        messages.error(request, "This return does not include any of your listings.")
+        return redirect("seller_return_requests")
+
+    already = rr.seller_receipts.filter(seller=request.user).first()
+
+    if request.method == "POST" and request.POST.get("action") == "book_received":
+        if rr.status == "rejected":
+            messages.error(request, "This return was rejected.")
+            return redirect("seller_return_request_detail", return_id=rr.id)
+        if already:
+            messages.info(request, "You already marked this return as received.")
+            return redirect("seller_return_request_detail", return_id=rr.id)
+
+        with transaction.atomic():
+            rr_locked = ReturnRequest.objects.select_for_update().get(pk=rr.id)
+            if SellerReturnReceipt.objects.filter(return_request=rr_locked, seller=request.user).exists():
+                messages.info(request, "You already marked this return as received.")
+                return redirect("seller_return_request_detail", return_id=rr.id)
+
+            amount = _seller_line_total_cents_for_order(rr_locked.order, request.user)
+            if amount <= 0:
+                messages.error(request, "No matching lines to credit for your account.")
+                return redirect("seller_return_requests")
+
+            buyer = User.objects.select_for_update().get(pk=rr_locked.order.user_id)
+            SellerReturnReceipt.objects.create(
+                return_request=rr_locked,
+                seller=request.user,
+                amount_credited_cents=amount,
+            )
+            buyer.store_credit_cents = (buyer.store_credit_cents or 0) + amount
+            buyer.save(update_fields=["store_credit_cents", "updated_at"])
+
+            for oi in OrderItem.objects.filter(order=rr_locked.order, book__seller_user=request.user).select_related(
+                "book"
+            ):
+                inv, _ = Inventory.objects.get_or_create(
+                    book=oi.book,
+                    defaults={
+                        "quantity_available": 0,
+                        "quantity_reserved": 0,
+                        "reorder_threshold": 0,
+                    },
+                )
+                inv.quantity_available = (inv.quantity_available or 0) + oi.quantity
+                inv.save(update_fields=["quantity_available", "updated_at"])
+
+            _maybe_finalize_buyer_return(rr_locked)
+
+        messages.success(
+            request,
+            "Book received. The buyer was credited and your sales total was adjusted for these lines.",
+        )
+        return redirect("seller_return_request_detail", return_id=rr.id)
+
+    return render(
+        request,
+        "returns/return_request_detail.html",
+        {
+            "return_request": rr,
+            "order": order,
+            "seller_lines_total_display": _format_cents_as_dollars(seller_total),
+            "already_received": already,
+            "amount_credited_display": _format_cents_as_dollars(already.amount_credited_cents) if already else None,
+        },
+    )

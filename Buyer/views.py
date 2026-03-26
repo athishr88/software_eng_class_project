@@ -3,6 +3,7 @@ from datetime import date, datetime
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
@@ -18,6 +19,16 @@ from Buyer.models import (
     ReturnRequest,
 )
 from General.models import Address, Book, Inventory
+
+
+def _buyer_return_status_label(return_request):
+    if not return_request:
+        return None
+    if return_request.status == "refunded":
+        return "Return complete"
+    if return_request.status == "rejected":
+        return "Return declined"
+    return "Return requested"
 
 
 def _addresses_for_user(user):
@@ -722,6 +733,7 @@ def buyer_profile(request):
                 return redirect("buyer_profile")
 
     ctx["profile_user"] = user
+    ctx["store_credit_display"] = f"{(user.store_credit_cents or 0) / 100:.2f}"
     return render(request, "account/buyer_profile.html", ctx)
 
 
@@ -757,6 +769,7 @@ def order_detail(request, order_id):
         Order.objects.select_related(
             "shipping_address",
             "shipping_snapshot",
+            "returnrequest",
         ).prefetch_related(
             Prefetch(
                 "orderitem",
@@ -768,7 +781,11 @@ def order_detail(request, order_id):
     )
     shipping = getattr(order, "shipping_snapshot", None)
     items = _order_items_from_snapshots(order)
-    has_return = hasattr(order, "returnrequest")
+    try:
+        return_request = order.returnrequest
+    except ObjectDoesNotExist:
+        return_request = None
+    has_return = return_request is not None
     can_request_return = order.status in ("paid", "shipped", "delivered") and not has_return
 
     return render(
@@ -782,6 +799,8 @@ def order_detail(request, order_id):
             "order_subtotal_display": f"{order.subtotal_cents / 100:.2f}",
             "can_request_return": can_request_return,
             "can_leave_review": False,
+            "return_request": return_request,
+            "return_status_label": _buyer_return_status_label(return_request),
         },
     )
 

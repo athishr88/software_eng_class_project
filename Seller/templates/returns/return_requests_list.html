@@ -1,0 +1,45 @@
+{% extends "seller_base.html" %}
+{% block title %}Return Requests | Seller{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+            Return requests
+        </h1>
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Open requests include your books and are waiting for you to confirm the book was received.
+        </p>
+    </header>
+
+    <div class="card" style="box-shadow:none; padding:0; overflow:hidden;">
+        {% if return_requests %}
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr style="background:#f8fafc;">
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Return</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Order</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Buyer</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Submitted</th>
+                        <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rr in return_requests %}
+                        <tr>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-weight:800;">#{{ rr.id }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee;">#{{ rr.order_id }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ rr.order.user.email }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ rr.created_at }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
+                                <a class="link" href="{% url 'seller_return_request_detail' rr.id %}">Open</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div style="padding:18px;">
+                <p style="margin:0; color:var(--muted); font-size:14px;">No pending return requests for your listings.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

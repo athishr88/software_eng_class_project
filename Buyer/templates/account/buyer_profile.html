@@ -16,6 +16,9 @@
         <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
             Email is your login id; change it from the admin or a future verified-email flow.
         </p>
+        <p style="margin:-6px 0 14px; color:var(--muted); font-size:14px;">
+            <strong style="color:var(--text);">Store credit:</strong> ${{ store_credit_display|default:"0.00" }} (from completed returns)
+        </p>
 
         <form method="post" action="{% url 'buyer_profile' %}" style="display:grid; gap:12px; max-width:520px;">
             {% csrf_token %}

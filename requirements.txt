@@ -5,7 +5,7 @@ django-extensions==4.1
 djangorestframework==3.16.1
 djangorestframework_simplejwt==5.5.1
 Faker==40.5.1
-packaging @ file:///C:/miniconda3/conda-bld/packaging_1761049098810/work
+packaging==24.2
 pydot==4.0.1
 PyJWT==2.11.0
 pyparsing==3.3.2

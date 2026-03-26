@@ -8,6 +8,7 @@ from .models import (
     OrderShippingAddress,
     PaymentMethod,
     ReturnRequest,
+    SellerReturnReceipt,
 )
 
 admin.site.register(Cart)
@@ -18,3 +19,4 @@ admin.site.register(OrderItem)
 admin.site.register(OrderShippingAddress)
 admin.site.register(OrderItemBookSnapshot)
 admin.site.register(ReturnRequest)
+admin.site.register(SellerReturnReceipt)
