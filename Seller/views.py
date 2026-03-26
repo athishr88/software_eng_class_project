@@ -6,10 +6,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Q
+from django.db.models import Q, Sum
 from django.shortcuts import get_object_or_404, redirect, render
 
+from Buyer.models import Order, OrderItem
 from General.models import Book, Inventory
+
+# Line revenue counted toward “total sales” for sellers.
+_SALE_RECOGNIZED_STATUSES = ("paid", "shipped", "delivered")
 
 
 def _require_seller(user):
@@ -306,6 +310,57 @@ def manage_inventory(request):
     page_obj = paginator.get_page(request.GET.get("page") or 1)
 
     return render(request, "inventory/manageInventory.html", {"page_obj": page_obj})
+
+
+def _seller_sales_total_cents(seller_user) -> int:
+    total = (
+        OrderItem.objects.filter(
+            book__seller_user=seller_user,
+            order__status__in=_SALE_RECOGNIZED_STATUSES,
+        ).aggregate(s=Sum("line_total_cents"))
+        .get("s")
+    )
+    return int(total or 0)
+
+
+def _format_cents_as_dollars(cents: int) -> str:
+    return f"{cents / 100:.2f}"
+
+
+@login_required(login_url="login")
+def sales_overview(request):
+    """Total sales and recent orders that include this seller's books."""
+    if not _require_seller(request.user):
+        messages.error(request, "A seller account is required.")
+        return redirect("buyer_home")
+
+    total_cents = _seller_sales_total_cents(request.user)
+
+    recent_sales_orders = (
+        Order.objects.filter(orderitem__book__seller_user=request.user)
+        .annotate(
+            seller_revenue_cents=Sum(
+                "orderitem__line_total_cents",
+                filter=Q(orderitem__book__seller_user=request.user),
+            )
+        )
+        .select_related("user")
+        .order_by("-created_at")[:25]
+    )
+
+    for o in recent_sales_orders:
+        rev = o.seller_revenue_cents or 0
+        o.seller_revenue_display = _format_cents_as_dollars(int(rev))
+        o.order_total_display = _format_cents_as_dollars(int(o.total_cents))
+
+    return render(
+        request,
+        "dashboard/sales_overview.html",
+        {
+            "total_sales_display": _format_cents_as_dollars(total_cents),
+            "recent_sales_orders": recent_sales_orders,
+        },
+    )
 
 
 def orders(request):

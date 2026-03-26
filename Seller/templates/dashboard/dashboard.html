@@ -6,7 +6,7 @@
             Seller Dashboard
         </h1>
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-            Overview of your listings, inventory, and recent orders.
+            Overview of your listings, inventory
         </p>
     </header>
 
@@ -39,17 +39,15 @@
         </div>
 
         <div class="card" style="box-shadow:none; padding:14px;">
-            <h3 style="margin:0 0 8px; font-size:14px; font-weight:800;">Orders</h3>
-            <p style="margin:0; font-size:14px;">
-                <strong style="color:var(--text);">Open:</strong> {{ stats.open_order|default:"0" }}
-            </p>
-            <p style="margin:0; font-size:14px;">
-                <strong style="color:var(--text);">Shipped:</strong> {{ stats.shipped_orders|default:"0" }}
+            <h3 style="margin:0 0 8px; font-size:14px; font-weight:800;">Sales overview</h3>
+            <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
+                See your total sales and the latest orders that include your books.
             </p>
             <div style="margin-top:10px;">
-                <a class="link" href="{% url 'seller_orders' %}">View Orders</a>
+                <a class="link" href="{% url 'seller_sales_overview' %}">View sales overview</a>
             </div>
         </div>
+
     </section>
 
     <section style="margin-top:14px; display:grid; grid-template-columns:repeat(2, 1fr); gap:12px; max-width:900px;">
@@ -98,7 +96,7 @@
                             <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
                         </tr>
                     </thead>
-                    </tbody>
+                    <tbody>
                         {% for order in recent_orders %}
                             <tr>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">#{{ order.id }}</td>
@@ -127,6 +125,9 @@
         @media (max-width: 900px) {
             section[style*="grid-template-columns:repeat(3"] { grid-template-columns: 1fr !important; }
             section[style*="grid-template-columns:repeat(2"] { grid-template-columns: 1fr !important; }
+        }
+        @media (min-width: 901px) and (max-width: 1100px) {
+            section[style*="grid-template-columns:repeat(3"] { grid-template-columns: repeat(2, 1fr) !important; }
         }
 
         @media (mac-width:640px){

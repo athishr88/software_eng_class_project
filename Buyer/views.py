@@ -34,7 +34,7 @@ def _order_items_from_snapshots(order):
     (so seller edits to Book do not change past orders). Prices come from OrderItem.
     """
     items = []
-    for oi in order.orderitem_set.all().select_related("book", "book_snapshot"):
+    for oi in order.orderitem.all().select_related("book", "book_snapshot"):
         snap = getattr(oi, "book_snapshot", None)
         book = oi.book
         title = snap.title if snap else (oi.title or book.title)
@@ -704,7 +704,7 @@ def order_confirmation(request, order_id):
     order = get_object_or_404(
         Order.objects.select_related("shipping_snapshot").prefetch_related(
             Prefetch(
-                "orderitem_set",
+                "orderitem",
                 queryset=OrderItem.objects.select_related("book", "book_snapshot"),
             )
         ),
@@ -733,7 +733,7 @@ def order_detail(request, order_id):
             "shipping_snapshot",
         ).prefetch_related(
             Prefetch(
-                "orderitem_set",
+                "orderitem",
                 queryset=OrderItem.objects.select_related("book", "book_snapshot"),
             )
         ),
