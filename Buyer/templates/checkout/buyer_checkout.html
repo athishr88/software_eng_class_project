@@ -61,7 +61,7 @@
                                     You do not have any saved addresses.
                                 </p>
                                 <div style="margin-top:10px;">
-                                    <a class="btn" href="{% url 'buyer_shipping' %}?next={{ request.path|urlencode }}">
+                                    <a class="btn" href="{% url 'buyer_add_shipping_address' %}?next={{ request.path|urlencode }}">
                                         Add address
                                     </a>
                                 </div>
@@ -112,7 +112,7 @@
                                     No saved payment methods.
                                 </p>
                                 <div style="margin-top:10px;">
-                                    <a class="btn" href="{% url 'buyer_payments' %}?next={{ request.path|urlencode }}">
+                                    <a class="btn" href="{% url 'buyer_add_payment_method' %}?next={{ request.path|urlencode }}">
                                         Add payment method
                                     </a>
                                 </div>

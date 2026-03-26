@@ -477,7 +477,19 @@ def update_cart_item(request, item_id):
 
 @login_required(login_url="login")
 def buyer_payments(request):
-    """List and create PaymentMethod rows (last4 + meta only; full card number and CVV are not stored)."""
+    """List saved PaymentMethod rows."""
+    return render(
+        request,
+        "checkout/buyer_payments.html",
+        {"payment_methods": list(_payment_methods_for_user(request.user))},
+    )
+
+
+@login_required(login_url="login")
+def buyer_add_payment_method(request):
+    """Form to add a PaymentMethod (last4 + meta only; full card number and CVV are not stored)."""
+    next_url_param = (request.POST.get("next") or request.GET.get("next") or "").strip()
+
     if request.method == "POST":
         cardholder_name = (request.POST.get("cardholder_name") or "").strip()
         card_number = (request.POST.get("card_number") or "").strip()
@@ -519,8 +531,8 @@ def buyer_payments(request):
                 messages.error(request, e)
             return render(
                 request,
-                "checkout/buyer_payments.html",
-                {"payment_methods": list(_payment_methods_for_user(request.user))},
+                "checkout/buyer_add_payment_method.html",
+                {"next": next_url_param},
             )
 
         last4 = digits[-4:]
@@ -537,15 +549,14 @@ def buyer_payments(request):
             is_default=is_default,
         )
         messages.success(request, "Payment method saved.")
-        next_url = (request.POST.get("next") or request.GET.get("next") or "").strip()
-        if next_url and next_url.startswith("/"):
-            return redirect(next_url)
+        if next_url_param and next_url_param.startswith("/"):
+            return redirect(next_url_param)
         return redirect("buyer_payments")
 
     return render(
         request,
-        "checkout/buyer_payments.html",
-        {"payment_methods": list(_payment_methods_for_user(request.user))},
+        "checkout/buyer_add_payment_method.html",
+        {"next": next_url_param},
     )
 
 
@@ -573,7 +584,19 @@ def delete_payment_method(request, payment_method_id):
 
 @login_required(login_url="login")
 def buyer_shipping(request):
-    """Shipping / addresses: list and create Address rows for the logged-in user."""
+    """List saved shipping Address rows for the logged-in user."""
+    return render(
+        request,
+        "checkout/buyer_shipping.html",
+        {"addresses": _addresses_for_user(request.user)},
+    )
+
+
+@login_required(login_url="login")
+def buyer_add_shipping_address(request):
+    """Form to add a shipping Address for the logged-in user."""
+    next_url_param = (request.POST.get("next") or request.GET.get("next") or "").strip()
+
     if request.method == "POST":
         label_raw = (request.POST.get("label") or "").strip()
         line1 = (request.POST.get("line1") or "").strip()
@@ -589,7 +612,11 @@ def buyer_shipping(request):
                 request,
                 "Street address, city, state, postal code, and country are required.",
             )
-            return redirect("buyer_shipping")
+            return render(
+                request,
+                "checkout/buyer_add_shipping_address.html",
+                {"next": next_url_param},
+            )
 
         if is_default:
             Address.objects.filter(user=request.user, is_default=True).update(
@@ -609,15 +636,14 @@ def buyer_shipping(request):
         )
         messages.success(request, "Address saved.")
 
-        next_url = request.POST.get("next") or request.GET.get("next")
-        if next_url:
-            return redirect(next_url)
+        if next_url_param and next_url_param.startswith("/"):
+            return redirect(next_url_param)
         return redirect("buyer_shipping")
 
     return render(
         request,
-        "checkout/buyer_shipping.html",
-        {"addresses": _addresses_for_user(request.user)},
+        "checkout/buyer_add_shipping_address.html",
+        {"next": next_url_param},
     )
 
 

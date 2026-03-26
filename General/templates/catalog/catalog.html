@@ -52,10 +52,6 @@
         </aside>
 
         <section class="card results-panel">
-            <div style="padding:16px 18px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; gap:12px; align-items:end;">
-                <h3 style="margin:0; font-size:16px; font-weight:900;">Results</h3>
-                <a class="link" href="{% url 'cart' %}">Go to Cart</a>
-            </div>
 
             {% if page_obj and page_obj.object_list %}
                 <div style="padding:18px;">

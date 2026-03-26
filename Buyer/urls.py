@@ -11,6 +11,11 @@ urlpatterns = [
     path("checkout/", views.buyer_checkout, name="checkout"),
     path("checkout/payments/", views.buyer_payments, name="buyer_payments"),
     path(
+        "checkout/payments/add/",
+        views.buyer_add_payment_method,
+        name="buyer_add_payment_method",
+    ),
+    path(
         "checkout/payments/set-default/<int:payment_method_id>/",
         views.set_default_payment_method,
         name="set_default_payment_method",
@@ -21,6 +26,11 @@ urlpatterns = [
         name="delete_payment_method",
     ),
     path("checkout/shipping/", views.buyer_shipping, name="buyer_shipping"),
+    path(
+        "checkout/shipping/add/",
+        views.buyer_add_shipping_address,
+        name="buyer_add_shipping_address",
+    ),
     path(
         "checkout/shipping/set-default/<int:address_id>/",
         views.set_default_shipping_address,

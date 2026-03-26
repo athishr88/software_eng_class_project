@@ -60,8 +60,7 @@
             <a class="link" href="{% url 'register' %}">Register</a>
 
         {% elif hdr_portal == 'buyer' %}
-            <a class="link" href="{% url 'general_home' %}">Home</a>
-            <a class="link" href="{% url 'catalog' %}">Browse</a>
+            <a class="link" href="{% url 'catalog' %}">Home</a>
             <a class="link" href="{% url 'cart' %}">Cart</a>
             <form method="post" action="{% url 'logout' %}" style="margin:0;">
                 {% csrf_token %}

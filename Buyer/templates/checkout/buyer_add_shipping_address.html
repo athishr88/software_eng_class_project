@@ -1,0 +1,122 @@
+{% extends "base_buyer.html" %}
+{% block title %}Add shipping address | My Account{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <p style="margin:0 0 8px;">
+            <a class="link" href="{% url 'buyer_shipping' %}{% if next %}?next={{ next|urlencode }}{% endif %}" style="font-size:14px;">← Back to shipping addresses</a>
+        </p>
+        <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+            Add shipping address
+        </h1>
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Make sure your shipping info is accurate to avoid delivery issues.
+        </p>
+    </header>
+
+    <section class="card" style="box-shadow:none; max-width:640px;">
+        <form method="POST" action="{% url 'buyer_add_shipping_address' %}" style="display:grid; gap:12px;">
+            {% csrf_token %}
+
+            <input type="hidden" name="next" value="{{ next|default:'' }}">
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Label (optional)
+                <input
+                    type="text"
+                    name="label"
+                    placeholder="Home, Work, etc."
+                    maxlength="100"
+                    value="{{ request.POST.label|default:'' }}"
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Address line 1
+                <input
+                    type="text"
+                    name="line1"
+                    placeholder="Street address, P.O. box, etc."
+                    maxlength="255"
+                    value="{{ request.POST.line1|default:'' }}"
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Address line 2 (optional)
+                <input
+                    type="text"
+                    name="line2"
+                    placeholder="Apartment, suite, unit, etc."
+                    maxlength="255"
+                    value="{{ request.POST.line2|default:'' }}"
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                City
+                <input
+                    type="text"
+                    name="city"
+                    placeholder="City"
+                    maxlength="100"
+                    value="{{ request.POST.city|default:'' }}"
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                State / province / region
+                <input
+                    type="text"
+                    name="state"
+                    placeholder="State"
+                    maxlength="100"
+                    value="{{ request.POST.state|default:'' }}"
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Postal code
+                <input
+                    type="text"
+                    name="postal_code"
+                    placeholder="ZIP or postal code"
+                    maxlength="30"
+                    value="{{ request.POST.postal_code|default:'' }}"
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                Country
+                <input
+                    type="text"
+                    name="country"
+                    placeholder="Country"
+                    maxlength="100"
+                    value="{{ request.POST.country|default:'' }}"
+                    required
+                    style="width:100%; border:1px solid var(--border); border-radius:10px; padding: 10px 12px; font-size:15px; outline:none; background:#fff;"
+                />
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; cursor:pointer;">
+                <input type="checkbox" name="is_default" {% if request.POST.is_default %}checked{% endif %} style="width:18px; height:18px;" />
+                Set as default shipping address
+            </label>
+            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button class="btn" type="submit">Save address</button>
+                <a href="{% url 'buyer_shipping' %}{% if next %}?next={{ next|urlencode }}{% endif %}" style="text-decoration:none; display:inline-flex; align-items:center; border:1px solid var(--border); background:#fff; color:var(--text); border-radius:10px; padding:10px 12px; font-size:14px; font-weight:700;">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </section>
+
+    <style>
+        input:focus{
+            border-color: #c0a5fa !important;
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.3) !important;
+        }
+    </style>
+{% endblock %}
