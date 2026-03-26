@@ -24,6 +24,21 @@ if not _BOOK_IMAGES_DIR.exists():
     _BOOK_IMAGES_DIR = Path(settings.BASE_DIR).parent / "book_images"
 
 
+def _sanitize_book_title_for_filename(title: str) -> str:
+    """Make a safe filename stem from a book title (Windows-friendly)."""
+    if not title:
+        return "book"
+    invalid_chars = set('<>:"/\\|?*')
+    cleaned_chars = []
+    for ch in title:
+        if ch in invalid_chars or ord(ch) < 32:
+            cleaned_chars.append("_")
+        else:
+            cleaned_chars.append(ch)
+    cleaned = "".join(cleaned_chars).strip().strip(".")
+    return cleaned or "book"
+
+
 def _get_book_cover_static_path(book_title):
     """Return static path like 'book_images/Title.jpg' if a file exists whose stem matches book title, else None."""
     name = _get_book_cover_filename(book_title)
@@ -41,7 +56,16 @@ def _get_book_cover_filename(book_title):
             stem, name = f.stem, f.name
             title_to_name[stem] = name
             title_to_name[stem.lower()] = name
-    return title_to_name.get(book_title) or title_to_name.get(book_title.lower())
+
+    # Try direct title match first (for existing filenames), then fallback to
+    # sanitized-title match (for uploaded covers).
+    candidates = [book_title, book_title.lower()]
+    safe_title = _sanitize_book_title_for_filename(book_title)
+    candidates.extend([safe_title, safe_title.lower()])
+    for c in candidates:
+        if c in title_to_name:
+            return title_to_name[c]
+    return None
 
 
 def serve_book_cover(request, path):

@@ -28,7 +28,7 @@
         </div>
     {% endif %}
 
-    <form method="post" action="{% url 'add_books' %}" style="max-width:900px;">
+    <form method="post" action="{% url 'add_books' %}" style="max-width:900px;" enctype="multipart/form-data">
         {% csrf_token %}
 
         <section style="display:grid; grid-template-columns: 1fr 340px; gap:12px; align-items:start;">
@@ -79,6 +79,11 @@
                         </div>
 
                         <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                            Cover image upload (optional)
+                            <input type="file" name="cover_image" accept="image/*">
+                        </label>
+
+                        <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                             Cover image URL (optional)
                             <input type="url" name="cover_image_url" placeholder="https://…" value="{{ form_values.cover_image_url|default:'' }}">
                         </label>
@@ -111,7 +116,7 @@
 
                             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                                 Quantity available <span style="color:#991b1b;">*</span>
-                                <input type="number" min="0" name="quantity_available" required value="{{ form_values.quantity_available|default:form_values.stock_quantity|default:'' }}">
+                                <input type="number" min="0" name="quantity_available" required value="{{ form_values.quantity_available|default:'' }}">
                             </label>
 
                             <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
