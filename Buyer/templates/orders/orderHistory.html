@@ -6,15 +6,15 @@
         <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
             Order History
         </h1>
-        <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
-            View your past orders and check thier current status.
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Your orders are loaded from the database (newest first).
         </p>
     </header>
 
     <section class="card" style="box-shadow:none; max-width:900px;">
         <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Filters</h2>
         <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
-            Narrow results by status and date range.
+            Narrow by status or placed date (YYYY-MM-DD).
         </p>
 
         <form method="get" action="{% url 'order_history' %}" style="display:grid; gap:12px;">
@@ -23,56 +23,29 @@
                     Status
                     <select name="status" id="status">
                         <option value="">All</option>
-                        <option value="pending" {% if request.GET.status == "pending" %}selected{% endif %}>
-                            Pending
-                        </option>
-                        <option value="paid" {% if request.GET.status == "paid" %}selected{% endif %}>
-                            Paid
-                        </option>
-                        <option value="shipped" {% if request.GET.status == "shipped" %}selected{% endif %}>
-                            Shipped
-                        </option>
-                        <option value="delivered" {% if request.GET.status == "delivered" %}selected{% endif %}>
-                            Delivered
-                        </option>
-                        <option value="cancelled" {% if request.GET.status == "cancelled" %}selected{% endif %}>
-                            Cancelled
-                        </option>
-                        <option value="refunded"{% if request.GET.status == "refunded" %}selected{% endif %}>
-                            Refunded
-                        </option>
-                    
-                        {% for s in statuses %}
-                            <option value="{{ s }}" {% if request.GET.status == s %}selected{% endif %}>{{ s }}</option>
-                        {% endfor %}
+                        <option value="pending" {% if request.GET.status == "pending" %}selected{% endif %}>Pending</option>
+                        <option value="paid" {% if request.GET.status == "paid" %}selected{% endif %}>Paid</option>
+                        <option value="shipped" {% if request.GET.status == "shipped" %}selected{% endif %}>Shipped</option>
+                        <option value="delivered" {% if request.GET.status == "delivered" %}selected{% endif %}>Delivered</option>
+                        <option value="cancelled" {% if request.GET.status == "cancelled" %}selected{% endif %}>Cancelled</option>
+                        <option value="refunded" {% if request.GET.status == "refunded" %}selected{% endif %}>Refunded</option>
                     </select>
                 </label>
 
-                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;" for="from">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                     From
+                    <input type="text" name="from" placeholder="YYYY-MM-DD" value="{{ request.GET.from }}">
                 </label>
-                <input 
-                    type="text" 
-                    name="from" 
-                    placeholder="YYYY-MM-DD"
-                    value="{{ request.GET.from }}"
-                >
-            </div>
-            <div>
-                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;" for="to">
-                     To
+
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    To
+                    <input type="text" name="to" placeholder="YYYY-MM-DD" value="{{ request.GET.to }}">
                 </label>
-                <input 
-                    type="text" 
-                    name="to" 
-                    placeholder="YYYY-MM-DD"
-                    value="{{ request.GET.to }}"
-                >
             </div>
 
             <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
                 <a class="link" href="{% url 'order_history' %}" style="align-self:center;">Clear</a>
-                <button class="btn" type="submit">Apply Filters</button>
+                <button class="btn" type="submit">Apply filters</button>
             </div>
         </form>
     </section>
@@ -91,25 +64,18 @@
                     {% endif %}
                 </p>
             </div>
-            <a class="link" href="{% url 'catalog' %}">Browse Books</a>
+            <a class="link" href="{% url 'catalog' %}">Browse books</a>
         </div>
 
         {% if orders %}
             <table style="width:100%; border-collapse:collapse;">
                 <thead>
                     <tr style="background:#f8fafc;">
-                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                            Order
-                        </th>
-                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                            Status
-                        </th>
-                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                            Total
-                        </th>
-                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                            Placed
-                        </th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Order</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Status</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Lines</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Total</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Placed</th>
                         <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
                     </tr>
                 </thead>
@@ -117,20 +83,13 @@
                 <tbody>
                     {% for order in orders %}
                         <tr>
-                            <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">
-                                #{{ order.id }}
-                            </td>
-                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;;">
-                                {{ order.status }}
-                            </td>
-                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                ${{ order.total_dollars|floatformat:2 }}
-                            </td>
-                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                {{ order.created_at }}
-                            </td>
-                            <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
-                                <a class="link" href="{% url 'order_detail' order.id %}">View Details</a>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;" data-label="Order">#{{ order.id }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;" data-label="Status">{{ order.status }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;" data-label="Lines">{{ order.item_count }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;" data-label="Total">${{ order.total_dollars|floatformat:2 }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;" data-label="Placed">{{ order.created_at }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;" data-label="">
+                                <a class="link" href="{% url 'order_detail' order.id %}">View details</a>
                             </td>
                         </tr>
                     {% endfor %}
@@ -139,8 +98,8 @@
 
         {% else %}
             <div style="padding:18px;">
-                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-                    No orders match your filters.
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    No orders match your filters, or you have not placed an order yet.
                 </p>
             </div>
         {% endif %}
@@ -188,4 +147,3 @@
         }
     </style>
 {% endblock %}
-        

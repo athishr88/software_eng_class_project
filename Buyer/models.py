@@ -88,6 +88,8 @@ class Order(models.Model):
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default="pending")
 
     subtotal_cents = models.PositiveIntegerField()
+    tax_cents = models.PositiveIntegerField(default=0)
+    fees_cents = models.PositiveIntegerField(default=0)
     discount_cents = models.PositiveIntegerField(default=0)
     total_cents = models.PositiveIntegerField()
 
@@ -106,16 +108,41 @@ class Order(models.Model):
     def discount_dollars(self):
         return self.discount_cents / 100.0
 
+    @property
+    def tax_dollars(self):
+        return self.tax_cents / 100.0
+
+    @property
+    def fees_dollars(self):
+        return self.fees_cents / 100.0
+
+    @property
+    def subtotal_dollars(self):
+        return self.subtotal_cents / 100.0
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
+
+    # Denormalized at checkout (same moment as OrderItemBookSnapshot). default="" is for migration backfill only.
+    title = models.CharField(max_length=255, default="")
+    author = models.CharField(max_length=255, default="")
+
+    deposit_required = models.BooleanField(default=False)
+    # Stored in cents to avoid floating point issues.
+    deposit_amount_cents = models.PositiveIntegerField(default=0)
 
     quantity = models.PositiveIntegerField()
     unit_price_cents = models.PositiveIntegerField()
     line_total_cents = models.PositiveIntegerField()
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def deposit_amount(self) -> float:
+        """Deposit amount in dollars (for templates)."""
+        return self.deposit_amount_cents / 100.0
 
     def __str__(self):
         return f"OrderItem {self.id} (Order {self.order_id})"

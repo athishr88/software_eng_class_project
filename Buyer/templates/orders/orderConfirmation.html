@@ -80,12 +80,15 @@
                         <div>
                             <strong style="font-size:14px;">{{ item.title }}</strong>
                             <div style="margin-top:4px; color:var(--muted); font-size:13px;">
-                                Qty {{ item.quantity }}
+                                {{ item.author }}
+                            </div>
+                            <div style="margin-top:4px; color:var(--muted); font-size:13px;">
+                                Qty {{ item.quantity }} · ${{ item.unit_price|floatformat:2 }} each
                             </div>
                         </div>
                         <div style="text-align:right;">
-                            <div style="color:var(--muted); font-size:13px;">Line Total</div>
-                            <div style="font-weight:900;">${{ item.line_total }}</div>
+                            <div style="color:var(--muted); font-size:13px;">Line total</div>
+                            <div style="font-weight:900;">${{ item.line_total|floatformat:2 }}</div>
                         </div>
                     </div>
                 {% endfor %}

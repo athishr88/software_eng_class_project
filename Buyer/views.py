@@ -1,10 +1,10 @@
 import re
-from datetime import date
+from datetime import date, datetime
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import Prefetch
+from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 
 from Buyer.cart_helpers import add_book_to_db_cart, clear_db_cart, db_cart_lines
@@ -26,6 +26,33 @@ def _addresses_for_user(user):
 
 def _payment_methods_for_user(user):
     return PaymentMethod.objects.filter(user=user).order_by("-is_default", "-updated_at")
+
+
+def _order_items_from_snapshots(order):
+    """
+    Line items for display using OrderItemBookSnapshot for title/author when present
+    (so seller edits to Book do not change past orders). Prices come from OrderItem.
+    """
+    items = []
+    for oi in order.orderitem_set.all().select_related("book", "book_snapshot"):
+        snap = getattr(oi, "book_snapshot", None)
+        book = oi.book
+        title = snap.title if snap else (oi.title or book.title)
+        author = snap.author if snap else (oi.author or book.author)
+        items.append(
+            {
+                "title": title,
+                "author": author,
+                "deposit_required": getattr(oi, "deposit_required", False),
+                "deposit_amount": round(getattr(oi, "deposit_amount_cents", 0) / 100.0, 2),
+                "quantity": oi.quantity,
+                "unit_price_cents": oi.unit_price_cents,
+                "unit_price": oi.unit_price_cents / 100.0,
+                "line_total_cents": oi.line_total_cents,
+                "line_total": oi.line_total_cents / 100.0,
+            }
+        )
+    return items
 
 
 def _checkout_page_context(
@@ -311,6 +338,8 @@ def buyer_checkout(request):
                     steward_contribution=None,
                     status="paid",
                     subtotal_cents=subtotal_cents,
+                    tax_cents=tax_cents,
+                    fees_cents=fees_cents,
                     discount_cents=0,
                     total_cents=total_cents,
                 )
@@ -337,6 +366,10 @@ def buyer_checkout(request):
                     oi = OrderItem.objects.create(
                         order=order,
                         book=book,
+                        title=book.title,
+                        author=book.author,
+                        deposit_required=getattr(book, "deposit_required", False),
+                        deposit_amount_cents=getattr(book, "deposit_amount_cents", 0),
                         quantity=line["quantity"],
                         unit_price_cents=book.base_price_cents,
                         line_total_cents=line["line_subtotal_cents"],
@@ -669,21 +702,17 @@ def buyer_profile(request):
 @login_required(login_url="login")
 def order_confirmation(request, order_id):
     order = get_object_or_404(
-        Order.objects.select_related("shipping_snapshot"),
+        Order.objects.select_related("shipping_snapshot").prefetch_related(
+            Prefetch(
+                "orderitem_set",
+                queryset=OrderItem.objects.select_related("book", "book_snapshot"),
+            )
+        ),
         pk=order_id,
         user=request.user,
     )
     shipping = getattr(order, "shipping_snapshot", None)
-    order_items = []
-    for oi in order.orderitem_set.all().select_related("book"):
-        snap = getattr(oi, "book_snapshot", None)
-        order_items.append(
-            {
-                "title": snap.title if snap else oi.book.title,
-                "quantity": oi.quantity,
-                "line_total": f"{oi.line_total_cents / 100:.2f}",
-            }
-        )
+    order_items = _order_items_from_snapshots(order)
     return render(
         request,
         "orders/orderConfirmation.html",
@@ -712,16 +741,7 @@ def order_detail(request, order_id):
         user=request.user,
     )
     shipping = getattr(order, "shipping_snapshot", None)
-    items = []
-    for oi in order.orderitem_set.all():
-        snap = getattr(oi, "book_snapshot", None)
-        items.append(
-            {
-                "title": snap.title if snap else oi.book.title,
-                "quantity": oi.quantity,
-                "line_total": oi.line_total_cents / 100.0,
-            }
-        )
+    items = _order_items_from_snapshots(order)
     has_return = hasattr(order, "returnrequest")
     can_request_return = order.status in ("paid", "shipped", "delivered") and not has_return
 
@@ -742,7 +762,33 @@ def order_detail(request, order_id):
 
 @login_required(login_url="login")
 def order_history(request):
-    orders = Order.objects.filter(user=request.user).order_by("-created_at")[:200]
+    qs = (
+        Order.objects.filter(user=request.user)
+        .annotate(item_count=Count("orderitem"))
+        .order_by("-created_at")
+    )
+
+    status = (request.GET.get("status") or "").strip()
+    if status:
+        qs = qs.filter(status=status)
+
+    date_from = (request.GET.get("from") or "").strip()
+    if date_from:
+        try:
+            start = datetime.strptime(date_from, "%Y-%m-%d").date()
+            qs = qs.filter(created_at__date__gte=start)
+        except ValueError:
+            pass
+
+    date_to = (request.GET.get("to") or "").strip()
+    if date_to:
+        try:
+            end = datetime.strptime(date_to, "%Y-%m-%d").date()
+            qs = qs.filter(created_at__date__lte=end)
+        except ValueError:
+            pass
+
+    orders = list(qs[:200])
     return render(request, "orders/orderHistory.html", {"orders": orders})
 
 

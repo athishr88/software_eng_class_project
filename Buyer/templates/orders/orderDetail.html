@@ -62,8 +62,9 @@
     </section>
 
     <section class="card" style="box-shadow:none; max-width:900px; margin-top:12px;">
-        <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Shipping Address</h2>
-        
+        <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Shipping address (at checkout)</h2>
+        <p style="margin:0 0 10px; color:var(--muted); font-size:13px;">This is the address captured when you placed the order; changing your saved addresses later does not change past orders.</p>
+
         {% if shipping %}
             <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; color:var(--muted); font-size:14px; line-height:1.45;">
                 {% if shipping.shipping_name %}<strong style="color:var(--text);">{{ shipping.shipping_name }}</strong><br>{% endif %}
@@ -90,7 +91,7 @@
             <div>
                 <h2 style="margin:0; font-size:16px; font-weight:800;">Items</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-                    {% if order_items %}{{ order_items|length }} item(s) in this order.{% endif %}
+                    {% if order_items %}{{ order_items|length }} line(s). Titles and authors are from the book snapshot at purchase.{% endif %}
                 </p>
             </div>
         </div>
@@ -102,7 +103,10 @@
                         <div>
                             <strong style="font-size:14px;">{{ item.title }}</strong>
                             <div style="margin-top:4px; color:var(--muted); font-size:13px;">
-                                Qty {{ item.quantity }}
+                                {{ item.author }}
+                            </div>
+                            <div style="margin-top:4px; color:var(--muted); font-size:13px;">
+                                Qty {{ item.quantity }} · ${{ item.unit_price|floatformat:2 }} each
                             </div>
                         </div>
 
@@ -127,6 +131,8 @@
             <h3 style="margin:0 0 6px; font-size:14px; font-weight:900;">Order Summary</h3>
             <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
                 Subtotal (items): ${{ order_subtotal_display }}<br>
+                Fees: ${{ order.fees_dollars|floatformat:2 }}<br>
+                Tax: ${{ order.tax_dollars|floatformat:2 }}<br>
                 Discount: ${{ order.discount_dollars|floatformat:2 }}<br>
                 <strong style="color:var(--text);">Total charged: ${{ order_total_display }}</strong>
             </p>
