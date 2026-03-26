@@ -3,18 +3,6 @@
 {% block title %}Browse Books | Pass It On Books {% endblock %}
 {% block content %}
     <section class="catalog-shell">
-        <header class="card catalog-header">
-            <div>
-                <h3 style="margin:0; font-size:16px; font-weight:900;">Browse Books</h3>
-                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-                    {% if page_obj %}
-                        Showing {{ page_obj.paginator.count }} book(s). Use the search bar above to refine results.
-                    {% else %}
-                        Search the catalog to see results.
-                    {% endif %}
-                </p>
-            </div>
-        </header>
 
         <aside class="card filters-panel">
             <h3 style="margin:0 0 12px; font-size:16px; font-weight:900;">Filters</h3>
