@@ -9,24 +9,25 @@ def _sqlite_orderitem_columns(schema_editor):
         return {row[1] for row in cursor.fetchall()}
 
 
+def _denorm_char_field(name):
+    """Field definition for DB apply; RunPython gets pre-migration apps, so no get_field on new columns."""
+    field = models.CharField(default="", max_length=255)
+    field.set_attributes_from_name(name)
+    return field
+
+
 def forward_add_denorm_fields(apps, schema_editor):
     """Add title/author only if missing (handles SQLite DBs that already had a stray title column)."""
     OrderItem = apps.get_model("Buyer", "OrderItem")
     if schema_editor.connection.vendor == "sqlite":
         cols = _sqlite_orderitem_columns(schema_editor)
         if "author" not in cols:
-            schema_editor.add_field(
-                OrderItem,
-                OrderItem._meta.get_field("author"),
-            )
+            schema_editor.add_field(OrderItem, _denorm_char_field("author"))
         if "title" not in cols:
-            schema_editor.add_field(
-                OrderItem,
-                OrderItem._meta.get_field("title"),
-            )
+            schema_editor.add_field(OrderItem, _denorm_char_field("title"))
         return
-    schema_editor.add_field(OrderItem, OrderItem._meta.get_field("author"))
-    schema_editor.add_field(OrderItem, OrderItem._meta.get_field("title"))
+    schema_editor.add_field(OrderItem, _denorm_char_field("author"))
+    schema_editor.add_field(OrderItem, _denorm_char_field("title"))
 
 
 def noop_reverse(apps, schema_editor):

@@ -11,22 +11,21 @@ def _sqlite_orderitem_columns(schema_editor):
         return {row[1] for row in cursor.fetchall()}
 
 
+def _deposit_amount_cents_field():
+    field = models.PositiveIntegerField(default=0)
+    field.set_attributes_from_name("deposit_amount_cents")
+    return field
+
+
 def forward_add_deposit_amount_cents(apps, schema_editor):
     OrderItem = apps.get_model("Buyer", "OrderItem")
     if schema_editor.connection.vendor == "sqlite":
         cols = _sqlite_orderitem_columns(schema_editor)
         if "deposit_amount_cents" not in cols:
-            schema_editor.add_field(
-                OrderItem,
-                OrderItem._meta.get_field("deposit_amount_cents"),
-            )
+            schema_editor.add_field(OrderItem, _deposit_amount_cents_field())
         return
 
-    # Non-SQLite: attempt the normal add field.
-    schema_editor.add_field(
-        OrderItem,
-        OrderItem._meta.get_field("deposit_amount_cents"),
-    )
+    schema_editor.add_field(OrderItem, _deposit_amount_cents_field())
 
 
 def noop_reverse(apps, schema_editor):

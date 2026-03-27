@@ -9,20 +9,20 @@ def _sqlite_orderitem_columns(schema_editor):
         return {row[1] for row in cursor.fetchall()}
 
 
+def _deposit_required_field():
+    field = models.BooleanField(default=False)
+    field.set_attributes_from_name("deposit_required")
+    return field
+
+
 def forward_add_deposit_required(apps, schema_editor):
     OrderItem = apps.get_model("Buyer", "OrderItem")
     if schema_editor.connection.vendor == "sqlite":
         cols = _sqlite_orderitem_columns(schema_editor)
         if "deposit_required" not in cols:
-            schema_editor.add_field(
-                OrderItem,
-                OrderItem._meta.get_field("deposit_required"),
-            )
+            schema_editor.add_field(OrderItem, _deposit_required_field())
         return
-    schema_editor.add_field(
-        OrderItem,
-        OrderItem._meta.get_field("deposit_required"),
-    )
+    schema_editor.add_field(OrderItem, _deposit_required_field())
 
 
 def noop_reverse(apps, schema_editor):
