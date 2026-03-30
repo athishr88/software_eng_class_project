@@ -66,14 +66,6 @@
                     </form>
                 </div>
 
-                {% if user.is_authenticated and user.is_steward %}
-                    <div style="margin-top:8px;">
-                        <a class="link" href="{% url 'catalog' %}">
-                            Buy with Steward Discount
-                        </a>
-                    </div>
-                {% endif %}
-
                 {% if user.is_authenticated %}
                     <div class="card" style="margin-top:14px; padding:14px; border:1px solid var(--border); border-radius:var(--radius);">
                         <h4 style="margin:0 0 8px; font-size:14px; font-weight:800;">Report a problem</h4>

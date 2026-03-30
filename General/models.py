@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
@@ -40,6 +41,13 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     steward_verified = models.BooleanField(default=False)
     steward_city = models.CharField(max_length=120, blank=True, null=True)
+    steward_progress = models.PositiveSmallIntegerField(
+        default=0,
+        validators=[MaxValueValidator(100)],
+    )
+
+    # Set when a steward redeems a free book; next free after FREE_BOOK_COOLDOWN (see General.steward).
+    last_free_book_redeemed_at = models.DateTimeField(blank=True, null=True)
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -137,6 +145,23 @@ class Inventory(models.Model):
 
     def __str__(self):
         return f"{self.book.title} inventory"
+
+
+class StewardPool(models.Model):
+    """
+    Singleton (pk=1): balance from steward checkout contributions, used to fund steward free books.
+    Initial balance: $1,000,000.00.
+    """
+
+    pool_cents = models.PositiveBigIntegerField(default=100_000_000)
+
+    class Meta:
+        verbose_name = "Steward contribution pool"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super().save(*args, **kwargs)
+
 
 class StewardContribution(models.Model):
     steward_user = models.ForeignKey(User, on_delete=models.CASCADE)

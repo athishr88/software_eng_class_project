@@ -11,6 +11,45 @@
 
     </header>
 
+    {% if user.is_authenticated and user.is_steward %}
+    <section class="card" style="box-shadow:none; max-width:900px; margin-bottom:12px;">
+        <h2 style="margin:0 0 8px; font-size:16px; font-weight:800;">Steward free book</h2>
+        
+        {% if steward_free_book_eligible %}
+            <p style="margin:10px 0 0; font-size:14px; color:#166534; font-weight:800;">
+                You’re eligible for your next free book — choose a cart line after you add books to your cart.
+            </p>
+        {% else %}
+            <p style="margin:10px 0 0; font-size:14px; color:var(--text);">
+                Next free book unlocks
+                {% if steward_next_free_at %}
+                    after <strong>{{ steward_next_free_at }}</strong>.
+                {% else %}
+                    when your cooldown ends.
+                {% endif %}
+            </p>
+            <div
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="{{ steward_free_cooldown_progress }}"
+                aria-label="Cooldown progress toward next free book"
+                style="margin-top:10px; height:10px; border-radius:999px; background:#e5e7eb; overflow:hidden;"
+            >
+                <div style="height:100%; width:{{ steward_free_cooldown_progress }}%; background:var(--primary, #2563eb); border-radius:inherit;"></div>
+            </div>
+            <p style="margin:6px 0 0; font-size:12px; color:var(--muted);">Progress through your 30-day wait.</p>
+        {% endif %}
+        <div style="margin-top:12px;">
+            <a class="link" href="{% url 'cart' %}">Your cart</a>
+            &nbsp;·&nbsp;
+            <a class="link" href="{% url 'catalog' %}">Browse catalog</a>
+            &nbsp;·&nbsp;
+            <a class="link" href="{% url 'order_history' %}">Order history</a>
+        </div>
+    </section>
+    {% endif %}
+
     <section style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:10px;">
         <div class="card" style="box-shadow:none; padding:14px;">
             <h3 style="margin:0 0 8px; font-size:14px; font-weight:800;">Orders</h3>
@@ -45,6 +84,21 @@
             <p style="margin:0; font-size:14px;">
                 <strong style="color:var(--text);">Email:</strong> {{ user.email }}
             </p>
+            <p style="margin:8px 0 0; font-size:14px;">
+                <strong style="color:var(--text);">Steward progress:</strong>
+                {{ user.steward_progress|default:0 }} / 100
+            </p>
+            <div
+                class="dashboard-steward-bar"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="{{ user.steward_progress|default:0 }}"
+                aria-label="Steward progress"
+                style="margin-top:8px; height:10px; border-radius:999px; background:#e5e7eb; overflow:hidden;"
+            >
+                <div style="height:100%; width:{{ user.steward_progress|default:0 }}%; background:var(--primary, #2563eb); border-radius:inherit; transition:width 0.25s ease;"></div>
+            </div>
             <div style="margin-top:10px;">
                 <a class="link" href="{% url 'buyer_profile' %}">Profile Settings</a>
             </div>

@@ -139,7 +139,12 @@
                                     </div>
                                     <div style="text-align:right;">
                                         <div style="color:var(--muted); font-size:13px;">Subtotal</div>
-                                        <div style="font-weight:900;">${{ item.subtotal|floatformat:2 }}</div>
+                                        {% if item.is_steward_free %}
+                                            <div style="font-weight:900; color:#166534;">FREE</div>
+                                            <div style="font-size:12px; color:var(--muted);">List ${{ item.book.price_dollars|floatformat:2 }}</div>
+                                        {% else %}
+                                            <div style="font-weight:900;">${{ item.subtotal|floatformat:2 }}</div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% endfor %}
@@ -171,17 +176,57 @@
                     </div>
                     <div style="display:flex; justify-content:space-between; gap:10px;">
                         <span style="color:var(--muted);">Fees</span>
-                        <strong>${{ fees|floatformat:2 }}</strong>
+                        <strong>${{ fees|floatformat:2 }}{% if cart_has_steward_free %} <span style="font-size:11px; font-weight:700; color:#166534;">(waived)</span>{% endif %}</strong>
                     </div>
                     <div style="display:flex; justify-content:space-between; gap:10px;">
                         <span style="color:var(--muted);">Tax</span>
                         <strong>${{ tax|floatformat:2 }}</strong>
                     </div>
+                    <div style="display:grid; gap:8px; margin-top:4px;">
+                        <span style="font-size:13px; font-weight:700; color:var(--text); margin:0;">
+                            Steward contribution
+                        </span>
+                        {% if cart_has_steward_free %}
+                            <input type="hidden" name="steward_contribution" value="0">
+                            <div style="border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:15px; background:#f8fafc; color:var(--muted);">
+                                $0.00 <span style="font-size:13px;">(free book checkout)</span>
+                            </div>
+                            <p id="steward-points-hint" style="margin:0; font-size:13px; color:var(--muted); line-height:1.45;">
+                                No steward contribution or order fees this checkout—only tax on paid lines. Default <strong>$2.00</strong> contribution and fees apply on other orders.
+                            </p>
+                        {% else %}
+                        <input
+                            type="number"
+                            name="steward_contribution"
+                            id="steward-contribution-input"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value="{{ steward_contribution_value }}"
+                            inputmode="decimal"
+                            aria-describedby="steward-points-hint{% if steward_contribution_invalid %} steward-contribution-error{% endif %}"
+                            style="width:100%; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:15px; font-family:inherit;{% if steward_contribution_invalid %} box-shadow:0 0 0 2px #ef4444;{% endif %}"
+                        />
+                        <p id="steward-points-hint" style="margin:0; font-size:13px; color:var(--muted); line-height:1.45;">
+                            You’ll earn <strong id="steward-points-preview" style="color:var(--text);">{{ steward_points_preview }}</strong> steward progress points
+                            <span style="white-space:nowrap;">($1 = 10 points).</span>
+                        </p>
+                        {% if steward_contribution_invalid %}
+                            <p id="steward-contribution-error" style="margin:0; font-size:13px; color:#991b1b;">
+                                Enter a dollar amount from 0 to 100.
+                            </p>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    <div style="display:flex; justify-content:space-between; gap:10px; margin-top:4px;">
+                        <span style="color:var(--muted);">Steward (in total)</span>
+                        <strong>$<span id="steward-line-dollars">{{ steward_line_dollars_display }}</span></strong>
+                    </div>
                     <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
 
                     <div style="display:flex; justify-content:space-between; gap:10px;">
                         <span style="color:var(--muted)">Total</span>
-                        <strong>${{ final_total|floatformat:2 }}</strong>
+                        <strong>$<span id="checkout-total-display">{{ final_total|floatformat:2 }}</span></strong>
                     </div>
                 </div>
 
@@ -214,6 +259,36 @@
             </aside>
         </section>
     </form>
+    <script>
+        (function () {
+            var cartHasFree = {{ cart_has_steward_free|yesno:"true,false" }};
+            if (cartHasFree) return;
+            var input = document.getElementById("steward-contribution-input");
+            var ptsEl = document.getElementById("steward-points-preview");
+            var totalEl = document.getElementById("checkout-total-display");
+            var stewardDollarsEl = document.getElementById("steward-line-dollars");
+            var baseCents = {{ base_total_cents|default:0 }};
+            var maxStewardCents = 10000;
+
+            function sync() {
+                if (!input || !ptsEl || !totalEl || !stewardDollarsEl) return;
+                var raw = parseFloat(String(input.value).replace(",", "."));
+                if (Number.isNaN(raw) || raw < 0) raw = 0;
+                if (raw > 100) raw = 100;
+                var sc = Math.min(maxStewardCents, Math.round(raw * 100));
+                var pts = Math.floor(sc / 10);
+                ptsEl.textContent = String(pts);
+                stewardDollarsEl.textContent = (sc / 100).toFixed(2);
+                totalEl.textContent = ((baseCents + sc) / 100).toFixed(2);
+            }
+
+            if (input) {
+                input.addEventListener("input", sync);
+                input.addEventListener("change", sync);
+                sync();
+            }
+        })();
+    </script>
     <style>
         button.btn:disabled {
             opacity: 0.6;

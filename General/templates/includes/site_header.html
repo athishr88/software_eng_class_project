@@ -38,8 +38,13 @@
         <div class="site-header__center-spacer" aria-hidden="true"></div>
     {% endif %}
 
+    <div class="site-header__trailing">
+    
     <nav class="site-header__nav navlinks" aria-label="{% if hdr_portal == 'public' or hdr_portal == 'home' %}Public navigation{% elif hdr_portal == 'buyer' %}Buyer navigation{% elif hdr_portal == 'seller' %}Seller navigation{% elif hdr_portal == 'admin_dashboard' %}Admin app navigation{% else %}Staff navigation{% endif %}">
         {% if hdr_portal == 'public' %}
+            {% if user.is_authenticated and user.role == 'buyer' %}
+                <span class="site-header__buyer-greet">Hello {{ user.first_name }}</span>
+            {% endif %}
             <a class="link" href="{% url 'catalog' %}">Browse</a>
             <a class="link" href="{% url 'cart' %}">Cart</a>
             {% if user.is_authenticated %}
@@ -93,5 +98,6 @@
             </form>
         {% endif %}
     </nav>
+    </div>
 </header>
 {% endwith %}

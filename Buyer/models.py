@@ -21,6 +21,9 @@ class CartItem(models.Model):
 
     quantity = models.PositiveIntegerField()
     unit_price_cents = models.PositiveIntegerField()
+    is_steward_free = models.BooleanField(default=False)
+    # List price at time of free redemption (pool deduction); 0 if not a steward-free line.
+    steward_free_list_price_cents = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -95,6 +98,9 @@ class Order(models.Model):
     discount_cents = models.PositiveIntegerField(default=0)
     total_cents = models.PositiveIntegerField()
 
+    # Optional checkout add-on; $1 contribution → 10 steward progress points (stored on User).
+    steward_contribution_cents = models.PositiveIntegerField(default=0)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -122,6 +128,10 @@ class Order(models.Model):
     def subtotal_dollars(self):
         return self.subtotal_cents / 100.0
 
+    @property
+    def steward_contribution_dollars(self):
+        return self.steward_contribution_cents / 100.0
+
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="orderitem")
@@ -138,6 +148,7 @@ class OrderItem(models.Model):
     quantity = models.PositiveIntegerField()
     unit_price_cents = models.PositiveIntegerField()
     line_total_cents = models.PositiveIntegerField()
+    is_steward_free = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
-from .models import User, Address, Book, Inventory, StewardContribution, Notification
+from .models import User, Address, Book, Inventory, StewardContribution, StewardPool, Notification
 
 
 @admin.register(User)
@@ -16,7 +16,20 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {"fields": ("email", "password")}),
         ("Personal info", {"fields": ("first_name", "last_name", "phone")}),
-        ("Role & status", {"fields": ("role", "steward_verified", "steward_city", "is_active", "is_staff")}),
+        (
+            "Role & status",
+            {
+                "fields": (
+                    "role",
+                    "steward_verified",
+                    "steward_city",
+                    "steward_progress",
+                    "last_free_book_redeemed_at",
+                    "is_active",
+                    "is_staff",
+                )
+            },
+        ),
         ("Dates", {"fields": ("last_login", "created_at", "updated_at")}),
         ("Permissions", {"fields": ("groups", "user_permissions", "is_superuser")}),
     )
@@ -31,4 +44,15 @@ admin.site.register(Address)
 admin.site.register(Book)
 admin.site.register(Inventory)
 admin.site.register(StewardContribution)
+
+
+@admin.register(StewardPool)
+class StewardPoolAdmin(admin.ModelAdmin):
+    list_display = ("id", "pool_dollars")
+
+    @admin.display(description="Pool balance")
+    def pool_dollars(self, obj):
+        return f"${obj.pool_cents / 100:,.2f}"
+
+
 admin.site.register(Notification)

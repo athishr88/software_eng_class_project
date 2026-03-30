@@ -13,10 +13,13 @@
     "role": "admin",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": true,
     "created_at": "2026-03-12T00:04:18.812Z",
     "updated_at": "2026-03-12T00:04:18.812Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -26,7 +29,7 @@
   "pk": 2,
   "fields": {
     "password": "pbkdf2_sha256$1200000$Ndxrl4WYTbKUSWC3XM3kjC$2nGhNHG+ZT3lg7P8tpV6dKypz0qVoSKAU5SIT3iD5Fc=",
-    "last_login": "2026-03-12T00:06:50.541Z",
+    "last_login": "2026-03-26T05:44:37.642Z",
     "is_superuser": false,
     "email": "john.smith@gmail.com",
     "first_name": "John",
@@ -35,10 +38,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T00:05:49.352Z",
     "updated_at": "2026-03-12T00:05:49.352Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -57,10 +63,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Port Leeshire",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:19.226Z",
     "updated_at": "2026-03-12T01:00:19.226Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -79,10 +88,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Walkerfort",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:19.608Z",
     "updated_at": "2026-03-12T01:00:19.608Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -101,10 +113,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:19.990Z",
     "updated_at": "2026-03-12T01:00:19.990Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -123,10 +138,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:20.370Z",
     "updated_at": "2026-03-12T01:00:20.370Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -145,10 +163,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:20.748Z",
     "updated_at": "2026-03-12T01:00:20.748Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -167,10 +188,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Jeremiahview",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:21.129Z",
     "updated_at": "2026-03-12T01:00:21.129Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -189,10 +213,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Alexischester",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:21.511Z",
     "updated_at": "2026-03-12T01:00:21.511Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -211,10 +238,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:21.895Z",
     "updated_at": "2026-03-12T01:00:21.895Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -233,10 +263,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:22.276Z",
     "updated_at": "2026-03-12T01:00:22.276Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -255,10 +288,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "New Joshua",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:22.665Z",
     "updated_at": "2026-03-12T01:00:22.665Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -277,10 +313,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "South Robertport",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:23.067Z",
     "updated_at": "2026-03-12T01:00:23.067Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -299,10 +338,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:23.460Z",
     "updated_at": "2026-03-12T01:00:23.460Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -321,10 +363,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:23.849Z",
     "updated_at": "2026-03-12T01:00:23.849Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -343,10 +388,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "North Matthewhaven",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:24.229Z",
     "updated_at": "2026-03-12T01:00:24.229Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -365,10 +413,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:24.618Z",
     "updated_at": "2026-03-12T01:00:24.618Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -387,10 +438,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Duranbury",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:24.997Z",
     "updated_at": "2026-03-12T01:00:24.997Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -409,10 +463,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "South Alexis",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:25.378Z",
     "updated_at": "2026-03-12T01:00:25.378Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -431,10 +488,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Port Dawnville",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:25.757Z",
     "updated_at": "2026-03-12T01:00:25.757Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -453,10 +513,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Watsonburgh",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:26.138Z",
     "updated_at": "2026-03-12T01:00:26.138Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -475,10 +538,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Wardfurt",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:26.517Z",
     "updated_at": "2026-03-12T01:00:26.518Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -497,10 +563,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Weaverview",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:26.905Z",
     "updated_at": "2026-03-12T01:00:26.905Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -519,10 +588,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:27.290Z",
     "updated_at": "2026-03-12T01:00:27.290Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -541,10 +613,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "West Juliantown",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:27.678Z",
     "updated_at": "2026-03-12T01:00:27.678Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -563,10 +638,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:28.063Z",
     "updated_at": "2026-03-12T01:00:28.063Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -585,10 +663,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:28.449Z",
     "updated_at": "2026-03-12T01:00:28.449Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -607,10 +688,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "South Cheryl",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:28.830Z",
     "updated_at": "2026-03-12T01:00:28.830Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -629,10 +713,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "New Michelle",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:29.208Z",
     "updated_at": "2026-03-12T01:00:29.208Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -651,10 +738,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:29.589Z",
     "updated_at": "2026-03-12T01:00:29.589Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -673,10 +763,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "South Timothytown",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:29.973Z",
     "updated_at": "2026-03-12T01:00:29.973Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -695,10 +788,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:30.356Z",
     "updated_at": "2026-03-12T01:00:30.356Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -717,10 +813,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:30.741Z",
     "updated_at": "2026-03-12T01:00:30.741Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -739,10 +838,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "North Williammouth",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:31.126Z",
     "updated_at": "2026-03-12T01:00:31.126Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -761,10 +863,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:31.507Z",
     "updated_at": "2026-03-12T01:00:31.507Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -783,10 +888,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:31.891Z",
     "updated_at": "2026-03-12T01:00:31.891Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -805,10 +913,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:32.277Z",
     "updated_at": "2026-03-12T01:00:32.277Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -827,10 +938,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Parrishborough",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:32.658Z",
     "updated_at": "2026-03-12T01:00:32.658Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -849,10 +963,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "West Isaac",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:33.043Z",
     "updated_at": "2026-03-12T01:00:33.043Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -871,10 +988,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:33.424Z",
     "updated_at": "2026-03-12T01:00:33.424Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -893,10 +1013,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:33.813Z",
     "updated_at": "2026-03-12T01:00:33.813Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -915,10 +1038,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Port Steventown",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:34.195Z",
     "updated_at": "2026-03-12T01:00:34.195Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -937,10 +1063,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Mariamouth",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:34.582Z",
     "updated_at": "2026-03-12T01:00:34.582Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -959,10 +1088,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:34.966Z",
     "updated_at": "2026-03-12T01:00:34.966Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -981,10 +1113,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:35.348Z",
     "updated_at": "2026-03-12T01:00:35.348Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1003,10 +1138,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "East Alexburgh",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:35.732Z",
     "updated_at": "2026-03-12T01:00:35.732Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1025,10 +1163,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "West Joshuatown",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:36.118Z",
     "updated_at": "2026-03-12T01:00:36.118Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1047,10 +1188,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Hayesview",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:36.501Z",
     "updated_at": "2026-03-12T01:00:36.501Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1069,10 +1213,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:36.885Z",
     "updated_at": "2026-03-12T01:00:36.885Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1091,10 +1238,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Jamesborough",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:37.276Z",
     "updated_at": "2026-03-12T01:00:37.276Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1113,10 +1263,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:37.660Z",
     "updated_at": "2026-03-12T01:00:37.660Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1135,10 +1288,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "New Christian",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:38.086Z",
     "updated_at": "2026-03-12T01:00:38.086Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1148,7 +1304,7 @@
   "pk": 53,
   "fields": {
     "password": "pbkdf2_sha256$1200000$317dVCLKxqZiaVa1F2Asxu$S7a+9tktd9zGTlExhoZxsENadcQrEbeVJFlg9DYJ+sU=",
-    "last_login": null,
+    "last_login": "2026-03-26T05:44:37.692Z",
     "is_superuser": false,
     "email": "brendansmith@example.org",
     "first_name": "Diane",
@@ -1157,10 +1313,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:38.474Z",
     "updated_at": "2026-03-12T01:00:38.474Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1179,10 +1338,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Newmanborough",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:38.859Z",
     "updated_at": "2026-03-12T01:00:38.859Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1201,10 +1363,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Careyfort",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:39.247Z",
     "updated_at": "2026-03-12T01:00:39.247Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1223,10 +1388,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Juliefort",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:39.629Z",
     "updated_at": "2026-03-12T01:00:39.629Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1245,10 +1413,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "South Philipfort",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:40.018Z",
     "updated_at": "2026-03-12T01:00:40.018Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1267,10 +1438,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Ochoatown",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:40.405Z",
     "updated_at": "2026-03-12T01:00:40.405Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1289,10 +1463,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "North Cindyburgh",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:40.802Z",
     "updated_at": "2026-03-12T01:00:40.802Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1311,10 +1488,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:41.187Z",
     "updated_at": "2026-03-12T01:00:41.187Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1333,10 +1513,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Lake Lauren",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:41.585Z",
     "updated_at": "2026-03-12T01:00:41.585Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1355,10 +1538,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:41.965Z",
     "updated_at": "2026-03-12T01:00:41.965Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1377,10 +1563,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Watsonport",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:42.350Z",
     "updated_at": "2026-03-12T01:00:42.350Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1399,10 +1588,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "North Alexanderberg",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:42.736Z",
     "updated_at": "2026-03-12T01:00:42.736Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1421,10 +1613,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Amberport",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:43.134Z",
     "updated_at": "2026-03-12T01:00:43.134Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1443,10 +1638,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:43.523Z",
     "updated_at": "2026-03-12T01:00:43.523Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1465,10 +1663,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Howardside",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:43.909Z",
     "updated_at": "2026-03-12T01:00:43.909Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1487,10 +1688,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Lake Maryfurt",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:44.292Z",
     "updated_at": "2026-03-12T01:00:44.292Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1509,10 +1713,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "South Misty",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:44.681Z",
     "updated_at": "2026-03-12T01:00:44.681Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1531,10 +1738,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:45.071Z",
     "updated_at": "2026-03-12T01:00:45.071Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1553,10 +1763,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:45.455Z",
     "updated_at": "2026-03-12T01:00:45.455Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1575,10 +1788,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:45.846Z",
     "updated_at": "2026-03-12T01:00:45.846Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1597,10 +1813,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:46.233Z",
     "updated_at": "2026-03-12T01:00:46.233Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1619,10 +1838,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Huffmanton",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:46.616Z",
     "updated_at": "2026-03-12T01:00:46.616Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1641,10 +1863,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Mcneilview",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:47.010Z",
     "updated_at": "2026-03-12T01:00:47.010Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1663,10 +1888,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Patriciafort",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:47.391Z",
     "updated_at": "2026-03-12T01:00:47.391Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1685,10 +1913,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:47.790Z",
     "updated_at": "2026-03-12T01:00:47.790Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1707,10 +1938,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "West Justin",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:48.202Z",
     "updated_at": "2026-03-12T01:00:48.202Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1729,10 +1963,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Moralesside",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:48.592Z",
     "updated_at": "2026-03-12T01:00:48.592Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1751,10 +1988,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Mcgeeton",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:49Z",
     "updated_at": "2026-03-12T01:00:49Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1773,10 +2013,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:49.445Z",
     "updated_at": "2026-03-12T01:00:49.445Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1795,10 +2038,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:49.829Z",
     "updated_at": "2026-03-12T01:00:49.829Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1817,10 +2063,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Maysfort",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:50.221Z",
     "updated_at": "2026-03-12T01:00:50.222Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1839,10 +2088,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:50.614Z",
     "updated_at": "2026-03-12T01:00:50.614Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1861,10 +2113,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:50.997Z",
     "updated_at": "2026-03-12T01:00:50.997Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1883,10 +2138,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "North Troy",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:51.390Z",
     "updated_at": "2026-03-12T01:00:51.390Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1905,10 +2163,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Danielchester",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:51.773Z",
     "updated_at": "2026-03-12T01:00:51.773Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1927,10 +2188,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:52.161Z",
     "updated_at": "2026-03-12T01:00:52.161Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1949,10 +2213,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Garzamouth",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:52.550Z",
     "updated_at": "2026-03-12T01:00:52.550Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1971,10 +2238,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:52.933Z",
     "updated_at": "2026-03-12T01:00:52.933Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -1993,10 +2263,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:53.319Z",
     "updated_at": "2026-03-12T01:00:53.319Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2015,10 +2288,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Lake Brian",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:53.702Z",
     "updated_at": "2026-03-12T01:00:53.702Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2037,10 +2313,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "Pamhaven",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:54.090Z",
     "updated_at": "2026-03-12T01:00:54.090Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2059,10 +2338,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:54.465Z",
     "updated_at": "2026-03-12T01:00:54.465Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2081,10 +2363,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "West Jermainestad",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:54.852Z",
     "updated_at": "2026-03-12T01:00:54.852Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2103,10 +2388,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:55.233Z",
     "updated_at": "2026-03-12T01:00:55.233Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2125,10 +2413,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:55.614Z",
     "updated_at": "2026-03-12T01:00:55.614Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2147,10 +2438,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:55.994Z",
     "updated_at": "2026-03-12T01:00:55.994Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2169,10 +2463,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "East Heather",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:56.378Z",
     "updated_at": "2026-03-12T01:00:56.378Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2191,10 +2488,13 @@
     "role": "buyer",
     "steward_verified": true,
     "steward_city": "Nathanielstad",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:56.760Z",
     "updated_at": "2026-03-12T01:00:56.760Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2213,10 +2513,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": "South Caleb",
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:57.140Z",
     "updated_at": "2026-03-12T01:00:57.140Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2235,10 +2538,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:00:57.518Z",
     "updated_at": "2026-03-12T01:00:57.518Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2248,7 +2554,7 @@
   "pk": 103,
   "fields": {
     "password": "pbkdf2_sha256$1200000$lIu3XBkAn1yRhDXmLyV3sy$Bfz5x9jzmuETbDadDlg1Ihjh1EXjWmCp0zH3QWsVlJ4=",
-    "last_login": null,
+    "last_login": "2026-03-26T05:44:37.574Z",
     "is_superuser": false,
     "email": "marierivera@example.com",
     "first_name": "Kimberly",
@@ -2257,10 +2563,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:36.574Z",
     "updated_at": "2026-03-12T01:02:36.574Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2279,10 +2588,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:36.960Z",
     "updated_at": "2026-03-12T01:02:36.960Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2301,10 +2613,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:37.339Z",
     "updated_at": "2026-03-12T01:02:37.339Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2323,10 +2638,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:37.715Z",
     "updated_at": "2026-03-12T01:02:37.716Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2345,10 +2663,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:38.094Z",
     "updated_at": "2026-03-12T01:02:38.094Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2367,10 +2688,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:38.468Z",
     "updated_at": "2026-03-12T01:02:38.468Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2389,10 +2713,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:38.863Z",
     "updated_at": "2026-03-12T01:02:38.863Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2411,10 +2738,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:39.244Z",
     "updated_at": "2026-03-12T01:02:39.244Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2433,10 +2763,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:39.627Z",
     "updated_at": "2026-03-12T01:02:39.627Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2455,10 +2788,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:40.002Z",
     "updated_at": "2026-03-12T01:02:40.002Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2477,10 +2813,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:40.383Z",
     "updated_at": "2026-03-12T01:02:40.383Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2499,10 +2838,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:40.769Z",
     "updated_at": "2026-03-12T01:02:40.769Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2521,10 +2863,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:41.149Z",
     "updated_at": "2026-03-12T01:02:41.149Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2543,10 +2888,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:41.525Z",
     "updated_at": "2026-03-12T01:02:41.525Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2565,10 +2913,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:41.912Z",
     "updated_at": "2026-03-12T01:02:41.912Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2587,10 +2938,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:42.292Z",
     "updated_at": "2026-03-12T01:02:42.292Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2609,10 +2963,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:42.674Z",
     "updated_at": "2026-03-12T01:02:42.674Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2631,10 +2988,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:43.068Z",
     "updated_at": "2026-03-12T01:02:43.068Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2653,10 +3013,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:43.467Z",
     "updated_at": "2026-03-12T01:02:43.467Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2675,10 +3038,13 @@
     "role": "seller",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T01:02:43.848Z",
     "updated_at": "2026-03-12T01:02:43.848Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2697,10 +3063,13 @@
     "role": "buyer",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T20:03:48.380Z",
     "updated_at": "2026-03-12T20:03:48.380Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -2710,19 +3079,22 @@
   "pk": 124,
   "fields": {
     "password": "pbkdf2_sha256$1200000$FHy8Ugwo0tccbqVWnYR1uW$DE//EJueLGxrRJKDsy4MzJIH2z+a5FvNt54OHufmQxk=",
-    "last_login": "2026-03-12T20:09:56.614Z",
+    "last_login": "2026-03-30T05:19:17.196Z",
     "is_superuser": false,
     "email": "example.user@passiton.com",
     "first_name": "Example",
     "last_name": "User",
     "phone": null,
     "role": "buyer",
-    "steward_verified": false,
-    "steward_city": null,
+    "steward_verified": true,
+    "steward_city": "Starkville",
+    "steward_progress": 100,
+    "last_free_book_redeemed_at": "2026-03-30T06:36:35.052Z",
     "is_active": true,
     "is_staff": false,
     "created_at": "2026-03-12T20:05:16.806Z",
-    "updated_at": "2026-03-12T20:05:16.806Z",
+    "updated_at": "2026-03-30T06:36:35.052Z",
+    "store_credit_cents": 3800,
     "groups": [],
     "user_permissions": []
   }
@@ -2732,7 +3104,7 @@
   "pk": 125,
   "fields": {
     "password": "pbkdf2_sha256$1200000$9VY8cZqiqwVsDxgIdoTuuf$YPvFRIV6PdXVFQNnBB8oy2cKWe1zlVkprv0xF+GAiyw=",
-    "last_login": "2026-03-12T20:07:08.607Z",
+    "last_login": "2026-03-24T21:47:58.863Z",
     "is_superuser": true,
     "email": "superuser@superuser.com",
     "first_name": "Super",
@@ -2741,10 +3113,88 @@
     "role": "admin",
     "steward_verified": false,
     "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
     "is_active": true,
     "is_staff": true,
     "created_at": "2026-03-12T20:06:54.373Z",
     "updated_at": "2026-03-12T20:06:54.373Z",
+    "store_credit_cents": 0,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "General.user",
+  "pk": 126,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$1VaBEznftdFwCG3Nq3pTZB$007ZpGCPchIrD28AMi+7pYM7Z4r3P+URVJV2/O4gP70=",
+    "last_login": "2026-03-30T05:22:44.560Z",
+    "is_superuser": true,
+    "email": "admin@admin.com",
+    "first_name": "Admin",
+    "last_name": "Admin",
+    "phone": null,
+    "role": "admin",
+    "steward_verified": false,
+    "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
+    "is_active": true,
+    "is_staff": true,
+    "created_at": "2026-03-24T16:36:05.337Z",
+    "updated_at": "2026-03-24T16:36:05.337Z",
+    "store_credit_cents": 0,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "General.user",
+  "pk": 127,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$0z50djHmKwx1DI1IGXqh6W$x248GEjHEfjKHBcuJoHnd9xeryWBiqew8JDbQQ0sAI0=",
+    "last_login": "2026-03-26T03:15:25.151Z",
+    "is_superuser": false,
+    "email": "example.seller@passiton.com",
+    "first_name": "Example",
+    "last_name": "Seller",
+    "phone": null,
+    "role": "seller",
+    "steward_verified": false,
+    "steward_city": null,
+    "steward_progress": 0,
+    "last_free_book_redeemed_at": null,
+    "is_active": true,
+    "is_staff": false,
+    "created_at": "2026-03-26T03:01:07.253Z",
+    "updated_at": "2026-03-26T03:01:07.253Z",
+    "store_credit_cents": 0,
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "General.user",
+  "pk": 128,
+  "fields": {
+    "password": "pbkdf2_sha256$1200000$bTXNYegu9PFJSiiWFmjPLP$eWacWPp5NeYJuMPyL1DTf8pN5vChKAu7B7hoVkXIDxI=",
+    "last_login": "2026-03-30T06:46:11.495Z",
+    "is_superuser": false,
+    "email": "example.user2@passiton.com",
+    "first_name": "Example",
+    "last_name": "User2",
+    "phone": null,
+    "role": "buyer",
+    "steward_verified": true,
+    "steward_city": "Starkville",
+    "steward_progress": 100,
+    "last_free_book_redeemed_at": "2026-03-30T06:48:49.502Z",
+    "is_active": true,
+    "is_staff": false,
+    "created_at": "2026-03-30T06:46:11.418Z",
+    "updated_at": "2026-03-30T06:48:49.502Z",
+    "store_credit_cents": 0,
     "groups": [],
     "user_permissions": []
   }
@@ -5028,6 +5478,57 @@
   }
 },
 {
+  "model": "General.address",
+  "pk": 135,
+  "fields": {
+    "user": 124,
+    "label": "Home",
+    "line1": "123 example st",
+    "line2": "apt 4",
+    "city": "Imaginary",
+    "state": "IS",
+    "postal_code": "12334",
+    "country": "US",
+    "is_default": true,
+    "created_at": "2026-03-24T16:32:11.731Z",
+    "updated_at": "2026-03-24T16:32:26.917Z"
+  }
+},
+{
+  "model": "General.address",
+  "pk": 136,
+  "fields": {
+    "user": 124,
+    "label": "876325",
+    "line1": "sdhfklj",
+    "line2": "kjhdf",
+    "city": ";jhsdgkj",
+    "state": "jklhsdg",
+    "postal_code": "987698",
+    "country": "kjhdg",
+    "is_default": false,
+    "created_at": "2026-03-24T21:04:25.058Z",
+    "updated_at": "2026-03-24T21:04:25.058Z"
+  }
+},
+{
+  "model": "General.address",
+  "pk": 137,
+  "fields": {
+    "user": 128,
+    "label": "Home",
+    "line1": "214 Home st",
+    "line2": "Apt 4",
+    "city": "Starkville",
+    "state": "MS",
+    "postal_code": "39759",
+    "country": "US",
+    "is_default": true,
+    "created_at": "2026-03-30T06:47:15.644Z",
+    "updated_at": "2026-03-30T06:47:15.644Z"
+  }
+},
+{
   "model": "General.book",
   "pk": 1,
   "fields": {
@@ -5788,14 +6289,54 @@
   }
 },
 {
+  "model": "General.book",
+  "pk": 39,
+  "fields": {
+    "seller_user": 127,
+    "title": "Stoner",
+    "author": "John Williams",
+    "description": "A quiet novel about a university professor who lives an unremarkable life filled with small struggles, quiet love, and inner resilience. It explores purpose, disappointment, and dignity in ordinary existence, showing how even a simple life can hold deep meaning.",
+    "isbn": "978-1590171998",
+    "language": null,
+    "publisher": "Viking Press",
+    "publication_year": 1965,
+    "cover_image_url": null,
+    "condition": "New",
+    "base_price_cents": 2300,
+    "is_active": true,
+    "created_at": "2026-03-26T03:23:02.028Z",
+    "updated_at": "2026-03-26T03:23:02.028Z"
+  }
+},
+{
+  "model": "General.book",
+  "pk": 40,
+  "fields": {
+    "seller_user": 127,
+    "title": "The Wall",
+    "author": "Marlen Haushofer",
+    "description": "A woman becomes trapped behind an invisible wall that isolates her from the world. Forced to survive alone in nature, she reflects on solitude, routine, and survival. A quiet, haunting story about isolation, resilience, and the human connection to the natural world.",
+    "isbn": "978-0811221191",
+    "language": "English",
+    "publisher": "New Directions Publishing",
+    "publication_year": 1963,
+    "cover_image_url": null,
+    "condition": "New",
+    "base_price_cents": 1500,
+    "is_active": true,
+    "created_at": "2026-03-26T03:30:53.959Z",
+    "updated_at": "2026-03-26T03:30:53.959Z"
+  }
+},
+{
   "model": "General.inventory",
   "pk": 1,
   "fields": {
     "book": 1,
-    "quantity_available": 7,
+    "quantity_available": 6,
     "quantity_reserved": 0,
     "reorder_threshold": 5,
-    "updated_at": "2026-03-12T16:01:24.331Z"
+    "updated_at": "2026-03-30T06:48:49.502Z"
   }
 },
 {
@@ -5946,10 +6487,10 @@
   "pk": 15,
   "fields": {
     "book": 15,
-    "quantity_available": 10,
+    "quantity_available": 7,
     "quantity_reserved": 0,
     "reorder_threshold": 2,
-    "updated_at": "2026-03-12T16:01:24.445Z"
+    "updated_at": "2026-03-30T06:47:59.177Z"
   }
 },
 {
@@ -6012,10 +6553,10 @@
   "pk": 21,
   "fields": {
     "book": 21,
-    "quantity_available": 5,
+    "quantity_available": 4,
     "quantity_reserved": 0,
     "reorder_threshold": 5,
-    "updated_at": "2026-03-12T16:01:24.490Z"
+    "updated_at": "2026-03-30T05:58:44.129Z"
   }
 },
 {
@@ -6089,10 +6630,10 @@
   "pk": 28,
   "fields": {
     "book": 28,
-    "quantity_available": 11,
+    "quantity_available": 10,
     "quantity_reserved": 0,
     "reorder_threshold": 4,
-    "updated_at": "2026-03-12T16:01:24.542Z"
+    "updated_at": "2026-03-26T02:53:36.812Z"
   }
 },
 {
@@ -6144,10 +6685,10 @@
   "pk": 33,
   "fields": {
     "book": 33,
-    "quantity_available": 4,
+    "quantity_available": 3,
     "quantity_reserved": 0,
     "reorder_threshold": 2,
-    "updated_at": "2026-03-12T16:01:24.577Z"
+    "updated_at": "2026-03-30T06:36:35.051Z"
   }
 },
 {
@@ -6188,10 +6729,10 @@
   "pk": 37,
   "fields": {
     "book": 37,
-    "quantity_available": 11,
+    "quantity_available": 7,
     "quantity_reserved": 0,
     "reorder_threshold": 1,
-    "updated_at": "2026-03-12T16:01:24.606Z"
+    "updated_at": "2026-03-30T06:09:23.408Z"
   }
 },
 {
@@ -6203,6 +6744,35 @@
     "quantity_reserved": 0,
     "reorder_threshold": 3,
     "updated_at": "2026-03-12T16:01:24.614Z"
+  }
+},
+{
+  "model": "General.inventory",
+  "pk": 39,
+  "fields": {
+    "book": 39,
+    "quantity_available": 10,
+    "quantity_reserved": 0,
+    "reorder_threshold": 0,
+    "updated_at": "2026-03-26T05:46:00.456Z"
+  }
+},
+{
+  "model": "General.inventory",
+  "pk": 40,
+  "fields": {
+    "book": 40,
+    "quantity_available": 12,
+    "quantity_reserved": 0,
+    "reorder_threshold": 0,
+    "updated_at": "2026-03-26T05:48:21.054Z"
+  }
+},
+{
+  "model": "General.stewardpool",
+  "pk": 1,
+  "fields": {
+    "pool_cents": 99995776
   }
 },
 {
@@ -8566,6 +9136,26 @@
   }
 },
 {
+  "model": "Buyer.cart",
+  "pk": 102,
+  "fields": {
+    "user": 124,
+    "status": "active",
+    "created_at": "2026-03-24T16:55:34.692Z",
+    "updated_at": "2026-03-24T16:55:34.692Z"
+  }
+},
+{
+  "model": "Buyer.cart",
+  "pk": 103,
+  "fields": {
+    "user": 128,
+    "status": "active",
+    "created_at": "2026-03-30T06:46:27.154Z",
+    "updated_at": "2026-03-30T06:46:27.154Z"
+  }
+},
+{
   "model": "Buyer.cartitem",
   "pk": 1,
   "fields": {
@@ -8573,6 +9163,8 @@
     "book": 24,
     "quantity": 1,
     "unit_price_cents": 1897,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.322Z",
     "updated_at": "2026-03-12T16:15:47.322Z"
   }
@@ -8585,6 +9177,8 @@
     "book": 15,
     "quantity": 1,
     "unit_price_cents": 4001,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.334Z",
     "updated_at": "2026-03-12T16:15:47.334Z"
   }
@@ -8597,6 +9191,8 @@
     "book": 30,
     "quantity": 2,
     "unit_price_cents": 1188,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.341Z",
     "updated_at": "2026-03-12T16:15:47.341Z"
   }
@@ -8609,6 +9205,8 @@
     "book": 24,
     "quantity": 1,
     "unit_price_cents": 1897,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.348Z",
     "updated_at": "2026-03-12T16:15:47.348Z"
   }
@@ -8621,6 +9219,8 @@
     "book": 35,
     "quantity": 1,
     "unit_price_cents": 1268,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.355Z",
     "updated_at": "2026-03-12T16:15:47.355Z"
   }
@@ -8633,6 +9233,8 @@
     "book": 32,
     "quantity": 1,
     "unit_price_cents": 998,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.361Z",
     "updated_at": "2026-03-12T16:15:47.361Z"
   }
@@ -8645,6 +9247,8 @@
     "book": 23,
     "quantity": 2,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.367Z",
     "updated_at": "2026-03-12T16:15:47.367Z"
   }
@@ -8657,6 +9261,8 @@
     "book": 22,
     "quantity": 2,
     "unit_price_cents": 2016,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.374Z",
     "updated_at": "2026-03-12T16:15:47.374Z"
   }
@@ -8669,6 +9275,8 @@
     "book": 36,
     "quantity": 2,
     "unit_price_cents": 2977,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.380Z",
     "updated_at": "2026-03-12T16:15:47.380Z"
   }
@@ -8681,6 +9289,8 @@
     "book": 32,
     "quantity": 2,
     "unit_price_cents": 998,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.386Z",
     "updated_at": "2026-03-12T16:15:47.386Z"
   }
@@ -8693,6 +9303,8 @@
     "book": 8,
     "quantity": 1,
     "unit_price_cents": 2302,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.393Z",
     "updated_at": "2026-03-12T16:15:47.393Z"
   }
@@ -8705,6 +9317,8 @@
     "book": 11,
     "quantity": 1,
     "unit_price_cents": 4035,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.399Z",
     "updated_at": "2026-03-12T16:15:47.399Z"
   }
@@ -8717,6 +9331,8 @@
     "book": 38,
     "quantity": 1,
     "unit_price_cents": 2623,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.405Z",
     "updated_at": "2026-03-12T16:15:47.405Z"
   }
@@ -8729,6 +9345,8 @@
     "book": 21,
     "quantity": 1,
     "unit_price_cents": 1294,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.411Z",
     "updated_at": "2026-03-12T16:15:47.411Z"
   }
@@ -8741,6 +9359,8 @@
     "book": 2,
     "quantity": 2,
     "unit_price_cents": 3622,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.417Z",
     "updated_at": "2026-03-12T16:15:47.417Z"
   }
@@ -8753,6 +9373,8 @@
     "book": 36,
     "quantity": 2,
     "unit_price_cents": 2977,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.423Z",
     "updated_at": "2026-03-12T16:15:47.423Z"
   }
@@ -8765,6 +9387,8 @@
     "book": 5,
     "quantity": 2,
     "unit_price_cents": 1131,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.429Z",
     "updated_at": "2026-03-12T16:15:47.429Z"
   }
@@ -8777,6 +9401,8 @@
     "book": 23,
     "quantity": 1,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.436Z",
     "updated_at": "2026-03-12T16:15:47.436Z"
   }
@@ -8789,6 +9415,8 @@
     "book": 28,
     "quantity": 1,
     "unit_price_cents": 1791,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.442Z",
     "updated_at": "2026-03-12T16:15:47.442Z"
   }
@@ -8801,6 +9429,8 @@
     "book": 26,
     "quantity": 2,
     "unit_price_cents": 2100,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.447Z",
     "updated_at": "2026-03-12T16:15:47.447Z"
   }
@@ -8813,6 +9443,8 @@
     "book": 23,
     "quantity": 2,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.453Z",
     "updated_at": "2026-03-12T16:15:47.453Z"
   }
@@ -8825,6 +9457,8 @@
     "book": 22,
     "quantity": 2,
     "unit_price_cents": 2016,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.460Z",
     "updated_at": "2026-03-12T16:15:47.460Z"
   }
@@ -8837,6 +9471,8 @@
     "book": 10,
     "quantity": 1,
     "unit_price_cents": 2030,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.465Z",
     "updated_at": "2026-03-12T16:15:47.465Z"
   }
@@ -8849,6 +9485,8 @@
     "book": 12,
     "quantity": 1,
     "unit_price_cents": 999,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.471Z",
     "updated_at": "2026-03-12T16:15:47.471Z"
   }
@@ -8861,6 +9499,8 @@
     "book": 35,
     "quantity": 2,
     "unit_price_cents": 1268,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.477Z",
     "updated_at": "2026-03-12T16:15:47.477Z"
   }
@@ -8873,6 +9513,8 @@
     "book": 14,
     "quantity": 2,
     "unit_price_cents": 4142,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.483Z",
     "updated_at": "2026-03-12T16:15:47.483Z"
   }
@@ -8885,6 +9527,8 @@
     "book": 34,
     "quantity": 1,
     "unit_price_cents": 1829,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.488Z",
     "updated_at": "2026-03-12T16:15:47.489Z"
   }
@@ -8897,6 +9541,8 @@
     "book": 3,
     "quantity": 1,
     "unit_price_cents": 2651,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.494Z",
     "updated_at": "2026-03-12T16:15:47.494Z"
   }
@@ -8909,6 +9555,8 @@
     "book": 23,
     "quantity": 1,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.500Z",
     "updated_at": "2026-03-12T16:15:47.500Z"
   }
@@ -8921,6 +9569,8 @@
     "book": 24,
     "quantity": 1,
     "unit_price_cents": 1897,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.506Z",
     "updated_at": "2026-03-12T16:15:47.506Z"
   }
@@ -8933,6 +9583,8 @@
     "book": 35,
     "quantity": 1,
     "unit_price_cents": 1268,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.512Z",
     "updated_at": "2026-03-12T16:15:47.512Z"
   }
@@ -8945,6 +9597,8 @@
     "book": 37,
     "quantity": 2,
     "unit_price_cents": 1974,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.518Z",
     "updated_at": "2026-03-12T16:15:47.518Z"
   }
@@ -8957,6 +9611,8 @@
     "book": 32,
     "quantity": 2,
     "unit_price_cents": 998,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.538Z",
     "updated_at": "2026-03-12T16:15:47.538Z"
   }
@@ -8969,6 +9625,8 @@
     "book": 2,
     "quantity": 1,
     "unit_price_cents": 3622,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.545Z",
     "updated_at": "2026-03-12T16:15:47.545Z"
   }
@@ -8981,6 +9639,8 @@
     "book": 34,
     "quantity": 2,
     "unit_price_cents": 1829,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.552Z",
     "updated_at": "2026-03-12T16:15:47.552Z"
   }
@@ -8993,6 +9653,8 @@
     "book": 13,
     "quantity": 1,
     "unit_price_cents": 3494,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.559Z",
     "updated_at": "2026-03-12T16:15:47.559Z"
   }
@@ -9005,6 +9667,8 @@
     "book": 9,
     "quantity": 1,
     "unit_price_cents": 2474,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.565Z",
     "updated_at": "2026-03-12T16:15:47.565Z"
   }
@@ -9017,6 +9681,8 @@
     "book": 37,
     "quantity": 2,
     "unit_price_cents": 1974,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.572Z",
     "updated_at": "2026-03-12T16:15:47.572Z"
   }
@@ -9029,6 +9695,8 @@
     "book": 26,
     "quantity": 2,
     "unit_price_cents": 2100,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.578Z",
     "updated_at": "2026-03-12T16:15:47.578Z"
   }
@@ -9041,6 +9709,8 @@
     "book": 6,
     "quantity": 2,
     "unit_price_cents": 1638,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.584Z",
     "updated_at": "2026-03-12T16:15:47.584Z"
   }
@@ -9053,6 +9723,8 @@
     "book": 35,
     "quantity": 1,
     "unit_price_cents": 1268,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.590Z",
     "updated_at": "2026-03-12T16:15:47.590Z"
   }
@@ -9065,6 +9737,8 @@
     "book": 9,
     "quantity": 1,
     "unit_price_cents": 2474,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.596Z",
     "updated_at": "2026-03-12T16:15:47.596Z"
   }
@@ -9077,6 +9751,8 @@
     "book": 2,
     "quantity": 2,
     "unit_price_cents": 3622,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.602Z",
     "updated_at": "2026-03-12T16:15:47.602Z"
   }
@@ -9089,6 +9765,8 @@
     "book": 27,
     "quantity": 1,
     "unit_price_cents": 1702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.609Z",
     "updated_at": "2026-03-12T16:15:47.609Z"
   }
@@ -9101,6 +9779,8 @@
     "book": 30,
     "quantity": 1,
     "unit_price_cents": 1188,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.614Z",
     "updated_at": "2026-03-12T16:15:47.614Z"
   }
@@ -9113,6 +9793,8 @@
     "book": 31,
     "quantity": 2,
     "unit_price_cents": 784,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.625Z",
     "updated_at": "2026-03-12T16:15:47.625Z"
   }
@@ -9125,6 +9807,8 @@
     "book": 5,
     "quantity": 2,
     "unit_price_cents": 1131,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.631Z",
     "updated_at": "2026-03-12T16:15:47.631Z"
   }
@@ -9137,6 +9821,8 @@
     "book": 14,
     "quantity": 2,
     "unit_price_cents": 4142,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.638Z",
     "updated_at": "2026-03-12T16:15:47.638Z"
   }
@@ -9149,6 +9835,8 @@
     "book": 25,
     "quantity": 2,
     "unit_price_cents": 2017,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.645Z",
     "updated_at": "2026-03-12T16:15:47.645Z"
   }
@@ -9161,6 +9849,8 @@
     "book": 28,
     "quantity": 1,
     "unit_price_cents": 1791,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.652Z",
     "updated_at": "2026-03-12T16:15:47.652Z"
   }
@@ -9173,6 +9863,8 @@
     "book": 32,
     "quantity": 1,
     "unit_price_cents": 998,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.658Z",
     "updated_at": "2026-03-12T16:15:47.658Z"
   }
@@ -9185,6 +9877,8 @@
     "book": 36,
     "quantity": 1,
     "unit_price_cents": 2977,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.664Z",
     "updated_at": "2026-03-12T16:15:47.664Z"
   }
@@ -9197,6 +9891,8 @@
     "book": 20,
     "quantity": 1,
     "unit_price_cents": 1614,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.671Z",
     "updated_at": "2026-03-12T16:15:47.671Z"
   }
@@ -9209,6 +9905,8 @@
     "book": 13,
     "quantity": 1,
     "unit_price_cents": 3494,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.677Z",
     "updated_at": "2026-03-12T16:15:47.677Z"
   }
@@ -9221,6 +9919,8 @@
     "book": 23,
     "quantity": 1,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.684Z",
     "updated_at": "2026-03-12T16:15:47.684Z"
   }
@@ -9233,6 +9933,8 @@
     "book": 9,
     "quantity": 2,
     "unit_price_cents": 2474,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.690Z",
     "updated_at": "2026-03-12T16:15:47.690Z"
   }
@@ -9245,6 +9947,8 @@
     "book": 2,
     "quantity": 2,
     "unit_price_cents": 3622,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.696Z",
     "updated_at": "2026-03-12T16:15:47.696Z"
   }
@@ -9257,6 +9961,8 @@
     "book": 28,
     "quantity": 2,
     "unit_price_cents": 1791,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.703Z",
     "updated_at": "2026-03-12T16:15:47.703Z"
   }
@@ -9269,6 +9975,8 @@
     "book": 19,
     "quantity": 2,
     "unit_price_cents": 2202,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.710Z",
     "updated_at": "2026-03-12T16:15:47.710Z"
   }
@@ -9281,6 +9989,8 @@
     "book": 1,
     "quantity": 2,
     "unit_price_cents": 3702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.717Z",
     "updated_at": "2026-03-12T16:15:47.717Z"
   }
@@ -9293,6 +10003,8 @@
     "book": 35,
     "quantity": 1,
     "unit_price_cents": 1268,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.724Z",
     "updated_at": "2026-03-12T16:15:47.724Z"
   }
@@ -9305,6 +10017,8 @@
     "book": 20,
     "quantity": 2,
     "unit_price_cents": 1614,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.731Z",
     "updated_at": "2026-03-12T16:15:47.731Z"
   }
@@ -9317,6 +10031,8 @@
     "book": 27,
     "quantity": 1,
     "unit_price_cents": 1702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.737Z",
     "updated_at": "2026-03-12T16:15:47.737Z"
   }
@@ -9329,6 +10045,8 @@
     "book": 22,
     "quantity": 2,
     "unit_price_cents": 2016,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.744Z",
     "updated_at": "2026-03-12T16:15:47.744Z"
   }
@@ -9341,6 +10059,8 @@
     "book": 20,
     "quantity": 1,
     "unit_price_cents": 1614,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.750Z",
     "updated_at": "2026-03-12T16:15:47.750Z"
   }
@@ -9353,6 +10073,8 @@
     "book": 31,
     "quantity": 2,
     "unit_price_cents": 784,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.756Z",
     "updated_at": "2026-03-12T16:15:47.756Z"
   }
@@ -9365,6 +10087,8 @@
     "book": 35,
     "quantity": 1,
     "unit_price_cents": 1268,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.763Z",
     "updated_at": "2026-03-12T16:15:47.763Z"
   }
@@ -9377,6 +10101,8 @@
     "book": 1,
     "quantity": 1,
     "unit_price_cents": 3702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.769Z",
     "updated_at": "2026-03-12T16:15:47.769Z"
   }
@@ -9389,6 +10115,8 @@
     "book": 2,
     "quantity": 1,
     "unit_price_cents": 3622,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.776Z",
     "updated_at": "2026-03-12T16:15:47.776Z"
   }
@@ -9401,6 +10129,8 @@
     "book": 6,
     "quantity": 2,
     "unit_price_cents": 1638,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.782Z",
     "updated_at": "2026-03-12T16:15:47.782Z"
   }
@@ -9413,6 +10143,8 @@
     "book": 18,
     "quantity": 2,
     "unit_price_cents": 3576,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.788Z",
     "updated_at": "2026-03-12T16:15:47.788Z"
   }
@@ -9425,6 +10157,8 @@
     "book": 22,
     "quantity": 2,
     "unit_price_cents": 2016,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.794Z",
     "updated_at": "2026-03-12T16:15:47.794Z"
   }
@@ -9437,6 +10171,8 @@
     "book": 37,
     "quantity": 1,
     "unit_price_cents": 1974,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.801Z",
     "updated_at": "2026-03-12T16:15:47.801Z"
   }
@@ -9449,6 +10185,8 @@
     "book": 34,
     "quantity": 1,
     "unit_price_cents": 1829,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.807Z",
     "updated_at": "2026-03-12T16:15:47.807Z"
   }
@@ -9461,6 +10199,8 @@
     "book": 8,
     "quantity": 2,
     "unit_price_cents": 2302,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.813Z",
     "updated_at": "2026-03-12T16:15:47.813Z"
   }
@@ -9473,6 +10213,8 @@
     "book": 31,
     "quantity": 1,
     "unit_price_cents": 784,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.819Z",
     "updated_at": "2026-03-12T16:15:47.819Z"
   }
@@ -9485,6 +10227,8 @@
     "book": 20,
     "quantity": 2,
     "unit_price_cents": 1614,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.825Z",
     "updated_at": "2026-03-12T16:15:47.825Z"
   }
@@ -9497,6 +10241,8 @@
     "book": 3,
     "quantity": 1,
     "unit_price_cents": 2651,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.831Z",
     "updated_at": "2026-03-12T16:15:47.831Z"
   }
@@ -9509,6 +10255,8 @@
     "book": 34,
     "quantity": 1,
     "unit_price_cents": 1829,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.837Z",
     "updated_at": "2026-03-12T16:15:47.837Z"
   }
@@ -9521,6 +10269,8 @@
     "book": 7,
     "quantity": 2,
     "unit_price_cents": 2916,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.844Z",
     "updated_at": "2026-03-12T16:15:47.844Z"
   }
@@ -9533,6 +10283,8 @@
     "book": 24,
     "quantity": 2,
     "unit_price_cents": 1897,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.850Z",
     "updated_at": "2026-03-12T16:15:47.850Z"
   }
@@ -9545,6 +10297,8 @@
     "book": 3,
     "quantity": 1,
     "unit_price_cents": 2651,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.856Z",
     "updated_at": "2026-03-12T16:15:47.856Z"
   }
@@ -9557,6 +10311,8 @@
     "book": 27,
     "quantity": 1,
     "unit_price_cents": 1702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.861Z",
     "updated_at": "2026-03-12T16:15:47.861Z"
   }
@@ -9569,6 +10325,8 @@
     "book": 36,
     "quantity": 1,
     "unit_price_cents": 2977,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.867Z",
     "updated_at": "2026-03-12T16:15:47.867Z"
   }
@@ -9581,6 +10339,8 @@
     "book": 2,
     "quantity": 2,
     "unit_price_cents": 3622,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.873Z",
     "updated_at": "2026-03-12T16:15:47.873Z"
   }
@@ -9593,6 +10353,8 @@
     "book": 11,
     "quantity": 2,
     "unit_price_cents": 4035,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.880Z",
     "updated_at": "2026-03-12T16:15:47.880Z"
   }
@@ -9605,6 +10367,8 @@
     "book": 12,
     "quantity": 1,
     "unit_price_cents": 999,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.886Z",
     "updated_at": "2026-03-12T16:15:47.886Z"
   }
@@ -9617,6 +10381,8 @@
     "book": 23,
     "quantity": 1,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.892Z",
     "updated_at": "2026-03-12T16:15:47.892Z"
   }
@@ -9629,6 +10395,8 @@
     "book": 17,
     "quantity": 2,
     "unit_price_cents": 1217,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.898Z",
     "updated_at": "2026-03-12T16:15:47.898Z"
   }
@@ -9641,6 +10409,8 @@
     "book": 18,
     "quantity": 1,
     "unit_price_cents": 3576,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.904Z",
     "updated_at": "2026-03-12T16:15:47.904Z"
   }
@@ -9653,6 +10423,8 @@
     "book": 1,
     "quantity": 2,
     "unit_price_cents": 3702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.910Z",
     "updated_at": "2026-03-12T16:15:47.911Z"
   }
@@ -9665,6 +10437,8 @@
     "book": 33,
     "quantity": 2,
     "unit_price_cents": 1522,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.917Z",
     "updated_at": "2026-03-12T16:15:47.917Z"
   }
@@ -9677,6 +10451,8 @@
     "book": 25,
     "quantity": 1,
     "unit_price_cents": 2017,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.923Z",
     "updated_at": "2026-03-12T16:15:47.923Z"
   }
@@ -9689,6 +10465,8 @@
     "book": 8,
     "quantity": 1,
     "unit_price_cents": 2302,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.930Z",
     "updated_at": "2026-03-12T16:15:47.930Z"
   }
@@ -9701,6 +10479,8 @@
     "book": 17,
     "quantity": 2,
     "unit_price_cents": 1217,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.938Z",
     "updated_at": "2026-03-12T16:15:47.938Z"
   }
@@ -9713,6 +10493,8 @@
     "book": 29,
     "quantity": 1,
     "unit_price_cents": 1926,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.945Z",
     "updated_at": "2026-03-12T16:15:47.945Z"
   }
@@ -9725,6 +10507,8 @@
     "book": 12,
     "quantity": 1,
     "unit_price_cents": 999,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.951Z",
     "updated_at": "2026-03-12T16:15:47.951Z"
   }
@@ -9737,6 +10521,8 @@
     "book": 6,
     "quantity": 1,
     "unit_price_cents": 1638,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.957Z",
     "updated_at": "2026-03-12T16:15:47.957Z"
   }
@@ -9749,6 +10535,8 @@
     "book": 34,
     "quantity": 1,
     "unit_price_cents": 1829,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.964Z",
     "updated_at": "2026-03-12T16:15:47.964Z"
   }
@@ -9761,6 +10549,8 @@
     "book": 32,
     "quantity": 2,
     "unit_price_cents": 998,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.970Z",
     "updated_at": "2026-03-12T16:15:47.970Z"
   }
@@ -9773,6 +10563,8 @@
     "book": 22,
     "quantity": 1,
     "unit_price_cents": 2016,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.977Z",
     "updated_at": "2026-03-12T16:15:47.977Z"
   }
@@ -9785,6 +10577,8 @@
     "book": 20,
     "quantity": 1,
     "unit_price_cents": 1614,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.983Z",
     "updated_at": "2026-03-12T16:15:47.983Z"
   }
@@ -9797,6 +10591,8 @@
     "book": 19,
     "quantity": 1,
     "unit_price_cents": 2202,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.990Z",
     "updated_at": "2026-03-12T16:15:47.990Z"
   }
@@ -9809,6 +10605,8 @@
     "book": 18,
     "quantity": 1,
     "unit_price_cents": 3576,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:47.996Z",
     "updated_at": "2026-03-12T16:15:47.996Z"
   }
@@ -9821,6 +10619,8 @@
     "book": 5,
     "quantity": 1,
     "unit_price_cents": 1131,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.003Z",
     "updated_at": "2026-03-12T16:15:48.003Z"
   }
@@ -9833,6 +10633,8 @@
     "book": 36,
     "quantity": 2,
     "unit_price_cents": 2977,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.009Z",
     "updated_at": "2026-03-12T16:15:48.009Z"
   }
@@ -9845,6 +10647,8 @@
     "book": 3,
     "quantity": 1,
     "unit_price_cents": 2651,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.015Z",
     "updated_at": "2026-03-12T16:15:48.015Z"
   }
@@ -9857,6 +10661,8 @@
     "book": 2,
     "quantity": 2,
     "unit_price_cents": 3622,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.022Z",
     "updated_at": "2026-03-12T16:15:48.022Z"
   }
@@ -9869,6 +10675,8 @@
     "book": 32,
     "quantity": 1,
     "unit_price_cents": 998,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.029Z",
     "updated_at": "2026-03-12T16:15:48.029Z"
   }
@@ -9881,6 +10689,8 @@
     "book": 5,
     "quantity": 2,
     "unit_price_cents": 1131,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.035Z",
     "updated_at": "2026-03-12T16:15:48.035Z"
   }
@@ -9893,6 +10703,8 @@
     "book": 16,
     "quantity": 1,
     "unit_price_cents": 4283,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.043Z",
     "updated_at": "2026-03-12T16:15:48.043Z"
   }
@@ -9905,6 +10717,8 @@
     "book": 11,
     "quantity": 1,
     "unit_price_cents": 4035,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.049Z",
     "updated_at": "2026-03-12T16:15:48.049Z"
   }
@@ -9917,6 +10731,8 @@
     "book": 7,
     "quantity": 2,
     "unit_price_cents": 2916,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.055Z",
     "updated_at": "2026-03-12T16:15:48.055Z"
   }
@@ -9929,6 +10745,8 @@
     "book": 8,
     "quantity": 1,
     "unit_price_cents": 2302,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.062Z",
     "updated_at": "2026-03-12T16:15:48.062Z"
   }
@@ -9941,6 +10759,8 @@
     "book": 27,
     "quantity": 1,
     "unit_price_cents": 1702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.068Z",
     "updated_at": "2026-03-12T16:15:48.068Z"
   }
@@ -9953,6 +10773,8 @@
     "book": 31,
     "quantity": 1,
     "unit_price_cents": 784,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.074Z",
     "updated_at": "2026-03-12T16:15:48.074Z"
   }
@@ -9965,6 +10787,8 @@
     "book": 9,
     "quantity": 1,
     "unit_price_cents": 2474,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.080Z",
     "updated_at": "2026-03-12T16:15:48.080Z"
   }
@@ -9977,6 +10801,8 @@
     "book": 36,
     "quantity": 1,
     "unit_price_cents": 2977,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.087Z",
     "updated_at": "2026-03-12T16:15:48.087Z"
   }
@@ -9989,6 +10815,8 @@
     "book": 31,
     "quantity": 2,
     "unit_price_cents": 784,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.093Z",
     "updated_at": "2026-03-12T16:15:48.093Z"
   }
@@ -10001,6 +10829,8 @@
     "book": 5,
     "quantity": 1,
     "unit_price_cents": 1131,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.100Z",
     "updated_at": "2026-03-12T16:15:48.100Z"
   }
@@ -10013,6 +10843,8 @@
     "book": 7,
     "quantity": 1,
     "unit_price_cents": 2916,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.107Z",
     "updated_at": "2026-03-12T16:15:48.107Z"
   }
@@ -10025,6 +10857,8 @@
     "book": 10,
     "quantity": 2,
     "unit_price_cents": 2030,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.113Z",
     "updated_at": "2026-03-12T16:15:48.113Z"
   }
@@ -10037,6 +10871,8 @@
     "book": 35,
     "quantity": 1,
     "unit_price_cents": 1268,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.120Z",
     "updated_at": "2026-03-12T16:15:48.120Z"
   }
@@ -10049,6 +10885,8 @@
     "book": 26,
     "quantity": 2,
     "unit_price_cents": 2100,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.126Z",
     "updated_at": "2026-03-12T16:15:48.126Z"
   }
@@ -10061,6 +10899,8 @@
     "book": 23,
     "quantity": 1,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.133Z",
     "updated_at": "2026-03-12T16:15:48.133Z"
   }
@@ -10073,6 +10913,8 @@
     "book": 27,
     "quantity": 2,
     "unit_price_cents": 1702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.140Z",
     "updated_at": "2026-03-12T16:15:48.140Z"
   }
@@ -10085,6 +10927,8 @@
     "book": 37,
     "quantity": 2,
     "unit_price_cents": 1974,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.146Z",
     "updated_at": "2026-03-12T16:15:48.146Z"
   }
@@ -10097,6 +10941,8 @@
     "book": 12,
     "quantity": 2,
     "unit_price_cents": 999,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.153Z",
     "updated_at": "2026-03-12T16:15:48.153Z"
   }
@@ -10109,6 +10955,8 @@
     "book": 27,
     "quantity": 2,
     "unit_price_cents": 1702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.160Z",
     "updated_at": "2026-03-12T16:15:48.160Z"
   }
@@ -10121,6 +10969,8 @@
     "book": 20,
     "quantity": 1,
     "unit_price_cents": 1614,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.167Z",
     "updated_at": "2026-03-12T16:15:48.167Z"
   }
@@ -10133,6 +10983,8 @@
     "book": 11,
     "quantity": 1,
     "unit_price_cents": 4035,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.174Z",
     "updated_at": "2026-03-12T16:15:48.174Z"
   }
@@ -10145,6 +10997,8 @@
     "book": 23,
     "quantity": 1,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.180Z",
     "updated_at": "2026-03-12T16:15:48.180Z"
   }
@@ -10157,6 +11011,8 @@
     "book": 37,
     "quantity": 2,
     "unit_price_cents": 1974,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.188Z",
     "updated_at": "2026-03-12T16:15:48.188Z"
   }
@@ -10169,6 +11025,8 @@
     "book": 31,
     "quantity": 1,
     "unit_price_cents": 784,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.194Z",
     "updated_at": "2026-03-12T16:15:48.194Z"
   }
@@ -10181,6 +11039,8 @@
     "book": 1,
     "quantity": 2,
     "unit_price_cents": 3702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.201Z",
     "updated_at": "2026-03-12T16:15:48.201Z"
   }
@@ -10193,6 +11053,8 @@
     "book": 30,
     "quantity": 1,
     "unit_price_cents": 1188,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.207Z",
     "updated_at": "2026-03-12T16:15:48.207Z"
   }
@@ -10205,6 +11067,8 @@
     "book": 21,
     "quantity": 2,
     "unit_price_cents": 1294,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.213Z",
     "updated_at": "2026-03-12T16:15:48.213Z"
   }
@@ -10217,6 +11081,8 @@
     "book": 26,
     "quantity": 2,
     "unit_price_cents": 2100,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.220Z",
     "updated_at": "2026-03-12T16:15:48.220Z"
   }
@@ -10229,6 +11095,8 @@
     "book": 12,
     "quantity": 1,
     "unit_price_cents": 999,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.226Z",
     "updated_at": "2026-03-12T16:15:48.226Z"
   }
@@ -10241,6 +11109,8 @@
     "book": 26,
     "quantity": 1,
     "unit_price_cents": 2100,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.232Z",
     "updated_at": "2026-03-12T16:15:48.232Z"
   }
@@ -10253,6 +11123,8 @@
     "book": 3,
     "quantity": 2,
     "unit_price_cents": 2651,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.239Z",
     "updated_at": "2026-03-12T16:15:48.239Z"
   }
@@ -10265,6 +11137,8 @@
     "book": 17,
     "quantity": 2,
     "unit_price_cents": 1217,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.245Z",
     "updated_at": "2026-03-12T16:15:48.245Z"
   }
@@ -10277,6 +11151,8 @@
     "book": 23,
     "quantity": 1,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.251Z",
     "updated_at": "2026-03-12T16:15:48.251Z"
   }
@@ -10289,6 +11165,8 @@
     "book": 37,
     "quantity": 2,
     "unit_price_cents": 1974,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.257Z",
     "updated_at": "2026-03-12T16:15:48.257Z"
   }
@@ -10301,6 +11179,8 @@
     "book": 8,
     "quantity": 2,
     "unit_price_cents": 2302,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.263Z",
     "updated_at": "2026-03-12T16:15:48.263Z"
   }
@@ -10313,6 +11193,8 @@
     "book": 3,
     "quantity": 2,
     "unit_price_cents": 2651,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.269Z",
     "updated_at": "2026-03-12T16:15:48.269Z"
   }
@@ -10325,6 +11207,8 @@
     "book": 31,
     "quantity": 2,
     "unit_price_cents": 784,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.275Z",
     "updated_at": "2026-03-12T16:15:48.275Z"
   }
@@ -10337,6 +11221,8 @@
     "book": 34,
     "quantity": 2,
     "unit_price_cents": 1829,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.281Z",
     "updated_at": "2026-03-12T16:15:48.281Z"
   }
@@ -10349,6 +11235,8 @@
     "book": 16,
     "quantity": 2,
     "unit_price_cents": 4283,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.287Z",
     "updated_at": "2026-03-12T16:15:48.287Z"
   }
@@ -10361,6 +11249,8 @@
     "book": 37,
     "quantity": 1,
     "unit_price_cents": 1974,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.293Z",
     "updated_at": "2026-03-12T16:15:48.293Z"
   }
@@ -10373,6 +11263,8 @@
     "book": 38,
     "quantity": 1,
     "unit_price_cents": 2623,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.299Z",
     "updated_at": "2026-03-12T16:15:48.299Z"
   }
@@ -10385,6 +11277,8 @@
     "book": 17,
     "quantity": 1,
     "unit_price_cents": 1217,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.305Z",
     "updated_at": "2026-03-12T16:15:48.305Z"
   }
@@ -10397,6 +11291,8 @@
     "book": 7,
     "quantity": 1,
     "unit_price_cents": 2916,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.311Z",
     "updated_at": "2026-03-12T16:15:48.311Z"
   }
@@ -10409,6 +11305,8 @@
     "book": 15,
     "quantity": 1,
     "unit_price_cents": 4001,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.318Z",
     "updated_at": "2026-03-12T16:15:48.318Z"
   }
@@ -10421,6 +11319,8 @@
     "book": 30,
     "quantity": 2,
     "unit_price_cents": 1188,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.324Z",
     "updated_at": "2026-03-12T16:15:48.324Z"
   }
@@ -10433,6 +11333,8 @@
     "book": 10,
     "quantity": 2,
     "unit_price_cents": 2030,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.330Z",
     "updated_at": "2026-03-12T16:15:48.330Z"
   }
@@ -10445,6 +11347,8 @@
     "book": 34,
     "quantity": 2,
     "unit_price_cents": 1829,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.336Z",
     "updated_at": "2026-03-12T16:15:48.336Z"
   }
@@ -10457,6 +11361,8 @@
     "book": 26,
     "quantity": 1,
     "unit_price_cents": 2100,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.342Z",
     "updated_at": "2026-03-12T16:15:48.342Z"
   }
@@ -10469,6 +11375,8 @@
     "book": 33,
     "quantity": 2,
     "unit_price_cents": 1522,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.348Z",
     "updated_at": "2026-03-12T16:15:48.348Z"
   }
@@ -10481,6 +11389,8 @@
     "book": 28,
     "quantity": 1,
     "unit_price_cents": 1791,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.355Z",
     "updated_at": "2026-03-12T16:15:48.355Z"
   }
@@ -10493,6 +11403,8 @@
     "book": 4,
     "quantity": 1,
     "unit_price_cents": 3347,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.361Z",
     "updated_at": "2026-03-12T16:15:48.361Z"
   }
@@ -10505,6 +11417,8 @@
     "book": 33,
     "quantity": 1,
     "unit_price_cents": 1522,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.367Z",
     "updated_at": "2026-03-12T16:15:48.367Z"
   }
@@ -10517,6 +11431,8 @@
     "book": 8,
     "quantity": 1,
     "unit_price_cents": 2302,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.373Z",
     "updated_at": "2026-03-12T16:15:48.373Z"
   }
@@ -10529,6 +11445,8 @@
     "book": 9,
     "quantity": 2,
     "unit_price_cents": 2474,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.379Z",
     "updated_at": "2026-03-12T16:15:48.379Z"
   }
@@ -10541,6 +11459,8 @@
     "book": 5,
     "quantity": 1,
     "unit_price_cents": 1131,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.385Z",
     "updated_at": "2026-03-12T16:15:48.385Z"
   }
@@ -10553,6 +11473,8 @@
     "book": 36,
     "quantity": 1,
     "unit_price_cents": 2977,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.392Z",
     "updated_at": "2026-03-12T16:15:48.392Z"
   }
@@ -10565,6 +11487,8 @@
     "book": 34,
     "quantity": 2,
     "unit_price_cents": 1829,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.398Z",
     "updated_at": "2026-03-12T16:15:48.398Z"
   }
@@ -10577,6 +11501,8 @@
     "book": 23,
     "quantity": 1,
     "unit_price_cents": 2583,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.404Z",
     "updated_at": "2026-03-12T16:15:48.404Z"
   }
@@ -10589,6 +11515,8 @@
     "book": 29,
     "quantity": 1,
     "unit_price_cents": 1926,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.410Z",
     "updated_at": "2026-03-12T16:15:48.410Z"
   }
@@ -10601,6 +11529,8 @@
     "book": 3,
     "quantity": 1,
     "unit_price_cents": 2651,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.418Z",
     "updated_at": "2026-03-12T16:15:48.418Z"
   }
@@ -10613,6 +11543,8 @@
     "book": 12,
     "quantity": 1,
     "unit_price_cents": 999,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.427Z",
     "updated_at": "2026-03-12T16:15:48.427Z"
   }
@@ -10625,6 +11557,8 @@
     "book": 22,
     "quantity": 1,
     "unit_price_cents": 2016,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.438Z",
     "updated_at": "2026-03-12T16:15:48.438Z"
   }
@@ -10637,6 +11571,8 @@
     "book": 9,
     "quantity": 1,
     "unit_price_cents": 2474,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.447Z",
     "updated_at": "2026-03-12T16:15:48.447Z"
   }
@@ -10649,6 +11585,8 @@
     "book": 22,
     "quantity": 2,
     "unit_price_cents": 2016,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.457Z",
     "updated_at": "2026-03-12T16:15:48.457Z"
   }
@@ -10661,6 +11599,8 @@
     "book": 19,
     "quantity": 2,
     "unit_price_cents": 2202,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.468Z",
     "updated_at": "2026-03-12T16:15:48.468Z"
   }
@@ -10673,6 +11613,8 @@
     "book": 34,
     "quantity": 1,
     "unit_price_cents": 1829,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.479Z",
     "updated_at": "2026-03-12T16:15:48.479Z"
   }
@@ -10685,6 +11627,8 @@
     "book": 36,
     "quantity": 1,
     "unit_price_cents": 2977,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.490Z",
     "updated_at": "2026-03-12T16:15:48.490Z"
   }
@@ -10697,6 +11641,8 @@
     "book": 9,
     "quantity": 1,
     "unit_price_cents": 2474,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.501Z",
     "updated_at": "2026-03-12T16:15:48.501Z"
   }
@@ -10709,6 +11655,8 @@
     "book": 10,
     "quantity": 2,
     "unit_price_cents": 2030,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.510Z",
     "updated_at": "2026-03-12T16:15:48.510Z"
   }
@@ -10721,6 +11669,8 @@
     "book": 14,
     "quantity": 2,
     "unit_price_cents": 4142,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.520Z",
     "updated_at": "2026-03-12T16:15:48.520Z"
   }
@@ -10733,6 +11683,8 @@
     "book": 17,
     "quantity": 1,
     "unit_price_cents": 1217,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.529Z",
     "updated_at": "2026-03-12T16:15:48.529Z"
   }
@@ -10745,6 +11697,8 @@
     "book": 18,
     "quantity": 1,
     "unit_price_cents": 3576,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.536Z",
     "updated_at": "2026-03-12T16:15:48.536Z"
   }
@@ -10757,6 +11711,8 @@
     "book": 11,
     "quantity": 2,
     "unit_price_cents": 4035,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.542Z",
     "updated_at": "2026-03-12T16:15:48.542Z"
   }
@@ -10769,6 +11725,8 @@
     "book": 21,
     "quantity": 2,
     "unit_price_cents": 1294,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.548Z",
     "updated_at": "2026-03-12T16:15:48.548Z"
   }
@@ -10781,6 +11739,8 @@
     "book": 26,
     "quantity": 2,
     "unit_price_cents": 2100,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.556Z",
     "updated_at": "2026-03-12T16:15:48.556Z"
   }
@@ -10793,6 +11753,8 @@
     "book": 7,
     "quantity": 1,
     "unit_price_cents": 2916,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.563Z",
     "updated_at": "2026-03-12T16:15:48.563Z"
   }
@@ -10805,6 +11767,8 @@
     "book": 25,
     "quantity": 2,
     "unit_price_cents": 2017,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.569Z",
     "updated_at": "2026-03-12T16:15:48.569Z"
   }
@@ -10817,6 +11781,8 @@
     "book": 2,
     "quantity": 1,
     "unit_price_cents": 3622,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.576Z",
     "updated_at": "2026-03-12T16:15:48.576Z"
   }
@@ -10829,6 +11795,8 @@
     "book": 16,
     "quantity": 2,
     "unit_price_cents": 4283,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.583Z",
     "updated_at": "2026-03-12T16:15:48.583Z"
   }
@@ -10841,6 +11809,8 @@
     "book": 25,
     "quantity": 1,
     "unit_price_cents": 2017,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.589Z",
     "updated_at": "2026-03-12T16:15:48.589Z"
   }
@@ -10853,6 +11823,8 @@
     "book": 27,
     "quantity": 1,
     "unit_price_cents": 1702,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.596Z",
     "updated_at": "2026-03-12T16:15:48.597Z"
   }
@@ -10865,6 +11837,8 @@
     "book": 33,
     "quantity": 1,
     "unit_price_cents": 1522,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.603Z",
     "updated_at": "2026-03-12T16:15:48.603Z"
   }
@@ -10877,6 +11851,8 @@
     "book": 24,
     "quantity": 1,
     "unit_price_cents": 1897,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.609Z",
     "updated_at": "2026-03-12T16:15:48.609Z"
   }
@@ -10889,6 +11865,8 @@
     "book": 13,
     "quantity": 2,
     "unit_price_cents": 3494,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.616Z",
     "updated_at": "2026-03-12T16:15:48.616Z"
   }
@@ -10901,6 +11879,8 @@
     "book": 5,
     "quantity": 2,
     "unit_price_cents": 1131,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.622Z",
     "updated_at": "2026-03-12T16:15:48.622Z"
   }
@@ -10913,8 +11893,54 @@
     "book": 11,
     "quantity": 1,
     "unit_price_cents": 4035,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
     "created_at": "2026-03-12T16:15:48.629Z",
     "updated_at": "2026-03-12T16:15:48.629Z"
+  }
+},
+{
+  "model": "Buyer.cartitem",
+  "pk": 211,
+  "fields": {
+    "cart": 102,
+    "book": 15,
+    "quantity": 1,
+    "unit_price_cents": 4001,
+    "is_steward_free": false,
+    "steward_free_list_price_cents": 0,
+    "created_at": "2026-03-30T06:36:41.316Z",
+    "updated_at": "2026-03-30T06:36:41.316Z"
+  }
+},
+{
+  "model": "Buyer.paymentmethod",
+  "pk": 1,
+  "fields": {
+    "user": 124,
+    "cardholder_name": "example card",
+    "brand": "Visa",
+    "last4": "4567",
+    "exp_month": 3,
+    "exp_year": 2029,
+    "is_default": true,
+    "created_at": "2026-03-26T02:22:10.250Z",
+    "updated_at": "2026-03-26T02:22:10.251Z"
+  }
+},
+{
+  "model": "Buyer.paymentmethod",
+  "pk": 2,
+  "fields": {
+    "user": 128,
+    "cardholder_name": "Example user 2",
+    "brand": "VISA",
+    "last4": "4567",
+    "exp_month": 3,
+    "exp_year": 2088,
+    "is_default": true,
+    "created_at": "2026-03-30T06:47:53.258Z",
+    "updated_at": "2026-03-30T06:47:53.258Z"
   }
 },
 {
@@ -10924,10 +11950,14 @@
     "user": 53,
     "shipping_address": 119,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 12791,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 12791,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.161Z",
     "updated_at": "2026-03-12T16:17:42.195Z"
   }
@@ -10939,10 +11969,14 @@
     "user": 78,
     "shipping_address": 77,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 6435,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 6435,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.202Z",
     "updated_at": "2026-03-12T16:17:42.221Z"
   }
@@ -10954,10 +11988,14 @@
     "user": 14,
     "shipping_address": 105,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "delivered",
     "subtotal_cents": 1702,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 1702,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.228Z",
     "updated_at": "2026-03-12T16:17:42.239Z"
   }
@@ -10969,10 +12007,14 @@
     "user": 24,
     "shipping_address": 111,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "paid",
     "subtotal_cents": 5166,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 5166,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.246Z",
     "updated_at": "2026-03-12T16:17:42.258Z"
   }
@@ -10984,10 +12026,14 @@
     "user": 93,
     "shipping_address": 92,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 4283,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 4283,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.265Z",
     "updated_at": "2026-03-12T16:17:42.276Z"
   }
@@ -10999,10 +12045,14 @@
     "user": 22,
     "shipping_address": 110,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "delivered",
     "subtotal_cents": 10836,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 10836,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.282Z",
     "updated_at": "2026-03-12T16:17:42.308Z"
   }
@@ -11014,10 +12064,14 @@
     "user": 46,
     "shipping_address": 45,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "paid",
     "subtotal_cents": 10489,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 10489,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.314Z",
     "updated_at": "2026-03-12T16:17:42.336Z"
   }
@@ -11029,10 +12083,14 @@
     "user": 41,
     "shipping_address": 40,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 8280,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 8280,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.342Z",
     "updated_at": "2026-03-12T16:17:42.364Z"
   }
@@ -11044,10 +12102,14 @@
     "user": 102,
     "shipping_address": 101,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 4404,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 4404,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.371Z",
     "updated_at": "2026-03-12T16:17:42.381Z"
   }
@@ -11059,10 +12121,14 @@
     "user": 17,
     "shipping_address": 16,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "delivered",
     "subtotal_cents": 18632,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 18632,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.387Z",
     "updated_at": "2026-03-12T16:17:42.410Z"
   }
@@ -11074,10 +12140,14 @@
     "user": 94,
     "shipping_address": 93,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 11577,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 11577,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.417Z",
     "updated_at": "2026-03-12T16:17:42.449Z"
   }
@@ -11089,10 +12159,14 @@
     "user": 99,
     "shipping_address": 98,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "delivered",
     "subtotal_cents": 5832,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 5832,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.455Z",
     "updated_at": "2026-03-12T16:17:42.467Z"
   }
@@ -11104,10 +12178,14 @@
     "user": 36,
     "shipping_address": 112,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 10272,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 10272,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.473Z",
     "updated_at": "2026-03-12T16:17:42.491Z"
   }
@@ -11119,10 +12197,14 @@
     "user": 24,
     "shipping_address": 111,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "delivered",
     "subtotal_cents": 4604,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 4604,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.497Z",
     "updated_at": "2026-03-12T16:17:42.509Z"
   }
@@ -11134,10 +12216,14 @@
     "user": 27,
     "shipping_address": 26,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "paid",
     "subtotal_cents": 10836,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 10836,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.515Z",
     "updated_at": "2026-03-12T16:17:42.532Z"
   }
@@ -11149,10 +12235,14 @@
     "user": 55,
     "shipping_address": 54,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 10008,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 10008,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.538Z",
     "updated_at": "2026-03-12T16:17:42.560Z"
   }
@@ -11164,10 +12254,14 @@
     "user": 27,
     "shipping_address": 26,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 9895,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 9895,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.567Z",
     "updated_at": "2026-03-12T16:17:42.584Z"
   }
@@ -11179,10 +12273,14 @@
     "user": 22,
     "shipping_address": 110,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 9621,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 9621,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.590Z",
     "updated_at": "2026-03-12T16:17:42.613Z"
   }
@@ -11194,10 +12292,14 @@
     "user": 7,
     "shipping_address": 6,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 4653,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 4653,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.620Z",
     "updated_at": "2026-03-12T16:17:42.637Z"
   }
@@ -11209,10 +12311,14 @@
     "user": 10,
     "shipping_address": 9,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "paid",
     "subtotal_cents": 7643,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 7643,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.643Z",
     "updated_at": "2026-03-12T16:17:42.666Z"
   }
@@ -11224,10 +12330,14 @@
     "user": 22,
     "shipping_address": 21,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "paid",
     "subtotal_cents": 11991,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 11991,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.673Z",
     "updated_at": "2026-03-12T16:17:42.694Z"
   }
@@ -11239,10 +12349,14 @@
     "user": 40,
     "shipping_address": 39,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "delivered",
     "subtotal_cents": 2474,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 2474,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.701Z",
     "updated_at": "2026-03-12T16:17:42.713Z"
   }
@@ -11254,10 +12368,14 @@
     "user": 13,
     "shipping_address": 12,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 8419,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 8419,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.719Z",
     "updated_at": "2026-03-12T16:17:42.748Z"
   }
@@ -11269,10 +12387,14 @@
     "user": 37,
     "shipping_address": 36,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "delivered",
     "subtotal_cents": 2520,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 2520,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.755Z",
     "updated_at": "2026-03-12T16:17:42.772Z"
   }
@@ -11284,10 +12406,14 @@
     "user": 67,
     "shipping_address": 66,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 5816,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 5816,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.779Z",
     "updated_at": "2026-03-12T16:17:42.797Z"
   }
@@ -11299,10 +12425,14 @@
     "user": 28,
     "shipping_address": 27,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 16914,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 16914,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.803Z",
     "updated_at": "2026-03-12T16:17:42.832Z"
   }
@@ -11314,10 +12444,14 @@
     "user": 9,
     "shipping_address": 103,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "paid",
     "subtotal_cents": 8002,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 8002,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.839Z",
     "updated_at": "2026-03-12T16:17:42.849Z"
   }
@@ -11329,10 +12463,14 @@
     "user": 26,
     "shipping_address": 25,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "delivered",
     "subtotal_cents": 2474,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 2474,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.856Z",
     "updated_at": "2026-03-12T16:17:42.867Z"
   }
@@ -11344,10 +12482,14 @@
     "user": 36,
     "shipping_address": 35,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 5129,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 5129,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.874Z",
     "updated_at": "2026-03-12T16:17:42.897Z"
   }
@@ -11359,10 +12501,14 @@
     "user": 74,
     "shipping_address": 73,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 7777,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 7777,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.905Z",
     "updated_at": "2026-03-12T16:17:42.922Z"
   }
@@ -11374,10 +12520,14 @@
     "user": 54,
     "shipping_address": 53,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 13811,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 13811,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.928Z",
     "updated_at": "2026-03-12T16:17:42.958Z"
   }
@@ -11389,10 +12539,14 @@
     "user": 35,
     "shipping_address": 34,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 2623,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 2623,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.965Z",
     "updated_at": "2026-03-12T16:17:42.976Z"
   }
@@ -11404,10 +12558,14 @@
     "user": 89,
     "shipping_address": 88,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 10846,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 10846,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:42.983Z",
     "updated_at": "2026-03-12T16:17:43.012Z"
   }
@@ -11419,10 +12577,14 @@
     "user": 52,
     "shipping_address": 51,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 9529,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 9529,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:43.018Z",
     "updated_at": "2026-03-12T16:17:43.036Z"
   }
@@ -11434,10 +12596,14 @@
     "user": 46,
     "shipping_address": 117,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "paid",
     "subtotal_cents": 6042,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 6042,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:43.043Z",
     "updated_at": "2026-03-12T16:17:43.060Z"
   }
@@ -11449,10 +12615,14 @@
     "user": 54,
     "shipping_address": 53,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "delivered",
     "subtotal_cents": 3390,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 3390,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:43.067Z",
     "updated_at": "2026-03-12T16:17:43.085Z"
   }
@@ -11464,10 +12634,14 @@
     "user": 4,
     "shipping_address": 3,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "shipped",
     "subtotal_cents": 11332,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 11332,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:43.091Z",
     "updated_at": "2026-03-12T16:17:43.114Z"
   }
@@ -11479,10 +12653,14 @@
     "user": 84,
     "shipping_address": 83,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 2623,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 2623,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:43.120Z",
     "updated_at": "2026-03-12T16:17:43.131Z"
   }
@@ -11494,10 +12672,14 @@
     "user": 39,
     "shipping_address": 38,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "pending",
     "subtotal_cents": 9797,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 9797,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:43.138Z",
     "updated_at": "2026-03-12T16:17:43.160Z"
   }
@@ -11509,12 +12691,225 @@
     "user": 68,
     "shipping_address": 124,
     "steward_contribution": null,
+    "payment_method": null,
     "status": "paid",
     "subtotal_cents": 5702,
+    "tax_cents": 0,
+    "fees_cents": 0,
     "discount_cents": 0,
     "total_cents": 5702,
+    "steward_contribution_cents": 0,
     "created_at": "2026-03-12T16:17:43.167Z",
     "updated_at": "2026-03-12T16:17:43.183Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 41,
+  "fields": {
+    "user": 124,
+    "shipping_address": 135,
+    "steward_contribution": null,
+    "payment_method": 1,
+    "status": "paid",
+    "subtotal_cents": 5792,
+    "tax_cents": 405,
+    "fees_cents": 299,
+    "discount_cents": 0,
+    "total_cents": 6496,
+    "steward_contribution_cents": 0,
+    "created_at": "2026-03-26T02:53:36.750Z",
+    "updated_at": "2026-03-26T02:53:36.750Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 42,
+  "fields": {
+    "user": 124,
+    "shipping_address": 135,
+    "steward_contribution": null,
+    "payment_method": 1,
+    "status": "paid",
+    "subtotal_cents": 1500,
+    "tax_cents": 105,
+    "fees_cents": 299,
+    "discount_cents": 0,
+    "total_cents": 1904,
+    "steward_contribution_cents": 0,
+    "created_at": "2026-03-26T03:48:20.694Z",
+    "updated_at": "2026-03-26T03:48:20.694Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 43,
+  "fields": {
+    "user": 124,
+    "shipping_address": 135,
+    "steward_contribution": null,
+    "payment_method": 1,
+    "status": "paid",
+    "subtotal_cents": 2300,
+    "tax_cents": 161,
+    "fees_cents": 299,
+    "discount_cents": 0,
+    "total_cents": 2760,
+    "steward_contribution_cents": 0,
+    "created_at": "2026-03-26T03:52:00.223Z",
+    "updated_at": "2026-03-26T03:52:00.223Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 44,
+  "fields": {
+    "user": 124,
+    "shipping_address": 135,
+    "steward_contribution": null,
+    "payment_method": 1,
+    "status": "paid",
+    "subtotal_cents": 3948,
+    "tax_cents": 276,
+    "fees_cents": 299,
+    "discount_cents": 0,
+    "total_cents": 4523,
+    "steward_contribution_cents": 0,
+    "created_at": "2026-03-26T04:41:48.118Z",
+    "updated_at": "2026-03-26T04:41:48.118Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 45,
+  "fields": {
+    "user": 124,
+    "shipping_address": 135,
+    "steward_contribution": null,
+    "payment_method": 1,
+    "status": "paid",
+    "subtotal_cents": 1500,
+    "tax_cents": 105,
+    "fees_cents": 299,
+    "discount_cents": 0,
+    "total_cents": 1904,
+    "steward_contribution_cents": 0,
+    "created_at": "2026-03-26T05:46:58.396Z",
+    "updated_at": "2026-03-26T05:46:58.396Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 46,
+  "fields": {
+    "user": 124,
+    "shipping_address": 135,
+    "steward_contribution": null,
+    "payment_method": 1,
+    "status": "paid",
+    "subtotal_cents": 1974,
+    "tax_cents": 138,
+    "fees_cents": 299,
+    "discount_cents": 0,
+    "total_cents": 2411,
+    "steward_contribution_cents": 0,
+    "created_at": "2026-03-27T04:06:22.734Z",
+    "updated_at": "2026-03-27T04:06:22.734Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 47,
+  "fields": {
+    "user": 124,
+    "shipping_address": 135,
+    "steward_contribution": null,
+    "payment_method": 1,
+    "status": "paid",
+    "subtotal_cents": 1294,
+    "tax_cents": 91,
+    "fees_cents": 299,
+    "discount_cents": 0,
+    "total_cents": 1884,
+    "steward_contribution_cents": 200,
+    "created_at": "2026-03-30T05:58:44.069Z",
+    "updated_at": "2026-03-30T05:58:44.069Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 48,
+  "fields": {
+    "user": 124,
+    "shipping_address": 135,
+    "steward_contribution": null,
+    "payment_method": 1,
+    "status": "paid",
+    "subtotal_cents": 1974,
+    "tax_cents": 138,
+    "fees_cents": 299,
+    "discount_cents": 0,
+    "total_cents": 3211,
+    "steward_contribution_cents": 800,
+    "created_at": "2026-03-30T06:09:23.389Z",
+    "updated_at": "2026-03-30T06:09:23.389Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 49,
+  "fields": {
+    "user": 124,
+    "shipping_address": 135,
+    "steward_contribution": null,
+    "payment_method": 1,
+    "status": "paid",
+    "subtotal_cents": 4001,
+    "tax_cents": 280,
+    "fees_cents": 0,
+    "discount_cents": 0,
+    "total_cents": 4281,
+    "steward_contribution_cents": 0,
+    "created_at": "2026-03-30T06:36:35.043Z",
+    "updated_at": "2026-03-30T06:36:35.043Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 50,
+  "fields": {
+    "user": 128,
+    "shipping_address": 137,
+    "steward_contribution": null,
+    "payment_method": 2,
+    "status": "paid",
+    "subtotal_cents": 4001,
+    "tax_cents": 280,
+    "fees_cents": 299,
+    "discount_cents": 0,
+    "total_cents": 5580,
+    "steward_contribution_cents": 1000,
+    "created_at": "2026-03-30T06:47:59.168Z",
+    "updated_at": "2026-03-30T06:47:59.168Z"
+  }
+},
+{
+  "model": "Buyer.order",
+  "pk": 51,
+  "fields": {
+    "user": 128,
+    "shipping_address": 137,
+    "steward_contribution": null,
+    "payment_method": 2,
+    "status": "paid",
+    "subtotal_cents": 0,
+    "tax_cents": 0,
+    "fees_cents": 0,
+    "discount_cents": 0,
+    "total_cents": 0,
+    "steward_contribution_cents": 0,
+    "created_at": "2026-03-30T06:48:49.494Z",
+    "updated_at": "2026-03-30T06:48:49.494Z"
   }
 },
 {
@@ -11523,9 +12918,14 @@
   "fields": {
     "order": 1,
     "book": 34,
+    "title": "Frankenstein",
+    "author": "Mary Shelley",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1829,
     "line_total_cents": 3658,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.171Z"
   }
 },
@@ -11535,9 +12935,14 @@
   "fields": {
     "order": 1,
     "book": 16,
+    "title": "Pattern Recognition and Machine Learning",
+    "author": "Christopher Bishop",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4283,
     "line_total_cents": 4283,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.178Z"
   }
 },
@@ -11547,9 +12952,14 @@
   "fields": {
     "order": 1,
     "book": 35,
+    "title": "The Picture of Dorian Gray",
+    "author": "Oscar Wilde",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1268,
     "line_total_cents": 1268,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.183Z"
   }
 },
@@ -11559,9 +12969,14 @@
   "fields": {
     "order": 1,
     "book": 28,
+    "title": "Brave New World",
+    "author": "Aldous Huxley",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1791,
     "line_total_cents": 3582,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.189Z"
   }
 },
@@ -11571,9 +12986,14 @@
   "fields": {
     "order": 2,
     "book": 29,
+    "title": "The Hobbit",
+    "author": "J. R. R. Tolkien",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1926,
     "line_total_cents": 3852,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.208Z"
   }
 },
@@ -11583,9 +13003,14 @@
   "fields": {
     "order": 2,
     "book": 23,
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2583,
     "line_total_cents": 2583,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.215Z"
   }
 },
@@ -11595,9 +13020,14 @@
   "fields": {
     "order": 3,
     "book": 27,
+    "title": "The Catcher in the Rye",
+    "author": "J. D. Salinger",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1702,
     "line_total_cents": 1702,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.234Z"
   }
 },
@@ -11607,9 +13037,14 @@
   "fields": {
     "order": 4,
     "book": 23,
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 2583,
     "line_total_cents": 5166,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.252Z"
   }
 },
@@ -11619,9 +13054,14 @@
   "fields": {
     "order": 5,
     "book": 16,
+    "title": "Pattern Recognition and Machine Learning",
+    "author": "Christopher Bishop",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4283,
     "line_total_cents": 4283,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.271Z"
   }
 },
@@ -11631,9 +13071,14 @@
   "fields": {
     "order": 6,
     "book": 3,
+    "title": "Introduction to Algorithms",
+    "author": "Thomas H. Cormen",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2651,
     "line_total_cents": 2651,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.287Z"
   }
 },
@@ -11643,9 +13088,14 @@
   "fields": {
     "order": 6,
     "book": 12,
+    "title": "The Mythical Man Month",
+    "author": "Fred Brooks",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 999,
     "line_total_cents": 999,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.292Z"
   }
 },
@@ -11655,9 +13105,14 @@
   "fields": {
     "order": 6,
     "book": 33,
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1522,
     "line_total_cents": 3044,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.297Z"
   }
 },
@@ -11667,9 +13122,14 @@
   "fields": {
     "order": 6,
     "book": 14,
+    "title": "Programming Pearls",
+    "author": "Jon Bentley",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4142,
     "line_total_cents": 4142,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.303Z"
   }
 },
@@ -11679,9 +13139,14 @@
   "fields": {
     "order": 7,
     "book": 30,
+    "title": "The Lord of the Rings",
+    "author": "J. R. R. Tolkien",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1188,
     "line_total_cents": 1188,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.320Z"
   }
 },
@@ -11691,9 +13156,14 @@
   "fields": {
     "order": 7,
     "book": 24,
+    "title": "Moby Dick",
+    "author": "Herman Melville",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1897,
     "line_total_cents": 1897,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.325Z"
   }
 },
@@ -11703,9 +13173,14 @@
   "fields": {
     "order": 7,
     "book": 1,
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 3702,
     "line_total_cents": 7404,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.330Z"
   }
 },
@@ -11715,9 +13190,14 @@
   "fields": {
     "order": 8,
     "book": 20,
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1614,
     "line_total_cents": 1614,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.348Z"
   }
 },
@@ -11727,9 +13207,14 @@
   "fields": {
     "order": 8,
     "book": 2,
+    "title": "The Pragmatic Programmer",
+    "author": "Andrew Hunt",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 3622,
     "line_total_cents": 3622,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.353Z"
   }
 },
@@ -11739,9 +13224,14 @@
   "fields": {
     "order": 8,
     "book": 33,
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1522,
     "line_total_cents": 3044,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.359Z"
   }
 },
@@ -11751,9 +13241,14 @@
   "fields": {
     "order": 9,
     "book": 19,
+    "title": "The Adventures of Sherlock Holmes",
+    "author": "Arthur Conan Doyle",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 2202,
     "line_total_cents": 4404,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.376Z"
   }
 },
@@ -11763,9 +13258,14 @@
   "fields": {
     "order": 10,
     "book": 16,
+    "title": "Pattern Recognition and Machine Learning",
+    "author": "Christopher Bishop",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 4283,
     "line_total_cents": 8566,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.393Z"
   }
 },
@@ -11775,9 +13275,14 @@
   "fields": {
     "order": 10,
     "book": 11,
+    "title": "Refactoring",
+    "author": "Martin Fowler",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 4035,
     "line_total_cents": 8070,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.398Z"
   }
 },
@@ -11787,9 +13292,14 @@
   "fields": {
     "order": 10,
     "book": 32,
+    "title": "Wuthering Heights",
+    "author": "Emily Bronte",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 998,
     "line_total_cents": 1996,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.404Z"
   }
 },
@@ -11799,9 +13309,14 @@
   "fields": {
     "order": 11,
     "book": 37,
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1974,
     "line_total_cents": 3948,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.423Z"
   }
 },
@@ -11811,9 +13326,14 @@
   "fields": {
     "order": 11,
     "book": 6,
+    "title": "Artificial Intelligence: A Modern Approach",
+    "author": "Stuart Russell",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1638,
     "line_total_cents": 3276,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.429Z"
   }
 },
@@ -11823,9 +13343,14 @@
   "fields": {
     "order": 11,
     "book": 3,
+    "title": "Introduction to Algorithms",
+    "author": "Thomas H. Cormen",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2651,
     "line_total_cents": 2651,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.436Z"
   }
 },
@@ -11835,9 +13360,14 @@
   "fields": {
     "order": 11,
     "book": 27,
+    "title": "The Catcher in the Rye",
+    "author": "J. D. Salinger",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1702,
     "line_total_cents": 1702,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.443Z"
   }
 },
@@ -11847,9 +13377,14 @@
   "fields": {
     "order": 12,
     "book": 7,
+    "title": "Computer Networks",
+    "author": "Andrew S. Tanenbaum",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 2916,
     "line_total_cents": 5832,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.461Z"
   }
 },
@@ -11859,9 +13394,14 @@
   "fields": {
     "order": 13,
     "book": 19,
+    "title": "The Adventures of Sherlock Holmes",
+    "author": "Arthur Conan Doyle",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2202,
     "line_total_cents": 2202,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.479Z"
   }
 },
@@ -11871,9 +13411,14 @@
   "fields": {
     "order": 13,
     "book": 11,
+    "title": "Refactoring",
+    "author": "Martin Fowler",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 4035,
     "line_total_cents": 8070,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.485Z"
   }
 },
@@ -11883,9 +13428,14 @@
   "fields": {
     "order": 14,
     "book": 8,
+    "title": "Operating System Concepts",
+    "author": "Abraham Silberschatz",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 2302,
     "line_total_cents": 4604,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.503Z"
   }
 },
@@ -11895,9 +13445,14 @@
   "fields": {
     "order": 15,
     "book": 4,
+    "title": "Design Patterns",
+    "author": "Erich Gamma",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 3347,
     "line_total_cents": 6694,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.521Z"
   }
 },
@@ -11907,9 +13462,14 @@
   "fields": {
     "order": 15,
     "book": 14,
+    "title": "Programming Pearls",
+    "author": "Jon Bentley",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4142,
     "line_total_cents": 4142,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.527Z"
   }
 },
@@ -11919,9 +13479,14 @@
   "fields": {
     "order": 16,
     "book": 27,
+    "title": "The Catcher in the Rye",
+    "author": "J. D. Salinger",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1702,
     "line_total_cents": 1702,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.544Z"
   }
 },
@@ -11931,9 +13496,14 @@
   "fields": {
     "order": 16,
     "book": 1,
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 3702,
     "line_total_cents": 3702,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.550Z"
   }
 },
@@ -11943,9 +13513,14 @@
   "fields": {
     "order": 16,
     "book": 8,
+    "title": "Operating System Concepts",
+    "author": "Abraham Silberschatz",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 2302,
     "line_total_cents": 4604,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.555Z"
   }
 },
@@ -11955,9 +13530,14 @@
   "fields": {
     "order": 17,
     "book": 3,
+    "title": "Introduction to Algorithms",
+    "author": "Thomas H. Cormen",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2651,
     "line_total_cents": 2651,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.572Z"
   }
 },
@@ -11967,9 +13547,14 @@
   "fields": {
     "order": 17,
     "book": 2,
+    "title": "The Pragmatic Programmer",
+    "author": "Andrew Hunt",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 3622,
     "line_total_cents": 7244,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.578Z"
   }
 },
@@ -11979,9 +13564,14 @@
   "fields": {
     "order": 18,
     "book": 28,
+    "title": "Brave New World",
+    "author": "Aldous Huxley",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1791,
     "line_total_cents": 3582,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.596Z"
   }
 },
@@ -11991,9 +13581,14 @@
   "fields": {
     "order": 18,
     "book": 14,
+    "title": "Programming Pearls",
+    "author": "Jon Bentley",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4142,
     "line_total_cents": 4142,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.602Z"
   }
 },
@@ -12003,9 +13598,14 @@
   "fields": {
     "order": 18,
     "book": 24,
+    "title": "Moby Dick",
+    "author": "Herman Melville",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1897,
     "line_total_cents": 1897,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.607Z"
   }
 },
@@ -12015,9 +13615,14 @@
   "fields": {
     "order": 19,
     "book": 10,
+    "title": "Code Complete",
+    "author": "Steve McConnell",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2030,
     "line_total_cents": 2030,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.626Z"
   }
 },
@@ -12027,9 +13632,14 @@
   "fields": {
     "order": 19,
     "book": 38,
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2623,
     "line_total_cents": 2623,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.631Z"
   }
 },
@@ -12039,9 +13649,14 @@
   "fields": {
     "order": 20,
     "book": 22,
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2016,
     "line_total_cents": 2016,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.649Z"
   }
 },
@@ -12051,9 +13666,14 @@
   "fields": {
     "order": 20,
     "book": 33,
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1522,
     "line_total_cents": 3044,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.655Z"
   }
 },
@@ -12063,9 +13683,14 @@
   "fields": {
     "order": 20,
     "book": 23,
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2583,
     "line_total_cents": 2583,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.660Z"
   }
 },
@@ -12075,9 +13700,14 @@
   "fields": {
     "order": 21,
     "book": 7,
+    "title": "Computer Networks",
+    "author": "Andrew S. Tanenbaum",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 2916,
     "line_total_cents": 5832,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.678Z"
   }
 },
@@ -12087,9 +13717,14 @@
   "fields": {
     "order": 21,
     "book": 14,
+    "title": "Programming Pearls",
+    "author": "Jon Bentley",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4142,
     "line_total_cents": 4142,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.683Z"
   }
 },
@@ -12099,9 +13734,14 @@
   "fields": {
     "order": 21,
     "book": 25,
+    "title": "War and Peace",
+    "author": "Leo Tolstoy",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2017,
     "line_total_cents": 2017,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.689Z"
   }
 },
@@ -12111,9 +13751,14 @@
   "fields": {
     "order": 22,
     "book": 9,
+    "title": "Structure and Interpretation of Computer Programs",
+    "author": "Harold Abelson",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2474,
     "line_total_cents": 2474,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.706Z"
   }
 },
@@ -12123,9 +13768,14 @@
   "fields": {
     "order": 23,
     "book": 23,
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2583,
     "line_total_cents": 2583,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.725Z"
   }
 },
@@ -12135,9 +13785,14 @@
   "fields": {
     "order": 23,
     "book": 6,
+    "title": "Artificial Intelligence: A Modern Approach",
+    "author": "Stuart Russell",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1638,
     "line_total_cents": 1638,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.730Z"
   }
 },
@@ -12147,9 +13802,14 @@
   "fields": {
     "order": 23,
     "book": 32,
+    "title": "Wuthering Heights",
+    "author": "Emily Bronte",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 998,
     "line_total_cents": 1996,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.736Z"
   }
 },
@@ -12159,9 +13819,14 @@
   "fields": {
     "order": 23,
     "book": 19,
+    "title": "The Adventures of Sherlock Holmes",
+    "author": "Arthur Conan Doyle",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2202,
     "line_total_cents": 2202,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.742Z"
   }
 },
@@ -12171,9 +13836,14 @@
   "fields": {
     "order": 24,
     "book": 33,
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1522,
     "line_total_cents": 1522,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.760Z"
   }
 },
@@ -12183,9 +13853,14 @@
   "fields": {
     "order": 24,
     "book": 32,
+    "title": "Wuthering Heights",
+    "author": "Emily Bronte",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 998,
     "line_total_cents": 998,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.766Z"
   }
 },
@@ -12195,9 +13870,14 @@
   "fields": {
     "order": 25,
     "book": 20,
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1614,
     "line_total_cents": 3228,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.785Z"
   }
 },
@@ -12207,9 +13887,14 @@
   "fields": {
     "order": 25,
     "book": 21,
+    "title": "1984",
+    "author": "George Orwell",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1294,
     "line_total_cents": 2588,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.791Z"
   }
 },
@@ -12219,9 +13904,14 @@
   "fields": {
     "order": 26,
     "book": 20,
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1614,
     "line_total_cents": 3228,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.809Z"
   }
 },
@@ -12231,9 +13921,14 @@
   "fields": {
     "order": 26,
     "book": 37,
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1974,
     "line_total_cents": 3948,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.815Z"
   }
 },
@@ -12243,9 +13938,14 @@
   "fields": {
     "order": 26,
     "book": 4,
+    "title": "Design Patterns",
+    "author": "Erich Gamma",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 3347,
     "line_total_cents": 6694,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.820Z"
   }
 },
@@ -12255,9 +13955,14 @@
   "fields": {
     "order": 26,
     "book": 33,
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1522,
     "line_total_cents": 3044,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.826Z"
   }
 },
@@ -12267,9 +13972,14 @@
   "fields": {
     "order": 27,
     "book": 15,
+    "title": "Algorithms",
+    "author": "Robert Sedgewick",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 4001,
     "line_total_cents": 8002,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.844Z"
   }
 },
@@ -12279,9 +13989,14 @@
   "fields": {
     "order": 28,
     "book": 9,
+    "title": "Structure and Interpretation of Computer Programs",
+    "author": "Harold Abelson",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2474,
     "line_total_cents": 2474,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.861Z"
   }
 },
@@ -12291,9 +14006,14 @@
   "fields": {
     "order": 29,
     "book": 26,
+    "title": "Crime and Punishment",
+    "author": "Fyodor Dostoevsky",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2100,
     "line_total_cents": 2100,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.880Z"
   }
 },
@@ -12303,9 +14023,14 @@
   "fields": {
     "order": 29,
     "book": 10,
+    "title": "Code Complete",
+    "author": "Steve McConnell",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2030,
     "line_total_cents": 2030,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.885Z"
   }
 },
@@ -12315,9 +14040,14 @@
   "fields": {
     "order": 29,
     "book": 12,
+    "title": "The Mythical Man Month",
+    "author": "Fred Brooks",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 999,
     "line_total_cents": 999,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.891Z"
   }
 },
@@ -12327,9 +14057,14 @@
   "fields": {
     "order": 30,
     "book": 13,
+    "title": "Head First Design Patterns",
+    "author": "Eric Freeman",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 3494,
     "line_total_cents": 3494,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.911Z"
   }
 },
@@ -12339,9 +14074,14 @@
   "fields": {
     "order": 30,
     "book": 16,
+    "title": "Pattern Recognition and Machine Learning",
+    "author": "Christopher Bishop",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4283,
     "line_total_cents": 4283,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.916Z"
   }
 },
@@ -12351,9 +14091,14 @@
   "fields": {
     "order": 31,
     "book": 8,
+    "title": "Operating System Concepts",
+    "author": "Abraham Silberschatz",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2302,
     "line_total_cents": 2302,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.934Z"
   }
 },
@@ -12363,9 +14108,14 @@
   "fields": {
     "order": 31,
     "book": 11,
+    "title": "Refactoring",
+    "author": "Martin Fowler",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4035,
     "line_total_cents": 4035,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.940Z"
   }
 },
@@ -12375,9 +14125,14 @@
   "fields": {
     "order": 31,
     "book": 2,
+    "title": "The Pragmatic Programmer",
+    "author": "Andrew Hunt",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 3622,
     "line_total_cents": 3622,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.946Z"
   }
 },
@@ -12387,9 +14142,14 @@
   "fields": {
     "order": 31,
     "book": 29,
+    "title": "The Hobbit",
+    "author": "J. R. R. Tolkien",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1926,
     "line_total_cents": 3852,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.952Z"
   }
 },
@@ -12399,9 +14159,14 @@
   "fields": {
     "order": 32,
     "book": 38,
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2623,
     "line_total_cents": 2623,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.970Z"
   }
 },
@@ -12411,9 +14176,14 @@
   "fields": {
     "order": 33,
     "book": 21,
+    "title": "1984",
+    "author": "George Orwell",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1294,
     "line_total_cents": 2588,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.989Z"
   }
 },
@@ -12423,9 +14193,14 @@
   "fields": {
     "order": 33,
     "book": 36,
+    "title": "Great Expectations",
+    "author": "Charles Dickens",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2977,
     "line_total_cents": 2977,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:42.995Z"
   }
 },
@@ -12435,9 +14210,14 @@
   "fields": {
     "order": 33,
     "book": 16,
+    "title": "Pattern Recognition and Machine Learning",
+    "author": "Christopher Bishop",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4283,
     "line_total_cents": 4283,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.001Z"
   }
 },
@@ -12447,9 +14227,14 @@
   "fields": {
     "order": 33,
     "book": 32,
+    "title": "Wuthering Heights",
+    "author": "Emily Bronte",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 998,
     "line_total_cents": 998,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.006Z"
   }
 },
@@ -12459,9 +14244,14 @@
   "fields": {
     "order": 34,
     "book": 16,
+    "title": "Pattern Recognition and Machine Learning",
+    "author": "Christopher Bishop",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4283,
     "line_total_cents": 4283,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.024Z"
   }
 },
@@ -12471,9 +14261,14 @@
   "fields": {
     "order": 34,
     "book": 38,
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 2623,
     "line_total_cents": 5246,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.031Z"
   }
 },
@@ -12483,9 +14278,14 @@
   "fields": {
     "order": 35,
     "book": 6,
+    "title": "Artificial Intelligence: A Modern Approach",
+    "author": "Stuart Russell",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1638,
     "line_total_cents": 1638,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.049Z"
   }
 },
@@ -12495,9 +14295,14 @@
   "fields": {
     "order": 35,
     "book": 19,
+    "title": "The Adventures of Sherlock Holmes",
+    "author": "Arthur Conan Doyle",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 2202,
     "line_total_cents": 4404,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.055Z"
   }
 },
@@ -12507,9 +14312,14 @@
   "fields": {
     "order": 36,
     "book": 19,
+    "title": "The Adventures of Sherlock Holmes",
+    "author": "Arthur Conan Doyle",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2202,
     "line_total_cents": 2202,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.073Z"
   }
 },
@@ -12519,9 +14329,14 @@
   "fields": {
     "order": 36,
     "book": 30,
+    "title": "The Lord of the Rings",
+    "author": "J. R. R. Tolkien",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1188,
     "line_total_cents": 1188,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.079Z"
   }
 },
@@ -12531,9 +14346,14 @@
   "fields": {
     "order": 37,
     "book": 36,
+    "title": "Great Expectations",
+    "author": "Charles Dickens",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 2977,
     "line_total_cents": 5954,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.097Z"
   }
 },
@@ -12543,9 +14363,14 @@
   "fields": {
     "order": 37,
     "book": 27,
+    "title": "The Catcher in the Rye",
+    "author": "J. D. Salinger",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1702,
     "line_total_cents": 3404,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.103Z"
   }
 },
@@ -12555,9 +14380,14 @@
   "fields": {
     "order": 37,
     "book": 37,
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 1974,
     "line_total_cents": 1974,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.109Z"
   }
 },
@@ -12567,9 +14397,14 @@
   "fields": {
     "order": 38,
     "book": 38,
+    "title": "The Alchemist",
+    "author": "Paulo Coelho",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2623,
     "line_total_cents": 2623,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.126Z"
   }
 },
@@ -12579,9 +14414,14 @@
   "fields": {
     "order": 39,
     "book": 15,
+    "title": "Algorithms",
+    "author": "Robert Sedgewick",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 4001,
     "line_total_cents": 4001,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.144Z"
   }
 },
@@ -12591,9 +14431,14 @@
   "fields": {
     "order": 39,
     "book": 13,
+    "title": "Head First Design Patterns",
+    "author": "Eric Freeman",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 3494,
     "line_total_cents": 3494,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.149Z"
   }
 },
@@ -12603,9 +14448,14 @@
   "fields": {
     "order": 39,
     "book": 8,
+    "title": "Operating System Concepts",
+    "author": "Abraham Silberschatz",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2302,
     "line_total_cents": 2302,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.155Z"
   }
 },
@@ -12615,9 +14465,14 @@
   "fields": {
     "order": 40,
     "book": 9,
+    "title": "Structure and Interpretation of Computer Programs",
+    "author": "Harold Abelson",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 1,
     "unit_price_cents": 2474,
     "line_total_cents": 2474,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.172Z"
   }
 },
@@ -12627,10 +14482,236 @@
   "fields": {
     "order": 40,
     "book": 20,
+    "title": "Pride and Prejudice",
+    "author": "Jane Austen",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
     "quantity": 2,
     "unit_price_cents": 1614,
     "line_total_cents": 3228,
+    "is_steward_free": false,
     "created_at": "2026-03-12T16:17:43.178Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 94,
+  "fields": {
+    "order": 41,
+    "book": 15,
+    "title": "Algorithms",
+    "author": "Robert Sedgewick",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 4001,
+    "line_total_cents": 4001,
+    "is_steward_free": false,
+    "created_at": "2026-03-26T02:53:36.756Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 95,
+  "fields": {
+    "order": 41,
+    "book": 28,
+    "title": "Brave New World",
+    "author": "Aldous Huxley",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 1791,
+    "line_total_cents": 1791,
+    "is_steward_free": false,
+    "created_at": "2026-03-26T02:53:36.810Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 96,
+  "fields": {
+    "order": 42,
+    "book": 40,
+    "title": "The Wall",
+    "author": "Marlen Haushofer",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 1500,
+    "line_total_cents": 1500,
+    "is_steward_free": false,
+    "created_at": "2026-03-26T03:48:20.717Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 97,
+  "fields": {
+    "order": 43,
+    "book": 39,
+    "title": "Stoner",
+    "author": "John Williams",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 2300,
+    "line_total_cents": 2300,
+    "is_steward_free": false,
+    "created_at": "2026-03-26T03:52:00.232Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 98,
+  "fields": {
+    "order": 44,
+    "book": 37,
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 2,
+    "unit_price_cents": 1974,
+    "line_total_cents": 3948,
+    "is_steward_free": false,
+    "created_at": "2026-03-26T04:41:48.126Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 99,
+  "fields": {
+    "order": 45,
+    "book": 40,
+    "title": "The Wall",
+    "author": "Marlen Haushofer",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 1500,
+    "line_total_cents": 1500,
+    "is_steward_free": false,
+    "created_at": "2026-03-26T05:46:58.404Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 100,
+  "fields": {
+    "order": 46,
+    "book": 37,
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 1974,
+    "line_total_cents": 1974,
+    "is_steward_free": false,
+    "created_at": "2026-03-27T04:06:22.743Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 101,
+  "fields": {
+    "order": 47,
+    "book": 21,
+    "title": "1984",
+    "author": "George Orwell",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 1294,
+    "line_total_cents": 1294,
+    "is_steward_free": false,
+    "created_at": "2026-03-30T05:58:44.075Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 102,
+  "fields": {
+    "order": 48,
+    "book": 37,
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 1974,
+    "line_total_cents": 1974,
+    "is_steward_free": false,
+    "created_at": "2026-03-30T06:09:23.402Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 103,
+  "fields": {
+    "order": 49,
+    "book": 15,
+    "title": "Algorithms",
+    "author": "Robert Sedgewick",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 4001,
+    "line_total_cents": 4001,
+    "is_steward_free": false,
+    "created_at": "2026-03-30T06:36:35.046Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 104,
+  "fields": {
+    "order": 49,
+    "book": 33,
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 0,
+    "line_total_cents": 0,
+    "is_steward_free": false,
+    "created_at": "2026-03-30T06:36:35.048Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 105,
+  "fields": {
+    "order": 50,
+    "book": 15,
+    "title": "Algorithms",
+    "author": "Robert Sedgewick",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 4001,
+    "line_total_cents": 4001,
+    "is_steward_free": false,
+    "created_at": "2026-03-30T06:47:59.173Z"
+  }
+},
+{
+  "model": "Buyer.orderitem",
+  "pk": 106,
+  "fields": {
+    "order": 51,
+    "book": 1,
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "deposit_required": false,
+    "deposit_amount_cents": 0,
+    "quantity": 1,
+    "unit_price_cents": 0,
+    "line_total_cents": 0,
+    "is_steward_free": true,
+    "created_at": "2026-03-30T06:48:49.500Z"
   }
 },
 {
@@ -13311,6 +15392,193 @@
     "source_address": 124,
     "created_at": "2026-03-19T15:50:31.065Z",
     "updated_at": "2026-03-19T15:50:31.065Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 41,
+  "fields": {
+    "order": 41,
+    "shipping_name": "Home",
+    "shipping_line1": "123 example st",
+    "shipping_line2": "apt 4",
+    "shipping_city": "Imaginary",
+    "shipping_state": "IS",
+    "shipping_postal_code": "12334",
+    "shipping_country": "US",
+    "source_address": 135,
+    "created_at": "2026-03-26T02:53:36.754Z",
+    "updated_at": "2026-03-26T02:53:36.754Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 42,
+  "fields": {
+    "order": 42,
+    "shipping_name": "Home",
+    "shipping_line1": "123 example st",
+    "shipping_line2": "apt 4",
+    "shipping_city": "Imaginary",
+    "shipping_state": "IS",
+    "shipping_postal_code": "12334",
+    "shipping_country": "US",
+    "source_address": 135,
+    "created_at": "2026-03-26T03:48:20.712Z",
+    "updated_at": "2026-03-26T03:48:20.712Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 43,
+  "fields": {
+    "order": 43,
+    "shipping_name": "Home",
+    "shipping_line1": "123 example st",
+    "shipping_line2": "apt 4",
+    "shipping_city": "Imaginary",
+    "shipping_state": "IS",
+    "shipping_postal_code": "12334",
+    "shipping_country": "US",
+    "source_address": 135,
+    "created_at": "2026-03-26T03:52:00.227Z",
+    "updated_at": "2026-03-26T03:52:00.227Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 44,
+  "fields": {
+    "order": 44,
+    "shipping_name": "Home",
+    "shipping_line1": "123 example st",
+    "shipping_line2": "apt 4",
+    "shipping_city": "Imaginary",
+    "shipping_state": "IS",
+    "shipping_postal_code": "12334",
+    "shipping_country": "US",
+    "source_address": 135,
+    "created_at": "2026-03-26T04:41:48.123Z",
+    "updated_at": "2026-03-26T04:41:48.123Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 45,
+  "fields": {
+    "order": 45,
+    "shipping_name": "Home",
+    "shipping_line1": "123 example st",
+    "shipping_line2": "apt 4",
+    "shipping_city": "Imaginary",
+    "shipping_state": "IS",
+    "shipping_postal_code": "12334",
+    "shipping_country": "US",
+    "source_address": 135,
+    "created_at": "2026-03-26T05:46:58.402Z",
+    "updated_at": "2026-03-26T05:46:58.402Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 46,
+  "fields": {
+    "order": 46,
+    "shipping_name": "Home",
+    "shipping_line1": "123 example st",
+    "shipping_line2": "apt 4",
+    "shipping_city": "Imaginary",
+    "shipping_state": "IS",
+    "shipping_postal_code": "12334",
+    "shipping_country": "US",
+    "source_address": 135,
+    "created_at": "2026-03-27T04:06:22.741Z",
+    "updated_at": "2026-03-27T04:06:22.741Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 47,
+  "fields": {
+    "order": 47,
+    "shipping_name": "Home",
+    "shipping_line1": "123 example st",
+    "shipping_line2": "apt 4",
+    "shipping_city": "Imaginary",
+    "shipping_state": "IS",
+    "shipping_postal_code": "12334",
+    "shipping_country": "US",
+    "source_address": 135,
+    "created_at": "2026-03-30T05:58:44.073Z",
+    "updated_at": "2026-03-30T05:58:44.073Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 48,
+  "fields": {
+    "order": 48,
+    "shipping_name": "Home",
+    "shipping_line1": "123 example st",
+    "shipping_line2": "apt 4",
+    "shipping_city": "Imaginary",
+    "shipping_state": "IS",
+    "shipping_postal_code": "12334",
+    "shipping_country": "US",
+    "source_address": 135,
+    "created_at": "2026-03-30T06:09:23.398Z",
+    "updated_at": "2026-03-30T06:09:23.398Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 49,
+  "fields": {
+    "order": 49,
+    "shipping_name": "Home",
+    "shipping_line1": "123 example st",
+    "shipping_line2": "apt 4",
+    "shipping_city": "Imaginary",
+    "shipping_state": "IS",
+    "shipping_postal_code": "12334",
+    "shipping_country": "US",
+    "source_address": 135,
+    "created_at": "2026-03-30T06:36:35.044Z",
+    "updated_at": "2026-03-30T06:36:35.044Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 50,
+  "fields": {
+    "order": 50,
+    "shipping_name": "Home",
+    "shipping_line1": "214 Home st",
+    "shipping_line2": "Apt 4",
+    "shipping_city": "Starkville",
+    "shipping_state": "MS",
+    "shipping_postal_code": "39759",
+    "shipping_country": "US",
+    "source_address": 137,
+    "created_at": "2026-03-30T06:47:59.169Z",
+    "updated_at": "2026-03-30T06:47:59.169Z"
+  }
+},
+{
+  "model": "Buyer.ordershippingaddress",
+  "pk": 51,
+  "fields": {
+    "order": 51,
+    "shipping_name": "Home",
+    "shipping_line1": "214 Home st",
+    "shipping_line2": "Apt 4",
+    "shipping_city": "Starkville",
+    "shipping_state": "MS",
+    "shipping_postal_code": "39759",
+    "shipping_country": "US",
+    "source_address": 137,
+    "created_at": "2026-03-30T06:48:49.499Z",
+    "updated_at": "2026-03-30T06:48:49.499Z"
   }
 },
 {
@@ -15081,6 +17349,253 @@
   }
 },
 {
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 94,
+  "fields": {
+    "order_item": 94,
+    "source_book": 15,
+    "title": "Algorithms",
+    "author": "Robert Sedgewick",
+    "description": "A comprehensive introduction to algorithms and data structures. The book explains sorting, searching, graphs, strings, and optimization techniques with clear explanations and Java implementations, helping readers understand both algorithm design and practical performance analysis.",
+    "isbn": "9780321573513",
+    "language": "English",
+    "publisher": "Addison-Wesley",
+    "publication_year": 2005,
+    "cover_image_url": null,
+    "condition": "Acceptable",
+    "created_at": "2026-03-26T02:53:36.806Z",
+    "updated_at": "2026-03-26T02:53:36.806Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 95,
+  "fields": {
+    "order_item": 95,
+    "source_book": 28,
+    "title": "Brave New World",
+    "author": "Aldous Huxley",
+    "description": "Set in a futuristic society where humans are genetically engineered and conditioned for stability and happiness, the novel follows Bernard Marx and John the Savage as they confront a world that sacrifices individuality and freedom for comfort and control.",
+    "isbn": "9780060850524",
+    "language": "English",
+    "publisher": "Harper Perennial",
+    "publication_year": 1949,
+    "cover_image_url": null,
+    "condition": "Very Good",
+    "created_at": "2026-03-26T02:53:36.811Z",
+    "updated_at": "2026-03-26T02:53:36.811Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 96,
+  "fields": {
+    "order_item": 96,
+    "source_book": 40,
+    "title": "The Wall",
+    "author": "Marlen Haushofer",
+    "description": "A woman becomes trapped behind an invisible wall that isolates her from the world. Forced to survive alone in nature, she reflects on solitude, routine, and survival. A quiet, haunting story about isolation, resilience, and the human connection to the natural world.",
+    "isbn": "978-0811221191",
+    "language": "English",
+    "publisher": "New Directions Publishing",
+    "publication_year": 1963,
+    "cover_image_url": null,
+    "condition": "New",
+    "created_at": "2026-03-26T03:48:20.719Z",
+    "updated_at": "2026-03-26T03:48:20.719Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 97,
+  "fields": {
+    "order_item": 97,
+    "source_book": 39,
+    "title": "Stoner",
+    "author": "John Williams",
+    "description": "A quiet novel about a university professor who lives an unremarkable life filled with small struggles, quiet love, and inner resilience. It explores purpose, disappointment, and dignity in ordinary existence, showing how even a simple life can hold deep meaning.",
+    "isbn": "978-1590171998",
+    "language": null,
+    "publisher": "Viking Press",
+    "publication_year": 1965,
+    "cover_image_url": null,
+    "condition": "New",
+    "created_at": "2026-03-26T03:52:00.234Z",
+    "updated_at": "2026-03-26T03:52:00.234Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 98,
+  "fields": {
+    "order_item": 98,
+    "source_book": 37,
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "description": "Set during the French Revolution, the novel follows Charles Darnay and Sydney Carton as their lives become intertwined with Lucie Manette in London and Paris. It explores sacrifice, resurrection, injustice, and the human cost of revolution.",
+    "isbn": "9780141439600",
+    "language": "English",
+    "publisher": "Penguin Books",
+    "publication_year": 1932,
+    "cover_image_url": null,
+    "condition": "New",
+    "created_at": "2026-03-26T04:41:48.128Z",
+    "updated_at": "2026-03-26T04:41:48.128Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 99,
+  "fields": {
+    "order_item": 99,
+    "source_book": 40,
+    "title": "The Wall",
+    "author": "Marlen Haushofer",
+    "description": "A woman becomes trapped behind an invisible wall that isolates her from the world. Forced to survive alone in nature, she reflects on solitude, routine, and survival. A quiet, haunting story about isolation, resilience, and the human connection to the natural world.",
+    "isbn": "978-0811221191",
+    "language": "English",
+    "publisher": "New Directions Publishing",
+    "publication_year": 1963,
+    "cover_image_url": null,
+    "condition": "New",
+    "created_at": "2026-03-26T05:46:58.407Z",
+    "updated_at": "2026-03-26T05:46:58.407Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 100,
+  "fields": {
+    "order_item": 100,
+    "source_book": 37,
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "description": "Set during the French Revolution, the novel follows Charles Darnay and Sydney Carton as their lives become intertwined with Lucie Manette in London and Paris. It explores sacrifice, resurrection, injustice, and the human cost of revolution.",
+    "isbn": "9780141439600",
+    "language": "English",
+    "publisher": "Penguin Books",
+    "publication_year": 1932,
+    "cover_image_url": null,
+    "condition": "New",
+    "created_at": "2026-03-27T04:06:22.746Z",
+    "updated_at": "2026-03-27T04:06:22.746Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 101,
+  "fields": {
+    "order_item": 101,
+    "source_book": 21,
+    "title": "1984",
+    "author": "George Orwell",
+    "description": "1984 is a dystopian novel set in a totalitarian society ruled by constant surveillance and propaganda. Winston Smith struggles to preserve truth and individuality while living under the oppressive control of Big Brother and the Party.",
+    "isbn": "9780141036144",
+    "language": "English",
+    "publisher": "Penguin Books",
+    "publication_year": 1994,
+    "cover_image_url": null,
+    "condition": "Like New",
+    "created_at": "2026-03-30T05:58:44.128Z",
+    "updated_at": "2026-03-30T05:58:44.128Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 102,
+  "fields": {
+    "order_item": 102,
+    "source_book": 37,
+    "title": "A Tale of Two Cities",
+    "author": "Charles Dickens",
+    "description": "Set during the French Revolution, the novel follows Charles Darnay and Sydney Carton as their lives become intertwined with Lucie Manette in London and Paris. It explores sacrifice, resurrection, injustice, and the human cost of revolution.",
+    "isbn": "9780141439600",
+    "language": "English",
+    "publisher": "Penguin Books",
+    "publication_year": 1932,
+    "cover_image_url": null,
+    "condition": "New",
+    "created_at": "2026-03-30T06:09:23.406Z",
+    "updated_at": "2026-03-30T06:09:23.406Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 103,
+  "fields": {
+    "order_item": 103,
+    "source_book": 15,
+    "title": "Algorithms",
+    "author": "Robert Sedgewick",
+    "description": "A comprehensive introduction to algorithms and data structures. The book explains sorting, searching, graphs, strings, and optimization techniques with clear explanations and Java implementations, helping readers understand both algorithm design and practical performance analysis.",
+    "isbn": "9780321573513",
+    "language": "English",
+    "publisher": "Addison-Wesley",
+    "publication_year": 2005,
+    "cover_image_url": null,
+    "condition": "Acceptable",
+    "created_at": "2026-03-30T06:36:35.047Z",
+    "updated_at": "2026-03-30T06:36:35.047Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 104,
+  "fields": {
+    "order_item": 104,
+    "source_book": 33,
+    "title": "Dracula",
+    "author": "Bram Stoker",
+    "description": "A Gothic horror novel that follows Jonathan Harker and a group of allies as they confront the mysterious Count Dracula. Told through letters and journal entries, the story explores fear, superstition, and the battle between good and evil.",
+    "isbn": "9780141439846",
+    "language": "English",
+    "publisher": "Penguin Classics",
+    "publication_year": 1855,
+    "cover_image_url": null,
+    "condition": "Like New",
+    "created_at": "2026-03-30T06:36:35.049Z",
+    "updated_at": "2026-03-30T06:36:35.049Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 105,
+  "fields": {
+    "order_item": 105,
+    "source_book": 15,
+    "title": "Algorithms",
+    "author": "Robert Sedgewick",
+    "description": "A comprehensive introduction to algorithms and data structures. The book explains sorting, searching, graphs, strings, and optimization techniques with clear explanations and Java implementations, helping readers understand both algorithm design and practical performance analysis.",
+    "isbn": "9780321573513",
+    "language": "English",
+    "publisher": "Addison-Wesley",
+    "publication_year": 2005,
+    "cover_image_url": null,
+    "condition": "Acceptable",
+    "created_at": "2026-03-30T06:47:59.175Z",
+    "updated_at": "2026-03-30T06:47:59.175Z"
+  }
+},
+{
+  "model": "Buyer.orderitembooksnapshot",
+  "pk": 106,
+  "fields": {
+    "order_item": 106,
+    "source_book": 1,
+    "title": "Clean Code",
+    "author": "Robert C. Martin",
+    "description": "A practical guide to writing readable, maintainable, and high quality software. The book teaches principles, patterns, and best practices for clean programming through real code examples, showing how developers can improve code structure, naming, testing, and design.",
+    "isbn": "9780132350884",
+    "language": "English",
+    "publisher": "Prentice Hall",
+    "publication_year": 2002,
+    "cover_image_url": null,
+    "condition": "Very Good",
+    "created_at": "2026-03-30T06:48:49.501Z",
+    "updated_at": "2026-03-30T06:48:49.501Z"
+  }
+},
+{
   "model": "Buyer.returnrequest",
   "pk": 1,
   "fields": {
@@ -15155,6 +17670,269 @@
     "status": "approved",
     "created_at": "2026-03-12T16:18:57.252Z",
     "updated_at": "2026-03-12T16:18:57.252Z"
+  }
+},
+{
+  "model": "Buyer.returnrequest",
+  "pk": 8,
+  "fields": {
+    "order": 43,
+    "reason": "[DAMAGED]\nDamaged",
+    "status": "refunded",
+    "created_at": "2026-03-26T04:22:31.126Z",
+    "updated_at": "2026-03-26T05:46:00.460Z"
+  }
+},
+{
+  "model": "Buyer.returnrequest",
+  "pk": 9,
+  "fields": {
+    "order": 44,
+    "reason": "[DAMAGED]\nDamaged badly",
+    "status": "requested",
+    "created_at": "2026-03-26T05:23:16.976Z",
+    "updated_at": "2026-03-26T05:23:16.976Z"
+  }
+},
+{
+  "model": "Buyer.returnrequest",
+  "pk": 10,
+  "fields": {
+    "order": 45,
+    "reason": "[NOT_AS_DESCRIBED]\nNot the book",
+    "status": "refunded",
+    "created_at": "2026-03-26T05:47:50.922Z",
+    "updated_at": "2026-03-26T05:48:21.058Z"
+  }
+},
+{
+  "model": "Buyer.sellerreturnreceipt",
+  "pk": 1,
+  "fields": {
+    "return_request": 8,
+    "seller": 127,
+    "amount_credited_cents": 2300,
+    "created_at": "2026-03-26T05:46:00.448Z"
+  }
+},
+{
+  "model": "Buyer.sellerreturnreceipt",
+  "pk": 2,
+  "fields": {
+    "return_request": 10,
+    "seller": 127,
+    "amount_credited_cents": 1500,
+    "created_at": "2026-03-26T05:48:21.045Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 1,
+  "fields": {
+    "user": 103,
+    "store_name": "Tran, Greene and Chang",
+    "is_verified": true,
+    "created_at": "2026-03-12T16:02:53.998Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 2,
+  "fields": {
+    "user": 104,
+    "store_name": "Jenkins, Aguilar and Reeves",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.013Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 3,
+  "fields": {
+    "user": 105,
+    "store_name": "Mason and Sons",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.044Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 4,
+  "fields": {
+    "user": 106,
+    "store_name": "Johnson LLC",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.053Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 5,
+  "fields": {
+    "user": 107,
+    "store_name": "Schmidt, Randolph and Duran",
+    "is_verified": true,
+    "created_at": "2026-03-12T16:02:54.064Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 6,
+  "fields": {
+    "user": 108,
+    "store_name": "Hernandez Group",
+    "is_verified": true,
+    "created_at": "2026-03-12T16:02:54.073Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 7,
+  "fields": {
+    "user": 109,
+    "store_name": "Martinez, Cook and Hurst",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.082Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 8,
+  "fields": {
+    "user": 110,
+    "store_name": "Lewis-Cooper",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.090Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 9,
+  "fields": {
+    "user": 111,
+    "store_name": "Morris-Howard",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.098Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 10,
+  "fields": {
+    "user": 112,
+    "store_name": "Smith, Parker and Reyes",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.106Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 11,
+  "fields": {
+    "user": 113,
+    "store_name": "Williams, Reed and Martin",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.114Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 12,
+  "fields": {
+    "user": 114,
+    "store_name": "Gardner, Lawrence and Jones",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.121Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 13,
+  "fields": {
+    "user": 115,
+    "store_name": "Richardson, Reyes and Dominguez",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.129Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 14,
+  "fields": {
+    "user": 116,
+    "store_name": "Weber LLC",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.136Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 15,
+  "fields": {
+    "user": 117,
+    "store_name": "Sanders, Lee and Perez",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.145Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 16,
+  "fields": {
+    "user": 118,
+    "store_name": "Lam-Moore",
+    "is_verified": false,
+    "created_at": "2026-03-12T16:02:54.152Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 17,
+  "fields": {
+    "user": 119,
+    "store_name": "Phelps PLC",
+    "is_verified": true,
+    "created_at": "2026-03-12T16:02:54.159Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 18,
+  "fields": {
+    "user": 120,
+    "store_name": "Rogers, Arroyo and Silva",
+    "is_verified": true,
+    "created_at": "2026-03-12T16:02:54.167Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 19,
+  "fields": {
+    "user": 121,
+    "store_name": "Mcdonald-Nichols",
+    "is_verified": true,
+    "created_at": "2026-03-12T16:02:54.174Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 20,
+  "fields": {
+    "user": 122,
+    "store_name": "Weaver, Marshall and Macias",
+    "is_verified": true,
+    "created_at": "2026-03-12T16:02:54.181Z"
+  }
+},
+{
+  "model": "Seller.sellerprofile",
+  "pk": 21,
+  "fields": {
+    "user": 127,
+    "store_name": "Bulldogs",
+    "is_verified": false,
+    "created_at": "2026-03-26T03:01:07.346Z"
   }
 },
 {
@@ -15575,206 +18353,6 @@
     "status": "resolved",
     "created_at": "2026-03-19T15:50:30.816Z",
     "updated_at": "2026-03-19T15:50:30.816Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 1,
-  "fields": {
-    "user": 103,
-    "store_name": "Tran, Greene and Chang",
-    "is_verified": true,
-    "created_at": "2026-03-12T16:02:53.998Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 2,
-  "fields": {
-    "user": 104,
-    "store_name": "Jenkins, Aguilar and Reeves",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.013Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 3,
-  "fields": {
-    "user": 105,
-    "store_name": "Mason and Sons",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.044Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 4,
-  "fields": {
-    "user": 106,
-    "store_name": "Johnson LLC",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.053Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 5,
-  "fields": {
-    "user": 107,
-    "store_name": "Schmidt, Randolph and Duran",
-    "is_verified": true,
-    "created_at": "2026-03-12T16:02:54.064Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 6,
-  "fields": {
-    "user": 108,
-    "store_name": "Hernandez Group",
-    "is_verified": true,
-    "created_at": "2026-03-12T16:02:54.073Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 7,
-  "fields": {
-    "user": 109,
-    "store_name": "Martinez, Cook and Hurst",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.082Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 8,
-  "fields": {
-    "user": 110,
-    "store_name": "Lewis-Cooper",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.090Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 9,
-  "fields": {
-    "user": 111,
-    "store_name": "Morris-Howard",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.098Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 10,
-  "fields": {
-    "user": 112,
-    "store_name": "Smith, Parker and Reyes",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.106Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 11,
-  "fields": {
-    "user": 113,
-    "store_name": "Williams, Reed and Martin",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.114Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 12,
-  "fields": {
-    "user": 114,
-    "store_name": "Gardner, Lawrence and Jones",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.121Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 13,
-  "fields": {
-    "user": 115,
-    "store_name": "Richardson, Reyes and Dominguez",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.129Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 14,
-  "fields": {
-    "user": 116,
-    "store_name": "Weber LLC",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.136Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 15,
-  "fields": {
-    "user": 117,
-    "store_name": "Sanders, Lee and Perez",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.145Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 16,
-  "fields": {
-    "user": 118,
-    "store_name": "Lam-Moore",
-    "is_verified": false,
-    "created_at": "2026-03-12T16:02:54.152Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 17,
-  "fields": {
-    "user": 119,
-    "store_name": "Phelps PLC",
-    "is_verified": true,
-    "created_at": "2026-03-12T16:02:54.159Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 18,
-  "fields": {
-    "user": 120,
-    "store_name": "Rogers, Arroyo and Silva",
-    "is_verified": true,
-    "created_at": "2026-03-12T16:02:54.167Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 19,
-  "fields": {
-    "user": 121,
-    "store_name": "Mcdonald-Nichols",
-    "is_verified": true,
-    "created_at": "2026-03-12T16:02:54.174Z"
-  }
-},
-{
-  "model": "Seller.sellerprofile",
-  "pk": 20,
-  "fields": {
-    "user": 122,
-    "store_name": "Weaver, Marshall and Macias",
-    "is_verified": true,
-    "created_at": "2026-03-12T16:02:54.181Z"
   }
 }
 ]
