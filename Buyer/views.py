@@ -8,6 +8,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 
 from Buyer.cart_helpers import add_book_to_db_cart, clear_db_cart, db_cart_lines
 from Buyer.models import (
@@ -19,7 +20,12 @@ from Buyer.models import (
     PaymentMethod,
     ReturnRequest,
 )
-from General.models import Address, Book, Inventory, User
+from General.models import Address, Book, Inventory, StewardPool, User
+from General.steward import (
+    get_steward_pool,
+    random_steward_attribution,
+    user_free_book_eligible,
+)
 
 _STEWARD_CONTRIBUTION_DEFAULT = Decimal("2.00")
 _STEWARD_CONTRIBUTION_MAX = Decimal("100.00")
@@ -82,6 +88,7 @@ def _order_items_from_snapshots(order):
         author = snap.author if snap else (oi.author or book.author)
         items.append(
             {
+                "book_id": book.id,
                 "title": title,
                 "author": author,
                 "deposit_required": getattr(oi, "deposit_required", False),
@@ -114,23 +121,30 @@ def _checkout_page_context(
         payment_methods = list(_payment_methods_for_user(user))
 
     tax_cents = int(round(subtotal_cents * 0.07))
-    fees_cents = 299 if cart_items else 0
+    cart_has_steward_free = any(line.get("is_steward_free") for line in cart_items)
+    fees_cents = 0 if cart_has_steward_free else (299 if cart_items else 0)
     base_total_cents = subtotal_cents + tax_cents + fees_cents
     cart_subtotal = subtotal_cents / 100.0
     tax = round(tax_cents / 100.0, 2)
     fees = round(fees_cents / 100.0, 2)
-
-    steward_d, steward_invalid = _parse_steward_contribution_dollars(steward_raw)
-    if steward_invalid:
-        steward_display = str(steward_raw).strip() if steward_raw is not None else ""
+    if cart_has_steward_free:
+        steward_display = "0.00"
         steward_contribution_cents = 0
         steward_points_preview = 0
         steward_line_dollars_display = "0.00"
+        steward_invalid = False
     else:
-        steward_display = str(steward_d)
-        steward_contribution_cents = _steward_cents_from_dollars(steward_d)
-        steward_points_preview = _steward_points_from_contribution_cents(steward_contribution_cents)
-        steward_line_dollars_display = f"{steward_contribution_cents / 100:.2f}"
+        steward_d, steward_invalid = _parse_steward_contribution_dollars(steward_raw)
+        if steward_invalid:
+            steward_display = str(steward_raw).strip() if steward_raw is not None else ""
+            steward_contribution_cents = 0
+            steward_points_preview = 0
+            steward_line_dollars_display = "0.00"
+        else:
+            steward_display = str(steward_d)
+            steward_contribution_cents = _steward_cents_from_dollars(steward_d)
+            steward_points_preview = _steward_points_from_contribution_cents(steward_contribution_cents)
+            steward_line_dollars_display = f"{steward_contribution_cents / 100:.2f}"
 
     total_cents = base_total_cents + steward_contribution_cents
     final_total = round(total_cents / 100.0, 2)
@@ -151,6 +165,7 @@ def _checkout_page_context(
         "steward_line_dollars_display": steward_line_dollars_display,
         "base_total_cents": base_total_cents,
         "steward_contribution_invalid": steward_invalid,
+        "cart_has_steward_free": cart_has_steward_free,
     }
 
 
@@ -182,14 +197,48 @@ def _cart_lines(session_cart):
     return lines, subtotal_cents
 
 
+def _buyer_dashboard_context(user):
+    from General.steward import (
+        free_book_cooldown_progress_percent,
+        get_steward_pool,
+        next_free_book_eligible_at,
+        user_free_book_eligible,
+    )
+
+    ctx = {
+        "stats": {"total_orders": 0, "open_orders": 0},
+        "credit_balance": "0.00",
+    }
+    if not user.is_authenticated:
+        return ctx
+    ctx["credit_balance"] = f"{(user.store_credit_cents or 0) / 100:.2f}"
+    ctx["stats"] = {
+        "total_orders": Order.objects.filter(user=user).count(),
+        "open_orders": Order.objects.filter(user=user)
+        .exclude(status__in=["delivered", "cancelled", "refunded"])
+        .count(),
+    }
+    if user.is_steward:
+        pool = get_steward_pool()
+        ctx["steward_pool_dollars"] = f"{pool.pool_cents / 100:,.2f}"
+        ctx["steward_free_book_eligible"] = user_free_book_eligible(user)
+        ctx["steward_free_cooldown_progress"] = free_book_cooldown_progress_percent(user)
+        ctx["steward_next_free_at"] = next_free_book_eligible_at(user)
+    return ctx
+
+
 def home(request):
     """Buyer home / dashboard."""
+    if request.user.is_authenticated:
+        ctx = _buyer_dashboard_context(request.user)
+        return render(request, "dashboard/buyer_dashboard.html", ctx)
     return render(request, "dashboard/buyer_dashboard.html")
 
 
 def buyer_dashboard(request):
     """Buyer dashboard."""
-    return render(request, "dashboard/buyer_dashboard.html")
+    ctx = _buyer_dashboard_context(request.user)
+    return render(request, "dashboard/buyer_dashboard.html", ctx)
 
 
 def add_to_cart(request, book_id):
@@ -202,7 +251,11 @@ def add_to_cart(request, book_id):
         if quantity < 1:
             quantity = 1
         if request.user.is_authenticated:
-            add_book_to_db_cart(request.user, book, quantity)
+            if not add_book_to_db_cart(request.user, book, quantity):
+                messages.error(
+                    request,
+                    "This title is already in your cart as a steward free book. Remove it before adding a paid copy.",
+                )
         else:
             cart = request.session.get("cart", {})
             book_id_str = str(book_id)
@@ -216,6 +269,8 @@ def add_to_cart(request, book_id):
 
 
 def buyer_cart(request):
+    from General.steward import cart_steward_privilege_row
+
     if request.user.is_authenticated:
         cart_items, subtotal_cents = db_cart_lines(request.user)
     else:
@@ -223,17 +278,39 @@ def buyer_cart(request):
         cart_items, subtotal_cents = _cart_lines(session_cart)
     cart_subtotal = subtotal_cents / 100.0
     tax = round(cart_subtotal * 0.07, 2)
-    fees = 0.00
+    cart_has_steward_free = any(item.get("is_steward_free") for item in cart_items)
+    fees = 0.00 if cart_has_steward_free else (2.99 if cart_items else 0.00)
     cart_total = round(cart_subtotal + tax + fees, 2)
     total_items = sum(item["quantity"] for item in cart_items)
+
+    pool_cents = 0
+    cart_free_book_id = None
+    if request.user.is_authenticated and cart_items:
+        pool_cents = get_steward_pool().pool_cents
+        cart_free_book_id = next(
+            (item["id"] for item in cart_items if item.get("is_steward_free")), None
+        )
+        for item in cart_items:
+            item["steward_priv"] = cart_steward_privilege_row(
+                request.user, item, cart_free_book_id, pool_cents
+            )
+    else:
+        for item in cart_items:
+            item["steward_priv"] = {
+                "show": False,
+                "is_free_line": bool(item.get("is_steward_free")),
+                "select_disabled": True,
+                "hint": "",
+            }
 
     context = {
         "cart_items": cart_items,
         "cart_subtotal": cart_subtotal,
-        "cart_total": cart_subtotal,
+        "cart_total": cart_total,
         "tax": tax,
         "fees": fees,
         "total_items": total_items,
+        "cart_has_steward_free": cart_has_steward_free,
         "addresses": [],
         "payment_methods": [],
         "checkout_error": None,
@@ -362,49 +439,97 @@ def buyer_checkout(request):
                 ),
             )
 
-        steward_d, steward_invalid = _parse_steward_contribution_dollars(post_steward)
-        if steward_invalid:
-            return render(
-                request,
-                "checkout/buyer_checkout.html",
-                _checkout_page_context(
-                    request.user,
-                    cart_items,
-                    subtotal_cents,
-                    post_steward,
-                    addresses=addresses,
-                    selected_address=ship_addr,
-                    payment_methods=payment_methods,
-                    selected_payment=pay_method,
-                    checkout_error="Enter a valid steward contribution (0 to $100).",
-                ),
-            )
-        steward_contribution_cents = _steward_cents_from_dollars(steward_d)
-        tax_cents = int(round(subtotal_cents * 0.07))
-        fees_cents = 299 if cart_items else 0
-        total_cents = subtotal_cents + tax_cents + fees_cents + steward_contribution_cents
+        cart_has_free = any(line.get("is_steward_free") for line in cart_items)
+        if cart_has_free:
+            steward_d = Decimal("0")
+            steward_invalid = False
+            steward_contribution_cents = 0
+        else:
+            steward_d, steward_invalid = _parse_steward_contribution_dollars(post_steward)
+            if steward_invalid:
+                return render(
+                    request,
+                    "checkout/buyer_checkout.html",
+                    _checkout_page_context(
+                        request.user,
+                        cart_items,
+                        subtotal_cents,
+                        post_steward,
+                        addresses=addresses,
+                        selected_address=ship_addr,
+                        payment_methods=payment_methods,
+                        selected_payment=pay_method,
+                        checkout_error="Enter a valid steward contribution (0 to $100).",
+                    ),
+                )
+            steward_contribution_cents = _steward_cents_from_dollars(steward_d)
 
         became_steward = False
         try:
             with transaction.atomic():
                 buyer_locked = User.objects.select_for_update().get(pk=request.user.pk)
+                pool = StewardPool.objects.select_for_update().get(pk=1)
+
+                cis = list(
+                    CartItem.objects.filter(cart__user=request.user)
+                    .select_related("book", "book__inventory")
+                    .select_for_update()
+                )
+                if not cis:
+                    raise ValueError("Your cart is empty.")
+
+                subtotal_cents_locked = 0
+                free_deduction = 0
+                steward_free_lines = 0
                 locked_books = {}
-                for line in cart_items:
+                for ci in cis:
+                    book = ci.book
+                    if not book.is_active:
+                        raise ValueError(
+                            f"“{book.title}” is no longer available. Remove it from your cart."
+                        )
+                    line_cents = ci.unit_price_cents * ci.quantity
+                    subtotal_cents_locked += line_cents
+                    if ci.is_steward_free:
+                        steward_free_lines += 1
+                        if ci.quantity != 1:
+                            raise ValueError("Steward free books must be quantity 1.")
+                        list_px = ci.steward_free_list_price_cents or book.base_price_cents
+                        free_deduction += list_px * ci.quantity
                     inv = (
                         Inventory.objects.select_for_update()
                         .select_related("book")
-                        .filter(book_id=line["book"].id)
+                        .filter(book_id=book.id)
                         .first()
                     )
                     if not inv:
                         raise ValueError(
-                            f"No inventory record for “{line['book'].title}”. Ask the seller to restock."
+                            f"No inventory record for “{book.title}”. Ask the seller to restock."
                         )
-                    if inv.quantity_available < line["quantity"]:
+                    if inv.quantity_available < ci.quantity:
                         raise ValueError(
-                            f"Not enough stock for “{line['book'].title}” (available {inv.quantity_available})."
+                            f"Not enough stock for “{book.title}” (available {inv.quantity_available})."
                         )
-                    locked_books[line["book"].id] = (inv, line)
+                    locked_books[book.id] = (inv, ci)
+
+                if steward_free_lines > 1:
+                    raise ValueError("Only one steward free book per order.")
+                if steward_free_lines and not user_free_book_eligible(buyer_locked):
+                    raise ValueError(
+                        "You are not eligible for a free book right now. Remove the steward free line from your cart."
+                    )
+
+                new_pool = pool.pool_cents + steward_contribution_cents - free_deduction
+                if new_pool < 0:
+                    raise ValueError(
+                        "The steward pool cannot cover this free book right now. Remove the free book or try another title."
+                    )
+                pool.pool_cents = new_pool
+                pool.save(update_fields=["pool_cents"])
+
+                tax_cents = int(round(subtotal_cents_locked * 0.07))
+                fees_cents = 0 if steward_free_lines else (299 if cis else 0)
+                total_cents = subtotal_cents_locked + tax_cents + fees_cents + steward_contribution_cents
 
                 order = Order.objects.create(
                     user=request.user,
@@ -412,7 +537,7 @@ def buyer_checkout(request):
                     payment_method=pay_method,
                     steward_contribution=None,
                     status="paid",
-                    subtotal_cents=subtotal_cents,
+                    subtotal_cents=subtotal_cents_locked,
                     tax_cents=tax_cents,
                     fees_cents=fees_cents,
                     discount_cents=0,
@@ -437,8 +562,9 @@ def buyer_checkout(request):
                     source_address=ship_addr,
                 )
 
-                for book_id, (inv, line) in locked_books.items():
-                    book = line["book"]
+                for book_id, (inv, ci) in locked_books.items():
+                    book = ci.book
+                    line_total = ci.unit_price_cents * ci.quantity
                     oi = OrderItem.objects.create(
                         order=order,
                         book=book,
@@ -446,9 +572,10 @@ def buyer_checkout(request):
                         author=book.author,
                         deposit_required=getattr(book, "deposit_required", False),
                         deposit_amount_cents=getattr(book, "deposit_amount_cents", 0),
-                        quantity=line["quantity"],
-                        unit_price_cents=book.base_price_cents,
-                        line_total_cents=line["line_subtotal_cents"],
+                        quantity=ci.quantity,
+                        unit_price_cents=ci.unit_price_cents,
+                        line_total_cents=line_total,
+                        is_steward_free=ci.is_steward_free,
                     )
                     OrderItemBookSnapshot.objects.create(
                         order_item=oi,
@@ -463,8 +590,11 @@ def buyer_checkout(request):
                         cover_image_url=book.cover_image_url,
                         condition=book.condition,
                     )
-                    inv.quantity_available -= line["quantity"]
+                    inv.quantity_available -= ci.quantity
                     inv.save(update_fields=["quantity_available", "updated_at"])
+
+                if steward_free_lines:
+                    buyer_locked.last_free_book_redeemed_at = timezone.now()
 
                 pts = _steward_points_from_contribution_cents(steward_contribution_cents)
                 was_steward_verified = buyer_locked.steward_verified
@@ -476,8 +606,12 @@ def buyer_checkout(request):
                 progress_update_fields = ["steward_progress", "updated_at"]
                 if buyer_locked.steward_verified != was_steward_verified:
                     progress_update_fields.append("steward_verified")
+                if steward_free_lines:
+                    progress_update_fields.append("last_free_book_redeemed_at")
                 buyer_locked.save(update_fields=progress_update_fields)
                 became_steward = buyer_locked.steward_verified and not was_steward_verified
+
+                CartItem.objects.filter(cart__user=request.user).delete()
 
         except ValueError as e:
             return render(
@@ -520,6 +654,103 @@ def buyer_checkout(request):
             checkout_error=None,
         ),
     )
+
+
+@login_required(login_url="login")
+@login_required(login_url="login")
+def cart_steward_free_select(request, book_id):
+    if request.method != "POST":
+        return redirect("cart")
+
+    def _fail(msg):
+        messages.error(request, msg)
+        return redirect("cart")
+
+    if not request.user.steward_verified:
+        return _fail("Only verified stewards can use this.")
+    if not user_free_book_eligible(request.user):
+        return _fail("Your next free book unlocks after the 30-day cooldown.")
+
+    with transaction.atomic():
+        pool = StewardPool.objects.select_for_update().get(pk=1)
+        ci = (
+            CartItem.objects.filter(cart__user=request.user, book_id=book_id)
+            .select_for_update()
+            .select_related("book", "book__inventory")
+            .first()
+        )
+        if not ci:
+            return _fail("That book is not in your cart.")
+        book = ci.book
+        if not book.is_active:
+            return _fail("That listing is no longer available.")
+        if ci.quantity != 1:
+            return _fail("Set quantity to 1 on this line to use your steward free book.")
+        if book.stock_quantity < 1:
+            return _fail("This book is out of stock.")
+        if pool.pool_cents < book.base_price_cents:
+            return _fail("The steward pool doesn’t cover this list price right now.")
+
+        for other in CartItem.objects.filter(cart__user=request.user, is_steward_free=True).select_related(
+            "book"
+        ):
+            other.is_steward_free = False
+            other.steward_free_list_price_cents = 0
+            other.unit_price_cents = other.book.base_price_cents
+            other.save(
+                update_fields=[
+                    "is_steward_free",
+                    "steward_free_list_price_cents",
+                    "unit_price_cents",
+                    "updated_at",
+                ]
+            )
+
+        ci.is_steward_free = True
+        ci.steward_free_list_price_cents = book.base_price_cents
+        ci.unit_price_cents = 0
+        ci.save(
+            update_fields=[
+                "is_steward_free",
+                "steward_free_list_price_cents",
+                "unit_price_cents",
+                "updated_at",
+            ]
+        )
+
+    messages.success(
+        request,
+        "This line is your steward free book. Checkout fees are waived; only tax applies on what you still pay for.",
+    )
+    return redirect("cart")
+
+
+@login_required(login_url="login")
+def cart_steward_free_deselect(request, book_id):
+    if request.method != "POST":
+        return redirect("cart")
+    ci = (
+        CartItem.objects.filter(
+            cart__user=request.user, book_id=book_id, is_steward_free=True
+        )
+        .select_related("book")
+        .first()
+    )
+    if not ci:
+        return redirect("cart")
+    ci.is_steward_free = False
+    ci.steward_free_list_price_cents = 0
+    ci.unit_price_cents = ci.book.base_price_cents
+    ci.save(
+        update_fields=[
+            "is_steward_free",
+            "steward_free_list_price_cents",
+            "unit_price_cents",
+            "updated_at",
+        ]
+    )
+    messages.success(request, "Steward free book cleared. You can choose another line in your cart.")
+    return redirect("cart")
 
 
 @login_required(login_url="login")
@@ -605,8 +836,11 @@ def update_cart_item(request, item_id):
                 cart__user=request.user, book_id=item_id
             ).select_related("book").first()
             if ci:
-                ci.quantity = quantity
-                ci.unit_price_cents = ci.book.base_price_cents
+                if ci.is_steward_free:
+                    ci.quantity = 1
+                else:
+                    ci.quantity = quantity
+                    ci.unit_price_cents = ci.book.base_price_cents
                 ci.save(update_fields=["quantity", "unit_price_cents", "updated_at"])
         else:
             cart = request.session.get("cart", {})
@@ -884,6 +1118,12 @@ def order_confirmation(request, order_id):
     shipping = getattr(order, "shipping_snapshot", None)
     order_items = _order_items_from_snapshots(order)
     steward_pts = order.steward_contribution_cents // 10
+    had_steward_free_book = order.orderitem.filter(is_steward_free=True).exists()
+    free_book_attribution = (
+        random_steward_attribution(exclude_user_id=request.user.pk)
+        if had_steward_free_book
+        else None
+    )
     return render(
         request,
         "orders/orderConfirmation.html",
@@ -894,6 +1134,7 @@ def order_confirmation(request, order_id):
             "order_total_display": f"{order.total_cents / 100:.2f}",
             "steward_points_earned": steward_pts,
             "steward_contribution_display": f"{order.steward_contribution_cents / 100:.2f}",
+            "free_book_attribution": free_book_attribution,
         },
     )
 

@@ -50,10 +50,18 @@
                                 </div>
 
                                 <div style="display:grid; gap:8px; align-items:start; justify-items:end;">
+                                    {% if item.is_steward_free %}
+                                        <div style="text-align:right;">
+                                            <div style="font-size:12px; color:var(--muted);">Price</div>
+                                            <div style="font-weight:900; color:#166534;">FREE</div>
+                                            <div style="font-size:12px; color:var(--muted);">List ${{ item.book.price_dollars|floatformat:2 }}</div>
+                                        </div>
+                                    {% else %}
                                     <div style="text-align:right;">
                                         <div style="font-size:12px; color:var(--muted);">Price</div>
                                         <div style="font-weight:900;">${{ item.book.price_dollars|default:item.subtotal|floatformat:2 }}</div>
                                     </div>
+                                    {% endif %}
 
                                     <div style="text-align:right;">
                                         <div style="font-size:13px; color:var(--muted);">Quantity</div>
@@ -72,6 +80,36 @@
                                     </form>
                                 </div>
                             </div>
+                            {% if item.steward_priv.show %}
+                                <div style="border-top:1px solid var(--border); padding-top:12px; margin-top:4px;">
+                                    <p style="margin:0 0 8px; font-size:12px; font-weight:800; color:var(--text); text-transform:uppercase; letter-spacing:0.04em;">
+                                        Steward privilege
+                                    </p>
+                                    {% if item.steward_priv.is_free_line %}
+                                        <form method="post" action="{% url 'cart_steward_free_deselect' item.id %}" style="margin:0;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn" style="background:#166534; font-size:13px;">
+                                                Deselect free book (restore list price)
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <form method="post" action="{% url 'cart_steward_free_select' item.id %}" style="margin:0;">
+                                            {% csrf_token %}
+                                            <button
+                                                type="submit"
+                                                class="btn"
+                                                style="font-size:13px; {% if item.steward_priv.select_disabled %}background:#9ca3af; cursor:not-allowed;{% else %}background:#2563eb;{% endif %}"
+                                                {% if item.steward_priv.select_disabled %}disabled title="{{ item.steward_priv.hint }}"{% endif %}
+                                            >
+                                                Select this line for free book
+                                            </button>
+                                        </form>
+                                        {% if item.steward_priv.hint %}
+                                            <p style="margin:8px 0 0; font-size:12px; color:var(--muted); line-height:1.4;">{{ item.steward_priv.hint }}</p>
+                                        {% endif %}
+                                    {% endif %}
+                                </div>
+                            {% endif %}
                         </article>
                     {% endfor %}
                 </div>
@@ -107,6 +145,19 @@
             <div style="display:grid; gap:8px; font-size:14px;">
                 <div style="display:flex; justify-content:space-between; gap:10px;">
                     <span style="color:var(--muted);">Subtotal</span>
+                    <strong>${{ cart_subtotal|floatformat:2 }}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                    <span style="color:var(--muted);">Fees</span>
+                    <strong>${{ fees|floatformat:2 }}{% if cart_has_steward_free %} <span style="font-size:11px; font-weight:700; color:#166534;">(waived)</span>{% endif %}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                    <span style="color:var(--muted);">Tax (est.)</span>
+                    <strong>${{ tax|floatformat:2 }}</strong>
+                </div>
+                <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                    <span style="color:var(--muted);">Estimated total</span>
                     <strong>${{ cart_total|floatformat:2 }}</strong>
                 </div>
             </div>

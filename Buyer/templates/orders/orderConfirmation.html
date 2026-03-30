@@ -16,6 +16,11 @@
                 (now up to 100).
             </p>
         {% endif %}
+        {% if free_book_attribution %}
+            <p style="margin:10px 0 0; font-size:14px; color:var(--text); line-height:1.5;">
+                Your book was made possible by <strong>{{ free_book_attribution.first_name }}</strong>{% if free_book_attribution.city %} from {{ free_book_attribution.city }}{% endif %}.
+            </p>
+        {% endif %}
     </header>
 
     <section class="card" style="box-shadow:none; max-width:900px;">

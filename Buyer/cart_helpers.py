@@ -33,9 +33,13 @@ def merge_session_cart_into_db(user, session):
                 defaults={
                     "quantity": qty,
                     "unit_price_cents": book.base_price_cents,
+                    "is_steward_free": False,
+                    "steward_free_list_price_cents": 0,
                 },
             )
             if not created:
+                if ci.is_steward_free:
+                    continue
                 ci.quantity += qty
                 ci.unit_price_cents = book.base_price_cents
                 ci.save(update_fields=["quantity", "unit_price_cents", "updated_at"])
@@ -72,6 +76,8 @@ def db_cart_lines(user):
                 "price": price,
                 "subtotal": line_cents / 100.0,
                 "line_subtotal_cents": line_cents,
+                "is_steward_free": ci.is_steward_free,
+                "steward_free_list_price_cents": ci.steward_free_list_price_cents,
             }
         )
 
@@ -86,7 +92,10 @@ def clear_db_cart(user):
 
 
 def add_book_to_db_cart(user, book, quantity):
-    """Add quantity to user's cart; refreshes unit_price_cents from the book."""
+    """
+    Add quantity to user's cart; refreshes unit_price_cents from the book.
+    Returns False if this title is already in the cart as a steward free line (paid add blocked).
+    """
     if quantity < 1:
         quantity = 1
     cart = get_or_create_cart(user)
@@ -96,9 +105,14 @@ def add_book_to_db_cart(user, book, quantity):
         defaults={
             "quantity": quantity,
             "unit_price_cents": book.base_price_cents,
+            "is_steward_free": False,
+            "steward_free_list_price_cents": 0,
         },
     )
+    if not created and ci.is_steward_free:
+        return False
     if not created:
         ci.quantity += quantity
         ci.unit_price_cents = book.base_price_cents
         ci.save(update_fields=["quantity", "unit_price_cents", "updated_at"])
+    return True
