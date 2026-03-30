@@ -473,6 +473,12 @@ def orders(request):
     q = (request.GET.get("q") or "").strip()
     qs = (
         Order.objects.filter(orderitem__book__seller_user=request.user)
+        .annotate(
+            seller_revenue_cents=Sum(
+                "orderitem__line_total_cents",
+                filter=Q(orderitem__book__seller_user=request.user),
+            )
+        )
         .order_by("-created_at")
         .select_related("user")
     )
@@ -484,8 +490,10 @@ def orders(request):
 
     paginator = Paginator(qs, 10)
     page_obj = paginator.get_page(request.GET.get("page") or 1)
+    for order in page_obj:
+        order.seller_revenue = _format_cents_as_dollars(int(order.seller_revenue_cents or 0))
     return render(request, "orders/orders.html", {
-        "page_obj": page_obj
+        "page_obj": page_obj,
     })
 
 
