@@ -15,7 +15,7 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    book = models.ForeignKey("General.Book", on_delete=models.CASCADE)
 
     quantity = models.PositiveIntegerField()
     unit_price_cents = models.PositiveIntegerField()
@@ -30,6 +30,7 @@ class CartItem(models.Model):
 
     def __str__(self):
         return f"{self.book.title} x {self.quantity}"
+    
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -42,100 +43,38 @@ class Order(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    shipping_address = models.ForeignKey(Address, on_delete=models.SET_NULL, blank=True, null=True)
-    steward_contribution = models.ForeignKey(
-        StewardContribution,
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True
-    )
-
+    shipping_address = models.ForeignKey("ShippingAddress", on_delete=models.SET_NULL, blank=True, null=True)
+    payment_method = models.ForeignKey("PaymentMethod", on_delete=models.SET_NULL, blank=True, null=True)
+    
     status = models.CharField(max_length=30, choices=STATUS_CHOICES, default="pending")
 
-    subtotal_cents = models.PositiveIntegerField()
-    discount_cents = models.PositiveIntegerField(default=0)
-    total_cents = models.PositiveIntegerField()
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    tax = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    fees = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    discount_cents = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
 
     def __str__(self):
-        return f"Order {self.id} - {self.user.email}"
+        return f"Order {self.id} - {self.user.username}"
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    order = models.ForeignKey("Order", on_delete=models.CASCADE, related_name="items")
+    book = models.ForeignKey("General.Book", on_delete=models.SET_NULL, null=True, blank=True)
 
-    quantity = models.PositiveIntegerField()
-    unit_price_cents = models.PositiveIntegerField()
-    line_total_cents = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"OrderItem {self.id} (Order {self.order_id})"
-
-
-class OrderShippingAddress(models.Model):
-    """
-    Snapshot of the shipping address at the moment the order was placed.
-
-    This prevents past orders from changing if the buyer edits their saved `Address`.
-    """
-
-    order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name="shipping_snapshot")
-
-    shipping_name = models.CharField(max_length=100, blank=True, null=True)
-    shipping_line1 = models.CharField(max_length=255)
-    shipping_line2 = models.CharField(max_length=255, blank=True, null=True)
-
-    shipping_city = models.CharField(max_length=100)
-    shipping_state = models.CharField(max_length=100)
-    shipping_postal_code = models.CharField(max_length=30)
-    shipping_country = models.CharField(max_length=100)
-
-    # Optional provenance to help debugging/auditing.
-    source_address = models.ForeignKey(Address, on_delete=models.SET_NULL, blank=True, null=True)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Shipping snapshot for Order {self.order_id}"
-
-
-class OrderItemBookSnapshot(models.Model):
-    """
-    Snapshot of book details at the moment an order item was created.
-
-    This allows cart/order history to show the purchased book's details even if
-    the live `Book` listing is edited later.
-    """
-
-    order_item = models.OneToOneField(OrderItem, on_delete=models.CASCADE, related_name="book_snapshot")
-
-    source_book = models.ForeignKey(Book, on_delete=models.SET_NULL, blank=True, null=True)
-
-    title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-
-    isbn = models.CharField(max_length=40, blank=True, null=True)
-    language = models.CharField(max_length=60, blank=True, null=True)
-    publisher = models.CharField(max_length=255, blank=True, null=True)
-    publication_year = models.IntegerField(blank=True, null=True)
-
-    cover_image_url = models.TextField(blank=True, null=True)
-    condition = models.CharField(max_length=100)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"Book snapshot for OrderItem {self.order_item_id}"
-
+        return f" {self.book} x {self.quantity})"
 
 class ReturnRequest(models.Model):
     STATUS_CHOICES = [
@@ -156,3 +95,69 @@ class ReturnRequest(models.Model):
 
     def __str__(self):
         return f"ReturnRequest for Order {self.order_id}"
+    
+class ShippingAddress(models.Model):
+    user=models.ForeignKey(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=100)
+    address_line_1 = models.CharField(max_length=255)
+    address_line_2 = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, default="USA")
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100)
+    zip_code = models.CharField(max_length=20)
+    is_default = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.address_line_1}"
+    
+class PaymentMethod(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    cardholder = models.CharField(max_length=100, blank=True)
+    processor_token = models.CharField(max_length=225)
+    last4 = models.CharField(max_length=4)
+    brand = models.CharField(max_length=30)
+    exp_month = models.IntegerField()
+    exp_year = models.IntegerField()
+    is_default = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return f"{self.brand} ending in {self.last4}"
+    
+class ReturnRequest(models.Model):
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("approved", "Approved"),
+        ("rejected", "Rejected"),
+        ("received", "Recieved"),
+        ("refunded", "Refunded"),
+    ]
+
+    order = models.ForeignKey("Order", on_delete=models.CASCADE)
+    order_item = models.ForeignKey("OrderItem", on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    reason = models.TextField()
+    details = models.TextField(blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="pending")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Return Request #{self.id} for Order #{self.order.id}"
+    
+class Review(models.Model):
+    
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey("General.Book", on_delete=models.CASCADE)
+    order = models.ForeignKey("Order", on_delete=models.CASCADE)
+    order_item = models.ForeignKey("OrderItem", on_delete=models.CASCADE)
+    rating = models.PositiveIntegerField()
+    comment = models.TextField(blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "order_item")
+
+    def __str__(self):
+        return f"{self.book.title} for {self.rating} stars"
