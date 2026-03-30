@@ -95,6 +95,9 @@ class Order(models.Model):
     discount_cents = models.PositiveIntegerField(default=0)
     total_cents = models.PositiveIntegerField()
 
+    # Optional checkout add-on; $1 contribution → 10 steward progress points (stored on User).
+    steward_contribution_cents = models.PositiveIntegerField(default=0)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -121,6 +124,10 @@ class Order(models.Model):
     @property
     def subtotal_dollars(self):
         return self.subtotal_cents / 100.0
+
+    @property
+    def steward_contribution_dollars(self):
+        return self.steward_contribution_cents / 100.0
 
 
 class OrderItem(models.Model):

@@ -1,5 +1,6 @@
 import re
 from datetime import date, datetime
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -18,7 +19,36 @@ from Buyer.models import (
     PaymentMethod,
     ReturnRequest,
 )
-from General.models import Address, Book, Inventory
+from General.models import Address, Book, Inventory, User
+
+_STEWARD_CONTRIBUTION_DEFAULT = Decimal("2.00")
+_STEWARD_CONTRIBUTION_MAX = Decimal("100.00")
+
+
+def _parse_steward_contribution_dollars(raw):
+    """
+    Parse checkout steward contribution. Blank → default $2.00.
+    Returns (Decimal value in dollars, is_invalid).
+    """
+    if raw is None or (isinstance(raw, str) and not raw.strip()):
+        return _STEWARD_CONTRIBUTION_DEFAULT, False
+    try:
+        v = Decimal(str(raw).strip())
+    except InvalidOperation:
+        return None, True
+    if v < 0:
+        return None, True
+    if v > _STEWARD_CONTRIBUTION_MAX:
+        v = _STEWARD_CONTRIBUTION_MAX
+    return v.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP), False
+
+
+def _steward_cents_from_dollars(dollars: Decimal) -> int:
+    return int((dollars * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+
+
+def _steward_points_from_contribution_cents(cents: int) -> int:
+    return cents // 10
 
 
 def _buyer_return_status_label(return_request):
@@ -69,10 +99,8 @@ def _order_items_from_snapshots(order):
 def _checkout_page_context(
     user,
     cart_items,
-    cart_subtotal,
-    tax,
-    fees,
-    final_total,
+    subtotal_cents,
+    steward_raw,
     *,
     addresses=None,
     selected_address=None,
@@ -84,6 +112,29 @@ def _checkout_page_context(
         addresses = list(_addresses_for_user(user))
     if payment_methods is None:
         payment_methods = list(_payment_methods_for_user(user))
+
+    tax_cents = int(round(subtotal_cents * 0.07))
+    fees_cents = 299 if cart_items else 0
+    base_total_cents = subtotal_cents + tax_cents + fees_cents
+    cart_subtotal = subtotal_cents / 100.0
+    tax = round(tax_cents / 100.0, 2)
+    fees = round(fees_cents / 100.0, 2)
+
+    steward_d, steward_invalid = _parse_steward_contribution_dollars(steward_raw)
+    if steward_invalid:
+        steward_display = str(steward_raw).strip() if steward_raw is not None else ""
+        steward_contribution_cents = 0
+        steward_points_preview = 0
+        steward_line_dollars_display = "0.00"
+    else:
+        steward_display = str(steward_d)
+        steward_contribution_cents = _steward_cents_from_dollars(steward_d)
+        steward_points_preview = _steward_points_from_contribution_cents(steward_contribution_cents)
+        steward_line_dollars_display = f"{steward_contribution_cents / 100:.2f}"
+
+    total_cents = base_total_cents + steward_contribution_cents
+    final_total = round(total_cents / 100.0, 2)
+
     return {
         "cart_items": cart_items,
         "cart_subtotal": cart_subtotal,
@@ -95,6 +146,11 @@ def _checkout_page_context(
         "payment_methods": payment_methods,
         "selected_payment": selected_payment,
         "checkout_error": checkout_error,
+        "steward_contribution_value": steward_display,
+        "steward_points_preview": steward_points_preview,
+        "steward_line_dollars_display": steward_line_dollars_display,
+        "base_total_cents": base_total_cents,
+        "steward_contribution_invalid": steward_invalid,
     }
 
 
@@ -189,10 +245,7 @@ def buyer_cart(request):
 @login_required(login_url="login")
 def buyer_checkout(request):
     cart_items, subtotal_cents = db_cart_lines(request.user)
-    cart_subtotal = subtotal_cents / 100.0
-    tax = round(cart_subtotal * 0.07, 2)
-    fees = 2.99 if cart_items else 0.00
-    final_total = round(cart_subtotal + tax + fees, 2)
+    steward_raw_get = request.GET.get("steward_contribution") if request.method != "POST" else None
 
     addresses = list(_addresses_for_user(request.user))
     payment_methods = list(_payment_methods_for_user(request.user))
@@ -220,6 +273,7 @@ def buyer_checkout(request):
     pay_method = None
 
     if request.method == "POST":
+        post_steward = request.POST.get("steward_contribution")
         if not cart_items:
             return render(
                 request,
@@ -228,9 +282,7 @@ def buyer_checkout(request):
                     request.user,
                     [],
                     0,
-                    0,
-                    0,
-                    0,
+                    post_steward,
                     addresses=addresses,
                     selected_address=selected_address,
                     payment_methods=payment_methods,
@@ -246,10 +298,8 @@ def buyer_checkout(request):
                 _checkout_page_context(
                     request.user,
                     cart_items,
-                    cart_subtotal,
-                    tax,
-                    fees,
-                    final_total,
+                    subtotal_cents,
+                    post_steward,
                     addresses=addresses,
                     selected_address=selected_address,
                     payment_methods=payment_methods,
@@ -266,10 +316,8 @@ def buyer_checkout(request):
                 _checkout_page_context(
                     request.user,
                     cart_items,
-                    cart_subtotal,
-                    tax,
-                    fees,
-                    final_total,
+                    subtotal_cents,
+                    post_steward,
                     addresses=addresses,
                     selected_address=selected_address,
                     payment_methods=payment_methods,
@@ -286,10 +334,8 @@ def buyer_checkout(request):
                 _checkout_page_context(
                     request.user,
                     cart_items,
-                    cart_subtotal,
-                    tax,
-                    fees,
-                    final_total,
+                    subtotal_cents,
+                    post_steward,
                     addresses=addresses,
                     selected_address=ship_addr,
                     payment_methods=payment_methods,
@@ -306,10 +352,8 @@ def buyer_checkout(request):
                 _checkout_page_context(
                     request.user,
                     cart_items,
-                    cart_subtotal,
-                    tax,
-                    fees,
-                    final_total,
+                    subtotal_cents,
+                    post_steward,
                     addresses=addresses,
                     selected_address=ship_addr,
                     payment_methods=payment_methods,
@@ -318,12 +362,32 @@ def buyer_checkout(request):
                 ),
             )
 
+        steward_d, steward_invalid = _parse_steward_contribution_dollars(post_steward)
+        if steward_invalid:
+            return render(
+                request,
+                "checkout/buyer_checkout.html",
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    subtotal_cents,
+                    post_steward,
+                    addresses=addresses,
+                    selected_address=ship_addr,
+                    payment_methods=payment_methods,
+                    selected_payment=pay_method,
+                    checkout_error="Enter a valid steward contribution (0 to $100).",
+                ),
+            )
+        steward_contribution_cents = _steward_cents_from_dollars(steward_d)
         tax_cents = int(round(subtotal_cents * 0.07))
         fees_cents = 299 if cart_items else 0
-        total_cents = subtotal_cents + tax_cents + fees_cents
+        total_cents = subtotal_cents + tax_cents + fees_cents + steward_contribution_cents
 
+        became_steward = False
         try:
             with transaction.atomic():
+                buyer_locked = User.objects.select_for_update().get(pk=request.user.pk)
                 locked_books = {}
                 for line in cart_items:
                     inv = (
@@ -352,6 +416,7 @@ def buyer_checkout(request):
                     tax_cents=tax_cents,
                     fees_cents=fees_cents,
                     discount_cents=0,
+                    steward_contribution_cents=steward_contribution_cents,
                     total_cents=total_cents,
                 )
 
@@ -401,6 +466,19 @@ def buyer_checkout(request):
                     inv.quantity_available -= line["quantity"]
                     inv.save(update_fields=["quantity_available", "updated_at"])
 
+                pts = _steward_points_from_contribution_cents(steward_contribution_cents)
+                was_steward_verified = buyer_locked.steward_verified
+                if pts:
+                    buyer_locked.steward_progress = min(100, buyer_locked.steward_progress + pts)
+                if buyer_locked.steward_progress >= 100:
+                    buyer_locked.steward_verified = True
+                    buyer_locked.steward_progress = 100
+                progress_update_fields = ["steward_progress", "updated_at"]
+                if buyer_locked.steward_verified != was_steward_verified:
+                    progress_update_fields.append("steward_verified")
+                buyer_locked.save(update_fields=progress_update_fields)
+                became_steward = buyer_locked.steward_verified and not was_steward_verified
+
         except ValueError as e:
             return render(
                 request,
@@ -408,10 +486,8 @@ def buyer_checkout(request):
                 _checkout_page_context(
                     request.user,
                     cart_items,
-                    cart_subtotal,
-                    tax,
-                    fees,
-                    final_total,
+                    subtotal_cents,
+                    post_steward,
                     addresses=addresses,
                     selected_address=ship_addr,
                     payment_methods=payment_methods,
@@ -423,7 +499,10 @@ def buyer_checkout(request):
         clear_db_cart(request.user)
         request.session["cart"] = {}
         request.session.modified = True
-        messages.success(request, "Order placed.")
+        if became_steward:
+            request.session["steward_milestone_order_id"] = order.id
+            return redirect("steward_welcome")
+        messages.success(request, "Thank you! Your order has been placed.")
         return redirect("order_confirmation", order_id=order.id)
 
     return render(
@@ -432,16 +511,69 @@ def buyer_checkout(request):
         _checkout_page_context(
             request.user,
             cart_items,
-            cart_subtotal,
-            tax,
-            fees,
-            final_total,
+            subtotal_cents,
+            steward_raw_get,
             addresses=addresses,
             selected_address=selected_address,
             payment_methods=payment_methods,
             selected_payment=selected_payment,
             checkout_error=None,
         ),
+    )
+
+
+@login_required(login_url="login")
+def steward_welcome(request):
+    """
+    One-time style welcome after `steward_progress` reaches 100 and `steward_verified` is set.
+    Collects required `steward_city`, then sends the buyer to order confirmation or dashboard.
+    """
+    user = request.user
+    if not user.steward_verified:
+        return redirect("catalog")
+
+    pending_order_id = request.session.get("steward_milestone_order_id")
+    if pending_order_id is not None and not Order.objects.filter(
+        pk=pending_order_id, user=user
+    ).exists():
+        del request.session["steward_milestone_order_id"]
+        request.session.modified = True
+        pending_order_id = None
+
+    if request.method == "POST":
+        city = (request.POST.get("steward_city") or "").strip()
+        if not city:
+            return render(
+                request,
+                "steward/steward_welcome.html",
+                {
+                    "city_error": "City is required so we can show your support in the right community.",
+                    "steward_city_value": (request.POST.get("steward_city") or "").strip(),
+                    "pending_order_id": pending_order_id,
+                },
+            )
+        user.steward_city = city[:120]
+        user.save(update_fields=["steward_city", "updated_at"])
+
+        pop_id = request.session.pop("steward_milestone_order_id", None)
+        request.session.modified = True
+        if pop_id and Order.objects.filter(pk=pop_id, user=user).exists():
+            messages.success(
+                request,
+                "You're all set—welcome to the steward community. Your order details are next.",
+            )
+            return redirect("order_confirmation", order_id=pop_id)
+        messages.success(request, "Thanks—your steward profile is updated.")
+        return redirect("buyer_dashboard")
+
+    return render(
+        request,
+        "steward/steward_welcome.html",
+        {
+            "city_error": None,
+            "steward_city_value": user.steward_city or "",
+            "pending_order_id": pending_order_id,
+        },
     )
 
 
@@ -751,6 +883,7 @@ def order_confirmation(request, order_id):
     )
     shipping = getattr(order, "shipping_snapshot", None)
     order_items = _order_items_from_snapshots(order)
+    steward_pts = order.steward_contribution_cents // 10
     return render(
         request,
         "orders/orderConfirmation.html",
@@ -759,6 +892,8 @@ def order_confirmation(request, order_id):
             "shipping": shipping,
             "order_items": order_items,
             "order_total_display": f"{order.total_cents / 100:.2f}",
+            "steward_points_earned": steward_pts,
+            "steward_contribution_display": f"{order.steward_contribution_cents / 100:.2f}",
         },
     )
 

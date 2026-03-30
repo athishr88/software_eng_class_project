@@ -16,7 +16,19 @@ class UserAdmin(BaseUserAdmin):
     fieldsets = (
         (None, {"fields": ("email", "password")}),
         ("Personal info", {"fields": ("first_name", "last_name", "phone")}),
-        ("Role & status", {"fields": ("role", "steward_verified", "steward_city", "is_active", "is_staff")}),
+        (
+            "Role & status",
+            {
+                "fields": (
+                    "role",
+                    "steward_verified",
+                    "steward_city",
+                    "steward_progress",
+                    "is_active",
+                    "is_staff",
+                )
+            },
+        ),
         ("Dates", {"fields": ("last_login", "created_at", "updated_at")}),
         ("Permissions", {"fields": ("groups", "user_permissions", "is_superuser")}),
     )

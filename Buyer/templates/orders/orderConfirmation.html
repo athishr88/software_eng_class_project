@@ -4,11 +4,18 @@
 
     <header style="margin-bottom:16px;">
         <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
-            Order Confirmed
+            Thank you!
         </h1>
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-            Thanks! Your order has been successfully placed.
+            Your order has been placed successfully.
         </p>
+        {% if steward_points_earned > 0 %}
+            <p style="margin:10px 0 0; font-size:14px; color:var(--text); line-height:1.5;">
+                Your steward contribution of <strong>${{ steward_contribution_display }}</strong> added
+                <strong>{{ steward_points_earned }}</strong> point{{ steward_points_earned|pluralize }} to your steward progress
+                (now up to 100).
+            </p>
+        {% endif %}
     </header>
 
     <section class="card" style="box-shadow:none; max-width:900px;">

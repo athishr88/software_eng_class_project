@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
@@ -40,6 +41,10 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     steward_verified = models.BooleanField(default=False)
     steward_city = models.CharField(max_length=120, blank=True, null=True)
+    steward_progress = models.PositiveSmallIntegerField(
+        default=0,
+        validators=[MaxValueValidator(100)],
+    )
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

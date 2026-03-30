@@ -45,6 +45,21 @@
             <p style="margin:0; font-size:14px;">
                 <strong style="color:var(--text);">Email:</strong> {{ user.email }}
             </p>
+            <p style="margin:8px 0 0; font-size:14px;">
+                <strong style="color:var(--text);">Steward progress:</strong>
+                {{ user.steward_progress|default:0 }} / 100
+            </p>
+            <div
+                class="dashboard-steward-bar"
+                role="progressbar"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="{{ user.steward_progress|default:0 }}"
+                aria-label="Steward progress"
+                style="margin-top:8px; height:10px; border-radius:999px; background:#e5e7eb; overflow:hidden;"
+            >
+                <div style="height:100%; width:{{ user.steward_progress|default:0 }}%; background:var(--primary, #2563eb); border-radius:inherit; transition:width 0.25s ease;"></div>
+            </div>
             <div style="margin-top:10px;">
                 <a class="link" href="{% url 'buyer_profile' %}">Profile Settings</a>
             </div>
