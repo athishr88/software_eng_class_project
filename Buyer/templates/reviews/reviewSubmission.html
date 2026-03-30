@@ -8,7 +8,7 @@
                 <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
                     Leave a Review
                 </h1>
-                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
                     Order #{{ order.id }} - Rate your order (1-5 stars).
                 </p>
             </div>
@@ -28,7 +28,7 @@
         </div>
     {% endif %}
 
-    <form method="post" action="{% url 'review_submit_post' order.id %}" style="max-width:900px;">
+    <form method="post" action="{% url 'submit_review' order.id %}" style="max-width:900px;">
         {% csrf_token %}
 
         <section style="display:grid; grid-template-columns: 1fr 340px; gap:12px; align-items:start;">
@@ -40,7 +40,7 @@
                         Choose the item you want to review.
                     </p>
 
-                    <div style="margin-top:12pxl; display:grid; gap:10px;">
+                    <div style="margin-top:12px; display:grid; gap:10px;">
                         {% if order_items %}
                             {% for item in order_items %}
                                 <label style="display:block; border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
@@ -52,8 +52,8 @@
                                             required
                                             style="width:auto; margin-top:3px;"/>
 
-                                        <div style="display:grip; gap:4px;">
-                                            <strong style="font-size:14px;">{{ item.title }}</strong>
+                                        <div style="display:grid; gap:4px;">
+                                            <strong style="font-size:14px;">{{ item.book.title }}</strong>
                                             <div style="color:var(--muted); font-size:13px;">
                                                 Qty {{ item.quantity }}
                                             </div>
@@ -64,7 +64,7 @@
                         {% else %}
                             <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
                                 <p style="margin:0; color:var(--muted); font-size:14px;">
-                                    No items are avalibable to review in this order.
+                                    No items are available to review in this order.
                                 </p>
                             </div>
                         {% endif %}
@@ -108,7 +108,7 @@
                              <strong style="color:var(--text);">Placed:</strong> {{ order.created_at }}
                         </div>
                         <div>
-                             <strong style="color:var(--text);">Status:</strong> #{{ order.status }}
+                             <strong style="color:var(--text);">Status:</strong> {{ order.status }}
                         </div>
                     </div>
 
