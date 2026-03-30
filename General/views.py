@@ -11,7 +11,7 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Book
+from .models import Book, Inventory
 
 User = get_user_model()
 
@@ -167,20 +167,21 @@ def email_verification(request):
 
 def catalog(request):
     """Book catalog / browse: list all active books from DB with filters and pagination."""
-    qs = Book.objects.filter(is_active=True).select_related("seller_user").prefetch_related("inventory").order_by("title").distinct()
+    qs = Book.objects.filter(is_active=True).select_related("seller_user", "inventory").order_by("title").distinct()
 
     q = (request.GET.get("q") or "").strip()
     if q:
         qs = qs.filter(Q(title__icontains=q) | Q(author__icontains=q) | Q(description__icontains=q))
 
     min_price = request.GET.get("min_price")
-    if min_price is not None and min_price != "":
+    if min_price:
         try:
             qs = qs.filter(base_price_cents__gte=int(float(min_price) * 100))
         except (ValueError, TypeError):
             pass
+
     max_price = request.GET.get("max_price")
-    if max_price is not None and max_price != "":
+    if max_price:
         try:
             qs = qs.filter(base_price_cents__lte=int(float(max_price) * 100))
         except (ValueError, TypeError):
@@ -205,14 +206,19 @@ def catalog(request):
     page_number = request.GET.get("page", 1)
     if not page_number or page_number == "0":
         page_number = 1
+
     page_obj = paginator.get_page(page_number)
 
     for book in page_obj.object_list:
+        if hasattr(book, "inventory") and book.inventory:
+            book.display_stock_quantity = book.inventory.quantity_available
+        else:
+            book.display_stock_quantity = 0
+
         fn = _get_book_cover_filename(book.title) or "default.jpg"
         book.cover_serve_url = request.build_absolute_uri(f"/book_covers/{quote(fn, safe='')}")
 
-        ##book.cover_serve_url = f"/book_images/{quote(fn, safe='')}"
-        
+       
 
     return render(
         request, 
@@ -222,10 +228,18 @@ def catalog(request):
         }
     )
 
+def compare_books(request):
+    book_ids = request.GET.getlist("books")
+    books = Book.objects.filter(id__in=book_ids)
+
+    return render(request, "cart/compare.html", {"books": books})
+
 
 def book_detail(request, book_id):
     """Single book detail by pk."""
     book = get_object_or_404(Book, pk=book_id)
+    inventory = get_object_or_404(Inventory, book=book)
+
     seller_display_name = (
         f"{book.seller_user.first_name} {book.seller_user.last_name}".strip()
         if book.seller_user else "—"
@@ -238,11 +252,13 @@ def book_detail(request, book_id):
         "catalog/book_detail.html",
         {
             "book": book,
+            "stock_quantity": inventory.quantity_available,
             "seller_display_name": seller_display_name,
             "cover_static_path": cover_static_path,
             "cover_serve_filename": cover_serve_filename,
             "cover_serve_url": cover_serve_url,
             "reviews": [],
+            "price_dollars": book.base_price_cents / 100,
         },
     )
     
