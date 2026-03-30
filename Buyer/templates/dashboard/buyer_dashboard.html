@@ -91,22 +91,22 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for order in recent_orders %}
+                        {% for entry in recent_orders %}
                             <tr>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-weight:700;">
-                                    #{{ order.id }}
+                                    #{{ entry.display_number }}
                                 </td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                    {{ order.status}}
+                                    {{ entry.order.status}}
                                 </td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                    ${{ order.total }}
+                                    ${{ entry.order.total }}
                                 </td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                    {{ order.created_at }}
+                                    {{ entry.order.created_at }}
                                 </td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
-                                    <a class="link" href="{% url 'order_detail' order.id %}">View</a>
+                                    <a class="link" href="{% url 'order_detail' entry.order.id %}">View</a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -128,9 +128,19 @@
     <section style="margin-top:18px; display:grid; grid-template-columns:repeat(2,1fr); gap:12px;">
         <div class="card" style="box-shadow:none; padding:14px;">
             <h3 style="margin:0 0 6px; font-size:14px; font-weight:800;">Shipping Addresses</h3>
-            <p style="margin:0; color:var(--muted); font-size:14px;">
-                Add or update your default shipping address.
-            </p>
+            {% if default_address %}
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    <strong style="color:var(--text);">{{ default_address.full_name }}</strong><br>
+                    {{ default_address.address_line_1 }}{% if default_address.address_line_2 %}, {{ default_address.address_line_2 }}{% endif %}<br>
+                    {{ default_address.city }}, {{ default_address.state }} {{ default_address.zip_code }}<br>
+                    {{ default_address.country }}
+                </p>
+            {% else %}
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    Add or update your default shipping address.
+                </p>
+            {% endif %}
+
             <div style="margin-top:10px;">
                 <a class="link" href="{% url 'buyer_shipping' %}">Manage Addresses</a>
             </div>
@@ -138,9 +148,18 @@
 
         <div class="card" style="box-shadow:none; padding:14px;">
             <h3 style="margin:0 0 6px; font-size:14px; font-weight:800;">Payment Methods</h3>
+            {% if default_payment %}
+                <p style="margin:0; color:var(--muted); font-size:14px;">
+                    <strong style="color:var(--text);">{{ default_payment.brand }} ending in {{ default_payment.last4 }}</strong><br>
+                    {{ default_payment.cardholder }}<br>
+                    Expires {{ default_payment.exp_month }}/{{ default_payment.exp_year }}
+                </p>
+            {% else %}
                 <p style="margin:0; color:var(--muted); font-size:14px;">
                     View and manage your saved payment methods.
                 </p>
+            {% endif %}
+
             <div style="margin-top:10px;">
                 <a class="link" href="{% url 'buyer_payments' %}">Manage Payment Methods</a>
             </div>
