@@ -473,7 +473,14 @@ def orders(request):
 
 def order_details(request, order_id=None):
     """Single order detail."""
-    return render(request, "orders/orderDetails.html")
+    
+    order = Order.objects.filter(id=order_id).select_related("user").prefetch_related("orderitem__book").first()
+    if not order:
+        messages.error(request, "Order not found.")
+        return redirect("orders")
+    return render(request, "orders/orderDetails.html", {
+        "order": order
+    })
 
 
 @login_required(login_url="login")
