@@ -15,7 +15,7 @@
             <div>
                 <h2 style="margin:0; font-size:16px; font-weight:800;">Items</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-                    {% if cart_items %}{{ cart_items|length }} item(s) in your cart.{% else %}Your cart is empty.{% endif %}
+                    {% if cart_items %}{{ total_items }} item{{ total_items|pluralize }} in your cart.{% else %}Your cart is empty.{% endif %}
                 </p>
             </div>
             <a class="link" href="{% url 'catalog' %}">Continue Shopping</a>
@@ -36,15 +36,15 @@
                                     </div>
 
                                     <div style="margin-top:8px; font-size:13px;">
-                                        {% if item.book.stock_quantity <= 0 %}
+                                        {% if item.available_stock <= 0 %}
                                             <span style="color:#991b1b; font-weight:800;">Out of Stock</span>
-                                        {% elif item.quantity > item.book.stock_quantity %}
+                                        {% elif item.quantity > item.available_stock %}
                                             <span style="color:#991b1b; font-weight:800;">
-                                                Only {{ item.book.stock_quantity }} left
+                                                Only {{ item.available_stock }} left
                                             </span>
                                         {% else %}
                                             <span style="color:#166534; font-weight:800;">In Stock</span>
-                                            <span style="color:var(--muted);">({{ item.book.stock_quantity }})</span>
+                                            <span style="color:var(--muted);">({{ item.available_stock }})</span>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -52,8 +52,7 @@
                                 <div style="display:grid; gap:8px; align-items:start; justify-items:end;">
                                     <div style="text-align:right;">
                                         <div style="font-size:12px; color:var(--muted);">Price</div>
-                                        <div style="font-weight:900;">${{ item.book.price_dollars|default:item.subtotal|floatformat:2 }}</div>
-                                    </div>
+                                        <div style="font-weight:900;">${{ item.price|floatformat:2 }}</div>
 
                                     <div style="text-align:right;">
                                         <div style="font-size:13px; color:var(--muted);">Quantity</div>
@@ -64,6 +63,12 @@
                                         <div style="font-size:13px; color:var(--muted);">Subtotal</div>
                                         <div style="font-weight:900;">${{ item.subtotal|floatformat:2 }}</div>
                                     </div>
+                                    <form method="post" action="{% url 'remove_cart_item' item.id %}" style="margin:0;">
+                                        {% csrf_token %}
+                                        <button class="btn" type="submit" style="background:#ef4444; min-width:unset;">
+                                            Remove
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </article>
@@ -101,6 +106,18 @@
             <div style="display:grid; gap:8px; font-size:14px;">
                 <div style="display:flex; justify-content:space-between; gap:10px;">
                     <span style="color:var(--muted);">Subtotal</span>
+                    <strong>${{ cart_subtotal|floatformat:2 }}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                    <span style="color:var(--muted);">Tax</span>
+                    <strong>${{ tax|floatformat:2 }}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                    <span style="color:var(--muted);">Fees</span>
+                    <strong>${{ fees|floatformat:2 }}</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; gap:10px;">
+                    <span style="color:var(--muted);">Total</span>
                     <strong>${{ cart_total|floatformat:2 }}</strong>
                 </div>
             </div>
