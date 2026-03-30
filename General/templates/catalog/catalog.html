@@ -126,8 +126,8 @@
                                 </dl>
                                 <p class="book-card__price">${{ book.price_dollars|floatformat:2 }}</p>
                                 <p class="book-card__stock">
-                                    {% if book.stock_quantity > 0 %}
-                                        <span class="book-card__stock--in">In Stock ({{ book.stock_quantity }})</span>
+                                    {% if book.display_stock_quantity > 0 %}
+                                        <span class="book-card__stock--in">In Stock ({{ book.display_stock_quantity }})</span>
                                     {% else %}
                                         <span class="book-card__stock--out">Out of Stock</span>
                                     {% endif %}
