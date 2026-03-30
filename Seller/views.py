@@ -172,6 +172,7 @@ def dashboard(request):
             "stats": stats,
             "recent_orders": recent_orders,
             "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
+            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user))
         },
     )
 

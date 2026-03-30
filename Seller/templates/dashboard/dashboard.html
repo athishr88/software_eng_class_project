@@ -43,6 +43,12 @@
             <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
                 See your total sales and the latest orders that include your books.
             </p>
+                <h2 style="margin:0 0 6px; font-size:14px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em;">
+                    Total sales
+                </h2>
+                <p style="margin:0; font-size:28px; font-weight:900; color:var(--text);">
+                    ${{ total_sales }}
+                </p>
             <div style="margin-top:10px;">
                 <a class="link" href="{% url 'seller_sales_overview' %}">View sales overview</a>
             </div>
