@@ -468,7 +468,24 @@ def sales_overview(request):
 
 def orders(request):
     """Orders list."""
-    return render(request, "orders/orders.html")
+
+    q = (request.GET.get("q") or "").strip()
+    qs = (
+        Order.objects.filter(orderitem__book__seller_user=request.user)
+        .order_by("-created_at")
+        .select_related("user")
+    )
+
+    if q:
+        qs = qs.filter(Q(user__email__icontains=q) | Q(orderitem__book__title__icontains=q)).distinct()
+    
+    sort = (request.GET.get("sort") or "newest").strip()
+
+    paginator = Paginator(qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page") or 1)
+    return render(request, "orders/orders.html", {
+        "page_obj": page_obj
+    })
 
 
 def order_details(request, order_id=None):
