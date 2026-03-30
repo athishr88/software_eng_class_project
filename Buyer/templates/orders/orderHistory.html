@@ -21,23 +21,58 @@
             <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:12px;">
                 <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
                     Status
-                    <select name="status">
+                    <select name="status" id="status">
                         <option value="">All</option>
+                        <option value="pending" {% if request.GET.status == "pending" %}selected{% endif %}>
+                            Pending
+                        </option>
+                        <option value="paid" {% if request.GET.status == "paid" %}selected{% endif %}>
+                            Paid
+                        </option>
+                        <option value="shipped" {% if request.GET.status == "shipped" %}selected{% endif %}>
+                            Shipped
+                        </option>
+                        <option value="delivered" {% if request.GET.status == "delivered" %}selected{% endif %}>
+                            Delivered
+                        </option>
+                        <option value="cancelled" {% if request.GET.status == "cancelled" %}selected{% endif %}>
+                            Cancelled
+                        </option>
+                        <option value="refunded"{% if request.GET.status == "refunded" %}selected{% endif %}>
+                            Refunded
+                        </option>
+                    
                         {% for s in statuses %}
                             <option value="{{ s }}" {% if request.GET.status == s %}selected{% endif %}>{{ s }}</option>
                         {% endfor %}
                     </select>
                 </label>
 
-                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;" for="from">
                     From
-                    <input type="date" name="from" value="{{ request.GET.from }}">
                 </label>
+                <input 
+                    type="text" 
+                    name="from" 
+                    placeholder="YYYY-MM-DD"
+                    value="{{ request.GET.from }}"
+                >
+            </div>
+            <div>
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;" for="to">
+                     To
+                </label>
+                <input 
+                    type="text" 
+                    name="to" 
+                    placeholder="YYYY-MM-DD"
+                    value="{{ request.GET.to }}"
+                >
             </div>
 
             <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
                 <a class="link" href="{% url 'order_history' %}" style="align-self:center;">Clear</a>
-                <button class="btn" type="submit">Apply</button>
+                <button class="btn" type="submit">Apply Filters</button>
             </div>
         </form>
     </section>
@@ -49,8 +84,8 @@
             <div>
                 <h2 style="margin:0; font-size:16px; font-weight:800;">Orders</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-                    {% if page_obj %}
-                        Showing {{ page_obj.paginator.count }} order(s).
+                    {% if numbered_orders %}
+                        Showing {{ numbered_orders|length }} order(s).
                     {% else %}
                         No orders found.
                     {% endif %}
@@ -59,7 +94,7 @@
             <a class="link" href="{% url 'catalog' %}">Browse Books</a>
         </div>
 
-        {% if page_obj and page_obj.object_list %}
+        {% if numbered_orders %}
             <table style="width:100%; border-collapse:collapse;">
                 <thead>
                     <tr style="background:#f8fafc;">
@@ -80,51 +115,31 @@
                 </thead>
 
                 <tbody>
-                    {% for order in page_obj.object_list %}
+                    {% for entry in numbered_orders %}
                         <tr>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">
-                                #{{ order.id }}
+                                #{{ entry.display_number }}
                             </td>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;;">
-                                {{ order.status }}
+                                {{ entry.order.status }}
                             </td>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                ${{ order.total_amount }}
+                                ${{ entry.order.total }}
                             </td>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                {{ order.created_at }}
+                                {{ entry.order.created_at }}
                             </td>
                             <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
-                                <a class="link" href="{% url 'order_detail' order.id %}">View</a>
+                                <a class="link" href="{% url 'order_detail' entry.order.id %}">View Details</a>
                             </td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
 
-            <div style="padding:14px 18px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-                <div style="color:var(--muted); font-size:14px;">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                </div>
-
-                <div style="display:flex; gap:10px; align-items:center;">
-                    {% if page_obj.has_previous %}
-                        <a class="link" href="?{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}page={{ page_obj.previous_page_number }}">
-                            Prev
-                        </a>
-                    {% endif %}
-
-                    {% if page_obj.has_next %}
-                        <a class="link" href="?{% if request.GET.status %}status={{ request.GET.status }}&{% endif %}{% if request.GET.from %}from={{ request.GET.from }}&{% endif %}{% if request.GET.to %}to={{ request.GET.to }}&{% endif %}page={{ page_obj.next_page_number }}">
-                            Next
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-
         {% else %}
             <div style="padding:18px;">
-                <p style="margin:0; color:var(--muted); font-size:14px;">
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
                     No orders match your filters.
                 </p>
             </div>
