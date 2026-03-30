@@ -122,12 +122,23 @@ def home(request):
         return redirect("buyer_home")
 
     stats = _seller_dashboard_stats(request.user)
+    recent_orders = (
+        Order.objects.filter(orderitem__book__seller_user=request.user)
+        .annotate(
+            seller_revenue_cents=Sum(
+                "orderitem__line_total_cents",
+                filter=Q(orderitem__book__seller_user=request.user),
+            )
+        )
+        .select_related("user")
+        .order_by("-created_at")[:25]
+    )
     return render(
         request,
         "dashboard/dashboard.html",
         {
             "stats": stats,
-            "recent_orders": [],
+            "recent_orders": recent_orders,
             "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
         },
     )
@@ -141,12 +152,25 @@ def dashboard(request):
         return redirect("buyer_home")
 
     stats = _seller_dashboard_stats(request.user)
+
+    recent_orders = (
+        Order.objects.filter(orderitem__book__seller_user=request.user)
+        .annotate(
+            seller_revenue_cents=Sum(
+                "orderitem__line_total_cents",
+                filter=Q(orderitem__book__seller_user=request.user),
+            )
+        )
+        .select_related("user")
+        .order_by("-created_at")[:25]
+    )
+    
     return render(
         request,
         "dashboard/dashboard.html",
         {
             "stats": stats,
-            "recent_orders": [],
+            "recent_orders": recent_orders,
             "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
         },
     )
