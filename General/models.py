@@ -96,19 +96,20 @@ class Book(models.Model):
     condition = models.CharField(max_length=100)
 
     base_price_cents = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(default=1)
 
     is_active = models.BooleanField(default=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return self.title
-
     @property
     def price_dollars(self):
         """Price in dollars for display (base_price_cents / 100)."""
         return self.base_price_cents / 100.0
+
+    def __str__(self):
+        return self.title
 
     @property
     def stock_quantity(self):
@@ -167,3 +168,4 @@ class Notification(models.Model):
 
     def __str__(self):
         return f"Notification {self.id} to {self.user.email}"
+
