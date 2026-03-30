@@ -31,27 +31,20 @@
                 </p>
 
                 <p style="margin:0; font-size:20px; font-weight:900;">
-                    ${{ book.price_dollars|floatformat:2 }}
+                    ${{ price_dollars|floatformat:2 }}
                 </p>
 
                 <p style="margin:0; font-size:14px;">
-                    {% if book.stock_quantity > 0 %}
+                    {% if stock_quantity > 0 %}
                         <span style="color:#166534; font-weight:800;">In Stock</span>
-                        <span style="color:var(--muted);">({{ book.stock_quantity }} available)</span>
+                        <span style="color:var(--muted);">({{ stock_quantity }} available)</span>
                     {% else %}
                         <span style="color:#991b1b; font-weight:800;">Out of Stock</span>
                     {% endif %}
                 </p>
 
-                {% if book.deposit_required %}
-                    <p style="margin:6px 0 0; font-size:14px; color:var(--muted);">
-                        Deposit Required:
-                        <strong style="color:var(--text);">${{ book.deposit_amount }}</strong>
-                    </p>
-                {% endif %}
-
                 <div style="margin-top:10px;">
-                    <form method="post" action="{% url 'cart' %}" style="display:grid; gap:10px; max-width:240px;">
+                    <form method="post" action="{% url 'add_to_cart' book.id %}" style="display:grid; gap:10px; max-width:240px;">
                         {% csrf_token %}
 
                         <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
@@ -61,13 +54,13 @@
                                 name="quantity"
                                 min="1"
                                 value="1"
-                                {% if book.stock_quantity <= 0 %}disabled{% endif %}>
+                                {% if stock_quantity <= 0 %}disabled{% endif %}>
                         </label>
 
                         <button 
                             class="btn"
                             type="submit"
-                            {% if book.stock_quantity <= 0 %}disabled{% endif %}>
+                            {% if stock_quantity <= 0 %}disabled{% endif %}>
                             Add to Cart
                         </button>
                     </form>
