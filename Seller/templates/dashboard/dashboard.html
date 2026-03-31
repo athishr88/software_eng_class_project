@@ -43,6 +43,12 @@
             <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
                 See your total sales and the latest orders that include your books.
             </p>
+                <h2 style="margin:0 0 6px; font-size:14px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em;">
+                    Total sales
+                </h2>
+                <p style="margin:0; font-size:28px; font-weight:900; color:var(--text);">
+                    ${{ total_sales }}
+                </p>
             <div style="margin-top:10px;">
                 <a class="link" href="{% url 'seller_sales_overview' %}">View sales overview</a>
             </div>
@@ -148,8 +154,8 @@
                             <tr>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">#{{ order.id }}</td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.status }}</td>
-                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.buyer_email }}</td>
-                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.total_amount }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.user.email }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.order_total_display }}</td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.created_at }}</td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
                                     <a class="link" href="{% url 'seller_order_details' order.id %}">View</a>

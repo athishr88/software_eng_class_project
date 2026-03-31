@@ -122,13 +122,25 @@ def home(request):
         return redirect("buyer_home")
 
     stats = _seller_dashboard_stats(request.user)
+    recent_orders = (
+        Order.objects.filter(orderitem__book__seller_user=request.user)
+        .annotate(
+            seller_revenue_cents=Sum(
+                "orderitem__line_total_cents",
+                filter=Q(orderitem__book__seller_user=request.user),
+            )
+        )
+        .select_related("user")
+        .order_by("-created_at")[:25]
+    )
     return render(
         request,
         "dashboard/dashboard.html",
         {
             "stats": stats,
-            "recent_orders": [],
+            "recent_orders": recent_orders,
             "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
+            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user))
         },
     )
 
@@ -141,13 +153,27 @@ def dashboard(request):
         return redirect("buyer_home")
 
     stats = _seller_dashboard_stats(request.user)
+
+    recent_orders = (
+        Order.objects.filter(orderitem__book__seller_user=request.user)
+        .annotate(
+            seller_revenue_cents=Sum(
+                "orderitem__line_total_cents",
+                filter=Q(orderitem__book__seller_user=request.user),
+            )
+        )
+        .select_related("user")
+        .order_by("-created_at")[:25]
+    )
+    
     return render(
         request,
         "dashboard/dashboard.html",
         {
             "stats": stats,
-            "recent_orders": [],
+            "recent_orders": recent_orders,
             "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
+            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user))
         },
     )
 
@@ -443,12 +469,64 @@ def sales_overview(request):
 
 def orders(request):
     """Orders list."""
-    return render(request, "orders/orders.html")
+
+    q = (request.GET.get("q") or "").strip()
+    qs = (
+        Order.objects.filter(orderitem__book__seller_user=request.user)
+        .annotate(
+            seller_revenue_cents=Sum(
+                "orderitem__line_total_cents",
+                filter=Q(orderitem__book__seller_user=request.user),
+            )
+        )
+        .order_by("-created_at")
+        .select_related("user")
+    )
+
+    if q:
+        qs = qs.filter(Q(user__email__icontains=q) | Q(orderitem__book__title__icontains=q)).distinct()
+    
+    sort = (request.GET.get("sort") or "newest").strip()
+
+    paginator = Paginator(qs, 10)
+    page_obj = paginator.get_page(request.GET.get("page") or 1)
+    for order in page_obj:
+        order.seller_revenue = _format_cents_as_dollars(int(order.seller_revenue_cents or 0))
+    return render(request, "orders/orders.html", {
+        "page_obj": page_obj,
+    })
 
 
 def order_details(request, order_id=None):
     """Single order detail."""
-    return render(request, "orders/orderDetails.html")
+    
+    order = Order.objects.filter(id=order_id).select_related(
+        "user"
+    ).prefetch_related(
+        "orderitem__book" 
+    ).annotate(
+        seller_revenue_cents=Sum(
+            "orderitem__line_total_cents",
+            filter=Q(orderitem__book__seller_user=request.user)
+        )
+    ).first()
+
+    if not order:
+        messages.error(request, "Order not found.")
+        return redirect("orders")
+
+    order_items = order.orderitem.filter(book__seller_user=request.user).select_related("book").annotate(
+        line_total_display=Sum("line_total_cents")
+    )
+
+    for item in order_items:
+        item.line_total_display = _format_cents_as_dollars(item.line_total_cents)
+
+    return render(request, "orders/orderDetails.html", {
+        "order": order,
+        "seller_revenue": _format_cents_as_dollars(order.seller_revenue_cents or 0),
+        "order_items": order_items,
+    })
 
 
 @login_required(login_url="login")
