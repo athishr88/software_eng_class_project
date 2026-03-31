@@ -500,12 +500,32 @@ def orders(request):
 def order_details(request, order_id=None):
     """Single order detail."""
     
-    order = Order.objects.filter(id=order_id).select_related("user").prefetch_related("orderitem__book").first()
+    order = Order.objects.filter(id=order_id).select_related(
+        "user"
+    ).prefetch_related(
+        "orderitem__book" 
+    ).annotate(
+        seller_revenue_cents=Sum(
+            "orderitem__line_total_cents",
+            filter=Q(orderitem__book__seller_user=request.user)
+        )
+    ).first()
+
     if not order:
         messages.error(request, "Order not found.")
         return redirect("orders")
+
+    order_items = order.orderitem.filter(book__seller_user=request.user).select_related("book").annotate(
+        line_total_display=Sum("line_total_cents")
+    )
+
+    for item in order_items:
+        item.line_total_display = _format_cents_as_dollars(item.line_total_cents)
+
     return render(request, "orders/orderDetails.html", {
-        "order": order
+        "order": order,
+        "seller_revenue": _format_cents_as_dollars(order.seller_revenue_cents or 0),
+        "order_items": order_items,
     })
 
 
