@@ -8,6 +8,7 @@ from django.core.paginator import Paginator
 from django.db import transaction
 from django.db.models import Exists, OuterRef, Q, Subquery, Sum
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.cache import never_cache
 
 from Buyer.models import Order, OrderItem, ReturnRequest, SellerReturnReceipt
 from General.models import Book, Inventory, User
@@ -17,8 +18,7 @@ _SALE_RECOGNIZED_STATUSES = ("paid", "shipped", "delivered")
 
 
 def _require_seller(user):
-    return user.is_authenticated and getattr(user, "role", None) == "seller"
-
+    return user.is_authenticated and getattr(user, "role", None) == "seller" and getattr(user, "seller_approved", False)
 
 def _sanitize_book_title_for_filename(title: str) -> str:
     """Make a safe filename stem from a book title (Windows-friendly)."""
@@ -35,7 +35,6 @@ def _sanitize_book_title_for_filename(title: str) -> str:
     cleaned = "".join(cleaned_chars).strip().strip(".")
     return cleaned or "book"
 
-
 def _get_book_images_dir() -> Path:
     """Return the on-disk directory used for storing covers."""
     d = Path(settings.BASE_DIR) / "book_images"
@@ -44,14 +43,12 @@ def _get_book_images_dir() -> Path:
     d.mkdir(parents=True, exist_ok=True)
     return d
 
-
 def _order_distinct_seller_user_ids(order):
     return set(
         OrderItem.objects.filter(order=order, book__seller_user__isnull=False)
         .values_list("book__seller_user_id", flat=True)
         .distinct()
     )
-
 
 def _seller_line_total_cents_for_order(order, seller_user) -> int:
     total = (
@@ -60,7 +57,6 @@ def _seller_line_total_cents_for_order(order, seller_user) -> int:
         ).get("s")
     )
     return int(total or 0)
-
 
 def _maybe_finalize_buyer_return(return_request):
     """Set return to refunded (buyer: Return complete) when every seller in the order has acknowledged."""
@@ -75,7 +71,6 @@ def _maybe_finalize_buyer_return(return_request):
         return_request.status = "refunded"
         return_request.save(update_fields=["status", "updated_at"])
 
-
 def _pending_return_requests_qs(seller_user):
     return (
         ReturnRequest.objects.filter(
@@ -88,7 +83,6 @@ def _pending_return_requests_qs(seller_user):
         .distinct()
         .order_by("-created_at")
     )
-
 
 def _seller_dashboard_stats(seller_user):
     seller_books = Book.objects.filter(seller_user=seller_user)
@@ -115,8 +109,13 @@ def _seller_dashboard_stats(seller_user):
 
 
 @login_required(login_url="login")
+@never_cache
 def home(request):
     """Seller home / dashboard."""
+    if request.user.role == "seller" and not request.user.seller_approved:
+        messages.error(request, "Your seller account is pending approval. Please check back later.")
+        return redirect("buyer_home")
+    
     if not _require_seller(request.user):
         messages.error(request, "A seller account is required.")
         return redirect("buyer_home")
@@ -134,6 +133,7 @@ def home(request):
 
 
 @login_required(login_url="login")
+@never_cache
 def dashboard(request):
     """Seller dashboard."""
     if not _require_seller(request.user):
@@ -153,6 +153,8 @@ def dashboard(request):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def add_books(request):
     """Create a Book + Inventory for the logged-in seller."""
     if not _require_seller(request.user):
@@ -289,6 +291,8 @@ def add_books(request):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def manage_inventory(request):
     """List seller books and update price, stock, and active flag."""
     if not _require_seller(request.user):
@@ -391,6 +395,8 @@ def _format_cents_as_dollars(cents: int) -> str:
 
 
 @login_required(login_url="login")
+@never_cache
+
 def sales_overview(request):
     """Total sales and recent orders that include this seller's books."""
     if not _require_seller(request.user):
@@ -440,18 +446,76 @@ def sales_overview(request):
         },
     )
 
+@login_required(login_url="login")
+@never_cache
 
 def orders(request):
     """Orders list."""
-    return render(request, "orders/orders.html")
+    if not _require_seller(request.user):
+        messages.error(request, "A seller account is required.")
+        return redirect("buyer_home")   
+    
+    qs = (
+        Order.objects.filter(orderitem__book__seller_user=request.user)
+        .select_related("user")
+        .prefetch_related("orderitem__book")
+        .order_by("-created_at")
+        .distinct()
+    )
 
+    status = (request.GET.get("status") or "").strip()
+    if status == "OPEN":
+        qs = qs.filter(status__in=["paid", "shipped"])
 
+    orders = list(qs[:200])
+
+    for order in orders:
+        seller_items = [
+            oi for oi in order.orderitem.all()
+            if oi.book and oi.book.seller_user_id == request.user.id
+        ]
+
+        order.seller_item_count = sum(oi.quantity for oi in seller_items)
+        order.seller_line_total_cents = sum(oi.line_total_cents for oi in seller_items)
+        order.seller_line_total_display = f"{order.seller_line_total_cents / 100:.2f}"
+    return render(request, "orders/orders.html", {"orders": orders})
+
+@login_required(login_url="login")
+@never_cache
 def order_details(request, order_id=None):
     """Single order detail."""
-    return render(request, "orders/orderDetails.html")
+    if not _require_seller(request.user):
+        messages.error(request, "An approved seller account is required.")
+        return redirect("buyer_home")
+    
+    order = get_object_or_404(
+        Order.objects.select_related("user", "shipping_snapshot", "shipping_address")
+        .prefetch_related("orderitem__book"),
+        pk=order_id,
+        orderitem__book__seller_user=request.user,
+    )
+
+
+    seller_items = [
+        oi for oi in order.orderitem.all()
+        if oi.book and oi.book.seller_user_id == request.user.id
+    ]
+
+    for item in seller_items:
+        item.line_total_display = f"{item.line_total_cents / 100:.2f}"
+
+    seller_total_cents = sum(oi.line_total_cents for oi in seller_items)
+
+    rr = ReturnRequest.objects.filter(order=order).first()
+    seller_receipt = None
+    if rr:
+        seller_receipt = rr.seller_receipts.filter(seller=request.user).first()
+    return render(request, "orders/orderDetails.html", {"order": order, "seller_items": seller_items, "seller_total_display": f"{seller_total_cents / 100:.2f}", "return_request": rr, "seller_receipt": seller_receipt})
 
 
 @login_required(login_url="login")
+@never_cache
+
 def return_requests_list(request):
     if not _require_seller(request.user):
         messages.error(request, "A seller account is required.")
@@ -466,6 +530,8 @@ def return_requests_list(request):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def return_request_detail(request, return_id):
     if not _require_seller(request.user):
         messages.error(request, "A seller account is required.")
@@ -486,9 +552,27 @@ def return_request_detail(request, return_id):
     already = rr.seller_receipts.filter(seller=request.user).first()
 
     if request.method == "POST" and request.POST.get("action") == "book_received":
-        if rr.status == "rejected":
-            messages.error(request, "This return was rejected.")
+        action = (request.POST.get("action") or "").strip()
+        if action == "approve":
+            if rr.status == "rejected":
+                messages.error(request, "This return was rejected.")
+                return redirect("seller_return_request_detail", return_id=rr.id)
+            
+            rr.status = "approved"
+            rr.save(update_fields=["status", "updated_at"])
+            messages.success(request, "Return request approved.")
             return redirect("seller_return_request_detail", return_id=rr.id)
+        
+        if action == "deny":
+            if rr.status == "rejected":
+                messages.error(request, "This return was already complete.")
+                return redirect("seller_return_request_detail", return_id=rr.id)
+            
+            rr.status = "rejected"
+            rr.save(update_fields=["status", "updated_at"])
+            messages.success(request, "Return request denied.")
+            return redirect("seller_return_request_detail", return_id=rr.id)
+
         if already:
             messages.info(request, "You already marked this return as received.")
             return redirect("seller_return_request_detail", return_id=rr.id)

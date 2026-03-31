@@ -1,0 +1,39 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<h1 style="margin-bottom:20px;">Seller Approvals</h1>
+
+<h2 style="margin-bottom:10px;">Pending Sellers</h2>
+{% if pending_sellers %}
+    {% for user in pending_sellers %}
+        <div style="border:1px solid #ddd; padding:16px; margin-botttom:12px; border-radius:10px;">
+            <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email }})<br>
+            Joined: {{ user.created_at|date:"M d, Y" }}<br>
+
+            <form method="post" action="{% url 'approve_seller' user.id %}" style="margin-top:10px;">
+                {% csrf_token %}
+                <button type="submit" style="background:#16a34a; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">
+                    Approve Seller
+                </button>
+            </form>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No pending seller approvals at this time.</p>
+{% endif %}
+
+<hr style="margin:30px 0;">
+
+<h2 style="margin-bottom:10px;">Approved Sellers</h2>
+{% if approved_sellers %}
+    {% for user in approved_sellers %}
+        <div style="border:1px solid #e5e7eb; padding:12px; margin-botttom:10px; border-radius:10px; background:#f9fafb;">
+            <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email }})<br>
+            Joined: {{ user.created_at|date:"M d, Y" }}<br>
+            Approved: {{ user.seller_approved_date|date:"M d, Y" }}
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No approved sellers yet. </p>
+{% endif %}
+{% endblock %}

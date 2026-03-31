@@ -175,11 +175,28 @@
                         <strong>${{ cart_subtotal|floatformat:2 }}</strong>
                     </div>
                     <div style="display:flex; justify-content:space-between; gap:10px;">
-                        <span style="color:var(--muted);">Fees</span>
+                        <span style="color:var(--muted); display:inline-flex; align-items:center; gap:6px;">
+                            Fees
+                            <span class="tooltip-icon" tabindex="0" aria-label="Shipping and handeling info">
+                                i
+                                <span class="tooltip-text">
+                                    Order fees cover shipping, handling, and other operational costs. Fees are waived on orders with steward-free items.
+                                </span>
+                            </span>
+                         </span>
                         <strong>${{ fees|floatformat:2 }}{% if cart_has_steward_free %} <span style="font-size:11px; font-weight:700; color:#166534;">(waived)</span>{% endif %}</strong>
                     </div>
+
                     <div style="display:flex; justify-content:space-between; gap:10px;">
-                        <span style="color:var(--muted);">Tax</span>
+                        <span style="color:var(--muted); display:inline-flex; align-items:center; gap:6px;">
+                            Tax
+                            <span class="tooltip-icon" tabindex="0" aria-label="Tax rate info">
+                                i
+                                <span class="tooltip-text">
+                                    Tax is calculated on the subtotal of paid items (not including steward contributions). Orders with steward-free items are only taxed on the paid lines.
+                                </span>
+                            </span>
+                        </span>
                         <strong>${{ tax|floatformat:2 }}</strong>
                     </div>
                     <div style="display:grid; gap:8px; margin-top:4px;">
@@ -306,6 +323,61 @@
             aside[style*="position:sticky"]{
                 position: static !important;
             }
+        }
+
+        .tooltip-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background: #e5e7eb;
+            color: #374151;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            width: 220px;
+            background: #111827;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+            position: absolute;
+            z-index: 20
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+            bottom: 125%; /* Position above the icon */
+            left: 50%;
+            transform: translateX(-50%);
+            transition: opacity 0.2s ease;
+        }
+
+        .tooltip-text::after{
+            content: "";
+            position: absolute;
+            top: 100%; /* At the bottom of the tooltip */
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: #111827 transparent transparent transparent;
+        }
+
+        .tooltip-icon:hover .tooltip-text,
+        .tooltip-icon:focus .tooltip-text {
+            visibility: visible;
+            opacity: 1;
         }
     </style>
 {% endblock %}

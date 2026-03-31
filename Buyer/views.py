@@ -9,6 +9,7 @@ from django.db import transaction
 from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.views.decorators.cache import never_cache
 
 from Buyer.cart_helpers import add_book_to_db_cart, clear_db_cart, db_cart_lines
 from Buyer.models import (
@@ -30,7 +31,6 @@ from General.steward import (
 _STEWARD_CONTRIBUTION_DEFAULT = Decimal("2.00")
 _STEWARD_CONTRIBUTION_MAX = Decimal("100.00")
 
-
 def _parse_steward_contribution_dollars(raw):
     """
     Parse checkout steward contribution. Blank → default $2.00.
@@ -48,14 +48,11 @@ def _parse_steward_contribution_dollars(raw):
         v = _STEWARD_CONTRIBUTION_MAX
     return v.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP), False
 
-
 def _steward_cents_from_dollars(dollars: Decimal) -> int:
     return int((dollars * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
 
-
 def _steward_points_from_contribution_cents(cents: int) -> int:
     return cents // 10
-
 
 def _buyer_return_status_label(return_request):
     if not return_request:
@@ -66,14 +63,11 @@ def _buyer_return_status_label(return_request):
         return "Return declined"
     return "Return requested"
 
-
 def _addresses_for_user(user):
     return Address.objects.filter(user=user).order_by("-is_default", "-updated_at")
 
-
 def _payment_methods_for_user(user):
-    return PaymentMethod.objects.filter(user=user).order_by("-is_default", "-updated_at")
-
+    return PaymentMethod.objects.filter(user=user).order_by("-is_default", "-id")
 
 def _order_items_from_snapshots(order):
     """
@@ -88,6 +82,7 @@ def _order_items_from_snapshots(order):
         author = snap.author if snap else (oi.author or book.author)
         items.append(
             {
+                "id": oi.id,
                 "book_id": book.id,
                 "title": title,
                 "author": author,
@@ -102,7 +97,7 @@ def _order_items_from_snapshots(order):
         )
     return items
 
-
+\
 def _checkout_page_context(
     user,
     cart_items,
@@ -226,6 +221,8 @@ def _buyer_dashboard_context(user):
         ctx["steward_next_free_at"] = next_free_book_eligible_at(user)
     return ctx
 
+@login_required(login_url="login")
+@never_cache
 
 def home(request):
     """Buyer home / dashboard."""
@@ -234,12 +231,16 @@ def home(request):
         return render(request, "dashboard/buyer_dashboard.html", ctx)
     return render(request, "dashboard/buyer_dashboard.html")
 
+@login_required(login_url="login")
+@never_cache
 
 def buyer_dashboard(request):
     """Buyer dashboard."""
     ctx = _buyer_dashboard_context(request.user)
     return render(request, "dashboard/buyer_dashboard.html", ctx)
 
+@login_required(login_url="login")
+@never_cache
 
 def add_to_cart(request, book_id):
     if request.method == "POST":
@@ -267,6 +268,8 @@ def add_to_cart(request, book_id):
             request.session.modified = True
     return redirect("cart")
 
+@login_required(login_url="login")
+@never_cache
 
 def buyer_cart(request):
     from General.steward import cart_steward_privilege_row
@@ -320,6 +323,8 @@ def buyer_cart(request):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def buyer_checkout(request):
     cart_items, subtotal_cents = db_cart_lines(request.user)
     steward_raw_get = request.GET.get("steward_contribution") if request.method != "POST" else None
@@ -657,7 +662,8 @@ def buyer_checkout(request):
 
 
 @login_required(login_url="login")
-@login_required(login_url="login")
+@never_cache
+
 def cart_steward_free_select(request, book_id):
     if request.method != "POST":
         return redirect("cart")
@@ -726,6 +732,8 @@ def cart_steward_free_select(request, book_id):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def cart_steward_free_deselect(request, book_id):
     if request.method != "POST":
         return redirect("cart")
@@ -754,6 +762,8 @@ def cart_steward_free_deselect(request, book_id):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def steward_welcome(request):
     """
     One-time style welcome after `steward_progress` reaches 100 and `steward_verified` is set.
@@ -807,20 +817,45 @@ def steward_welcome(request):
         },
     )
 
+@login_required(login_url="login")
+@never_cache
 
 def remove_cart_item(request, item_id):
     if request.method == "POST":
         if request.user.is_authenticated:
-            CartItem.objects.filter(cart__user=request.user, book_id=item_id).delete()
+            ci = CartItem.objects.filter(cart__user=request.user, book_id=item_id).first()
+            
+            if ci:
+                if ci.quantity > 1:
+                    ci.quantity -= 1
+                    ci.save(update_fields=["quantity", "updated_at"])
+                else:
+                    ci.delete()
         else:
             cart = request.session.get("cart", {})
             item_id_str = str(item_id)
+
             if item_id_str in cart:
-                del cart[item_id_str]
+                item = cart[item_id_str]
+
+                if isinstance(item, dict):
+                    qty = item.get("quantity", 1)
+                    if qty > 1:
+                        cart[item_id_str]["quantity"] = qty - 1
+                    else:
+                        del cart[item_id_str]
+                else:
+                    if item > 1:
+                        cart[item_id_str] = item - 1
+                    else:
+                        del cart[item_id_str]
+
             request.session["cart"] = cart
             request.session.modified = True
     return redirect("cart")
 
+@login_required(login_url="login")
+@never_cache
 
 def update_cart_item(request, item_id):
     if request.method == "POST":
@@ -835,24 +870,33 @@ def update_cart_item(request, item_id):
             ci = CartItem.objects.filter(
                 cart__user=request.user, book_id=item_id
             ).select_related("book").first()
+            
             if ci:
                 if ci.is_steward_free:
                     ci.quantity = 1
+
                 else:
                     ci.quantity = quantity
                     ci.unit_price_cents = ci.book.base_price_cents
+
                 ci.save(update_fields=["quantity", "unit_price_cents", "updated_at"])
         else:
             cart = request.session.get("cart", {})
             item_id_str = str(item_id)
+
             if item_id_str in cart:
-                cart[item_id_str]["quantity"] = quantity
+                if isinstance(cart[item_id_str], dict):
+                    cart[item_id_str]["quantity"] = quantity
+                else:
+                    cart[item_id_str] = quantity
+                    
             request.session["cart"] = cart
             request.session.modified = True
     return redirect("cart")
 
 
 @login_required(login_url="login")
+@never_cache
 def buyer_payments(request):
     """List saved PaymentMethod rows."""
     return render(
@@ -863,6 +907,7 @@ def buyer_payments(request):
 
 
 @login_required(login_url="login")
+@never_cache
 def buyer_add_payment_method(request):
     """Form to add a PaymentMethod (last4 + meta only; full card number and CVV are not stored)."""
     next_url_param = (request.POST.get("next") or request.GET.get("next") or "").strip()
@@ -938,6 +983,8 @@ def buyer_add_payment_method(request):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def set_default_payment_method(request, payment_method_id):
     if request.method != "POST":
         return redirect("buyer_payments")
@@ -950,6 +997,8 @@ def set_default_payment_method(request, payment_method_id):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def delete_payment_method(request, payment_method_id):
     if request.method != "POST":
         return redirect("buyer_payments")
@@ -960,6 +1009,8 @@ def delete_payment_method(request, payment_method_id):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def buyer_shipping(request):
     """List saved shipping Address rows for the logged-in user."""
     return render(
@@ -970,6 +1021,8 @@ def buyer_shipping(request):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def buyer_add_shipping_address(request):
     """Form to add a shipping Address for the logged-in user."""
     next_url_param = (request.POST.get("next") or request.GET.get("next") or "").strip()
@@ -1025,6 +1078,8 @@ def buyer_add_shipping_address(request):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def set_default_shipping_address(request, address_id):
     if request.method != "POST":
         return redirect("buyer_shipping")
@@ -1037,6 +1092,8 @@ def set_default_shipping_address(request, address_id):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def delete_shipping_address(request, address_id):
     if request.method != "POST":
         return redirect("buyer_shipping")
@@ -1047,6 +1104,8 @@ def delete_shipping_address(request, address_id):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def buyer_profile(request):
     """Update User profile fields and password (schema: first_name, last_name, phone)."""
     user = request.user
@@ -1104,6 +1163,8 @@ def buyer_profile(request):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def order_confirmation(request, order_id):
     order = get_object_or_404(
         Order.objects.select_related("shipping_snapshot").prefetch_related(
@@ -1140,6 +1201,8 @@ def order_confirmation(request, order_id):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def order_detail(request, order_id):
     order = get_object_or_404(
         Order.objects.select_related(
@@ -1163,25 +1226,39 @@ def order_detail(request, order_id):
         return_request = None
     has_return = return_request is not None
     can_request_return = order.status in ("paid", "shipped", "delivered") and not has_return
+    can_leave_review = order.status == "delivered"
 
+    user_orders = list(
+        Order.objects.filter(user=request.user).order_by("-created_at", "-id")
+    )
+    position = None
+    for index, user_order in enumerate(user_orders, start=1):
+        if user_order.id == order.id:
+            position = index
+            break
+    display_order_number = len(user_orders) - position + 1 if position is not None else None
     return render(
         request,
         "orders/orderDetail.html",
         {
+
             "order": order,
             "shipping": shipping,
             "order_items": items,
             "order_total_display": f"{order.total_cents / 100:.2f}",
             "order_subtotal_display": f"{order.subtotal_cents / 100:.2f}",
             "can_request_return": can_request_return,
-            "can_leave_review": False,
+            "can_leave_review": can_leave_review,
             "return_request": return_request,
             "return_status_label": _buyer_return_status_label(return_request),
+            "display_order_number": display_order_number,
         },
     )
 
 
 @login_required(login_url="login")
+@never_cache
+
 def order_history(request):
     qs = (
         Order.objects.filter(user=request.user)
@@ -1214,6 +1291,8 @@ def order_history(request):
 
 
 @login_required(login_url="login")
+@never_cache
+
 def return_request_view(request, order_id):
     order = get_object_or_404(Order, pk=order_id, user=request.user)
     if hasattr(order, "returnrequest"):
@@ -1250,6 +1329,8 @@ def return_request_view(request, order_id):
 
     return render(request, "orders/ReturnRequest.html", {"order": order})
 
+@login_required(login_url="login")
+@never_cache
 
 def review_submission(request):
     """Submit a review (no Review model in project schema yet)."""

@@ -29,7 +29,7 @@
       {% if error %}
       <p class="error">{{ error }}</p>
       {% endif %}
-      <form method="post" action="{% url 'staff_login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">
+      <form method="post" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next|urlencode }}{% endif %}">
         {% csrf_token %}
         {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}" />{% endif %}
         <label for="email">Email</label>

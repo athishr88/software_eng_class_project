@@ -1,12 +1,15 @@
 from datetime import timedelta
 from functools import wraps
+from pyexpat.errors import messages
 
+from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db.models import Sum
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse
 from urllib.parse import quote
 from django.utils import timezone
+from django.views.decorators.cache import never_cache
 
 from Admin.models import FlagReport
 from Buyer.models import Order, ReturnRequest
@@ -25,38 +28,21 @@ def staff_required(view_func):
         return view_func(request, *args, **kwargs)
     return _wrapped
 
-
+@never_cache
 def staff_login(request):
     """Staff-only login at /staff/login. Only users with role=admin and is_staff can log in."""
-    if request.user.is_authenticated and getattr(request.user, "role", None) == "admin" and getattr(request.user, "is_staff", False):
-        return redirect("admin_dashboard")
-    if request.method == "POST":
-        email = (request.POST.get("email") or "").strip()
-        password = request.POST.get("password") or ""
-        user = authenticate(request, username=email, password=password)
-        if user is not None and user.is_active and getattr(user, "role", None) == "admin" and getattr(user, "is_staff", False):
-            login(request, user)
-            next_url = (request.POST.get("next") or request.GET.get("next") or "").strip()
-            if next_url.startswith("/staff/"):
-                return redirect(next_url)
-            return redirect("admin_dashboard")
-        error = "Invalid email or password, or not authorized for staff access."
-        return render(request, "auth/staff_login.html", {"error": error, "email": email})
-    return render(request, "auth/staff_login.html")
-
+    return redirect("login")
 
 def staff_logout(request):
     """Log out and redirect to staff login."""
     logout(request)
     return redirect("staff_login")
 
-
 def _format_status(s):
     """Map FlagReport status to display label."""
     return {"open": "Open", "reviewing": "Triage", "resolved": "Resolved", "dismissed": "Dismissed"}.get(
         (s or "").lower(), s or "Open"
     )
-
 
 def _flag_to_steward_row(flag):
     target = flag.target_user
@@ -69,7 +55,6 @@ def _flag_to_steward_row(flag):
         "flagged_date": flag.created_at.strftime("%b %d, %Y"),
     }
 
-
 def _flag_to_payment_row(flag):
     target = flag.target_user
     return {
@@ -80,7 +65,6 @@ def _flag_to_payment_row(flag):
         "status": _format_status(flag.status),
         "flagged_date": flag.created_at.strftime("%b %d, %Y"),
     }
-
 
 def _flag_to_all_row(flag):
     if flag.target_user:
@@ -127,6 +111,7 @@ def admin_dashboard(request):
 
     open_flags_count = FlagReport.objects.filter(status__in=("open", "reviewing")).count()
 
+    
     revenue_result = (
         Order.objects.filter(
             created_at__gte=start_of_month,
@@ -166,6 +151,8 @@ def admin_dashboard(request):
         }
         for b in recent_books
     ]
+    pending_seller_approvals = User.objects.filter(role="seller", seller_approved=False).count()
+    pending_sellers_preview = User.objects.filter(role="seller", seller_approved=False).order_by("created_at")[:5]
 
     admin_name = "Admin"
     if request.user.is_authenticated:
@@ -177,6 +164,7 @@ def admin_dashboard(request):
         "steward_flags": steward_flags,
         "payment_flags": payment_flags,
         "recent_listings": recent_listings,
+        "pending_sellers_preview": pending_sellers_preview,
         "metrics": {
             "total_users": f"{total_users:,}",
             "active_users_30d": f"{active_users_30d:,}",
@@ -186,6 +174,7 @@ def admin_dashboard(request):
             "returns_month": f"{returns_month:,}",
             "open_flags": f"{open_flags_count}",
             "revenue_month": revenue_month,
+            "pending_seller_approvals": f"{pending_seller_approvals:,}",
             "total_users_note": f"+{users_this_week} this week",
             "active_users_note": f"{active_pct:.0f}% of total",
             "books_listed_note": f"+{books_today} today",
@@ -194,7 +183,9 @@ def admin_dashboard(request):
             "returns_month_note": f"{return_rate:.1f}% return rate",
             "open_flags_note": "Needs review",
             "revenue_month_note": "Platform fees",
+
         },
+        
     }
     return render(request, "dashboard/admin_dashboard.html", context)
 
@@ -205,6 +196,25 @@ def _admin_context(request):
         admin_name = getattr(request.user, "get_full_name", lambda: request.user.email)() or request.user.email
     return {"admin_name": admin_name}
 
+@staff_required
+def seller_approvals(request):
+    pending_sellers = User.objects.filter(role="seller", seller_approved=False).order_by("created_at")
+    approved_sellers = User.objects.filter(role="seller", seller_approved=True).order_by("-seller_approved_at", "-created_at")
+    return render(request, "users/seller_approvals.html", {"pending_sellers": pending_sellers, "approved_sellers": approved_sellers,})
+
+@staff_required
+def approve_seller(request, user_id):
+    if request.method != "POST":
+        return redirect("seller_approvals")
+    
+    user = get_object_or_404(User, id=user_id, role="seller")
+    if user:
+        user.seller_approved = True
+        user.seller_approved_at = timezone.now()
+        user.save(update_fields=["seller_approved", "seller_approved_at"])
+
+    messages.success(request, f"Seller account for {user.email} has been approved.")
+    return redirect("seller_approvals")
 
 @staff_required
 def reports_flags(request):
@@ -260,10 +270,7 @@ def admin_returns(request):
 @staff_required
 def admin_payments(request):
     paid = Order.objects.filter(status__in=("paid", "shipped", "delivered")).select_related("user").order_by("-created_at")[:200]
-    for p in paid:
-        p.total_dollars = p.total_cents / 100.0
-        p.subtotal_dollars = p.subtotal_cents / 100.0
-        p.discount_dollars = p.discount_cents / 100.0
+    
     ctx = {**_admin_context(request), "nav_active": "payments", "payments": paid}
     return render(request, "payments/payments.html", ctx)
 
