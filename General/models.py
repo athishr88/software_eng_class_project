@@ -38,6 +38,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=50, blank=True, null=True)
 
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    seller_approved = models.BooleanField(default=False)
+    seller_approved_at = models.DateTimeField(blank=True, null=True)
 
     steward_verified = models.BooleanField(default=False)
     steward_city = models.CharField(max_length=120, blank=True, null=True)
@@ -45,7 +47,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         default=0,
         validators=[MaxValueValidator(100)],
     )
-
+    
     # Set when a steward redeems a free book; next free after FREE_BOOK_COOLDOWN (see General.steward).
     last_free_book_redeemed_at = models.DateTimeField(blank=True, null=True)
 
@@ -59,6 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     store_credit_cents = models.PositiveIntegerField(default=0)
 
     objects = UserManager()
+
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]

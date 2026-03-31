@@ -40,5 +40,36 @@
                 <button class="btn" type="submit">Book received</button>
             </form>
         {% endif %}
+
+        {% if return_request %}
+            <div class="card" style="margin-top:12px;">
+                <h3>Return Request</h3>
+                <p><strong>Status:</strong> {{ return_request.status }}</p>
+                <p><strong>Reason:</strong> {{ return_request.reason }}</p>
+
+                {% if return_request.status != 'rejected' and return_request.status != 'refunded' %}
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve">
+                            <button class="btn" type="submit">Approve Return</button>
+                        </form>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject">
+                            <button class="btn" type="submit" style="background:#b91c1c;">Deny Return</button>
+                        </form>
+                    </div>
+                {% endif %}
+
+                {% if return_request.status == 'approved' and not already_received %}
+                    <form method="post" style="margin-top:12px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="book_received">
+                        <button class="btn" type="submit">Mark as Received</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endif %}
     </section>
 {% endblock %}

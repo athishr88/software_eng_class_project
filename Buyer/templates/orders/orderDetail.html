@@ -170,8 +170,51 @@
                 {% if can_request_return %}
                     <a class="link" href="{% url 'return_request' order.id %}">Request Return</a>
                 {% endif %}
-                {% if can_leave_review %}
-                    <a class="link" href="{% url 'review_submit' order.id %}">Leave Review</a>
+
+                {% if can_leave_review and order_items %}
+                <section class="card" style="box-shadow:none; max-width:900px; margin-top:12px;">
+                    <h3 style="margin:0 0 10px; font-size:16px; font-weight:800;">Rate Your Items</h3>
+                    <p style="margin:0 0 10px; color:var(--muted); font-size:14px;">
+                        Select 1 to 5 stars for each item and leave an optional review.
+                    </p>
+
+                    <div style="display:grid; gap:14px;">
+                        {% for item in order_items %}
+                            <form method="POST" action="{% url 'review_submission' order.id %}" style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
+                                {% csrf_token %}
+                                <input type="hidden" name="order_item_id" value="{{ item.id }}">
+
+                                <div style="margin-top:10px;">
+                                    <strong style="font-size:14px;">{{ item.title }}</strong>
+                                    <div style="margin-top:4px; color:var(--muted); font-size:13px;">
+                                        {{ item.author }}
+                                    </div>
+                                </div>
+
+                                <div class="star-rating" style="margin-bottom:12px;">
+                                    <input type="radio" id="star5-{{ item.id }}" name="rating" value="5">
+                                    <label for="star5-{{ item.id }}" title="5 stars">★</label>
+
+                                    <input type="radio" id="star4-{{ item.id }}" name="rating" value="4">
+                                    <label for="star4-{{ item.id }}" title="4 stars">★</label>
+
+                                    <input type="radio" id="star3-{{ item.id }}" name="rating" value="3">
+                                    <label for="star3-{{ item.id }}" title="3 stars">★</label>
+
+                                    <input type="radio" id="star2-{{ item.id }}" name="rating" value="2">
+                                    <label for="star2-{{ item.id }}" title="2 stars">★</label>
+                                    
+                                    <input type="radio" id="star1-{{ item.id }}" name="rating" value="1">
+                                    <label for="star1-{{ item.id }}" title="1 star">★</label>
+                                </div>
+
+                                <button type="submit" class="btn" style="margin-top:10px;">
+                                    Submit Rating
+                                </button>
+                            </form>
+                        {% endfor %}
+                    </div>
+                </section>
                 {% endif %}
             </div>
         </div>
@@ -182,6 +225,30 @@
             section[style*="grid-template-columns: 1fr 1fr"]{
                 grid-template-columns: 1fr !important;
             }
+        }
+
+        .star-rating {
+            display: inline-flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 2px;
+        }
+
+        .star-rating input {
+            display: none;
+        }
+
+        .star-rating label {
+            font-size: 28px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star-rating label:hover,
+        .star-rating label:hover ~ label,
+        .star-rating input:checked ~ label{
+            color: #f5b301;
         }
     </style>
 {% endblock %}

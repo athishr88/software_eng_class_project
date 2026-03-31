@@ -12,9 +12,11 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.middleware.csrf import get_token
 
 from Admin.models import FlagReport
 from .models import Book, StewardContribution
+from django.views.decorators.cache import never_cache
 
 User = get_user_model()
 
@@ -88,7 +90,7 @@ def serve_book_cover(request, path):
 
 def home(request):
     """Landing: only Customer or Admin choice."""
-    return render(request, "home/index.html")
+    return render(request, "login/login_page.html")
 
 
 def _set_jwt_cookies(response, user):
@@ -112,14 +114,23 @@ def _set_jwt_cookies(response, user):
     )
     return response
 
-
+@never_cache
 def login_page(request):
     """Login: GET shows form; POST authenticates, session login, JWT cookies, redirect by role or next."""
     next_url = (request.POST.get("next") or request.GET.get("next") or "").strip()
+    if request.user.is_authenticated:
+        if request.user.role == "admin":
+            return redirect("admin_dashboard")
+        elif request.user.role == "seller":
+            return redirect("seller_home")
+        else:
+            return redirect("buyer_home")
+    
     if request.method == "POST":
-        email = (request.POST.get("username") or "").strip()
+        identifier = (request.POST.get("username") or "").strip()
         password = request.POST.get("password") or ""
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=identifier, password=password)
+        
         if user is not None and user.is_active:
             login(request, user)
             from Buyer.cart_helpers import merge_session_cart_into_db
@@ -130,7 +141,11 @@ def login_page(request):
             elif user.role == "admin":
                 response = redirect("admin_dashboard")
             elif user.role == "seller":
-                response = redirect("seller_home")
+                if user.seller_approved:
+                    response = redirect("seller_home")
+                else:
+                    messages.error(request, "Your seller account is pending approval.")
+                    response = redirect("buyer_home")
             else:
                 response = redirect("buyer_home")
             return _set_jwt_cookies(response, user)
@@ -139,6 +154,7 @@ def login_page(request):
             "login/login_page.html",
             {"error": "Invalid email or password.", "next": next_url},
         )
+    get_token(request)
     return render(request, "login/login_page.html", {"next": next_url})
 
 
@@ -184,6 +200,8 @@ def register(request):
         )
         if role == "seller":
             from Seller.models import SellerProfile
+            user.seller_approved = False
+            user.save(update_fields=["seller_approved"])
 
             SellerProfile.objects.update_or_create(
                 user=user,
@@ -205,7 +223,7 @@ def email_verification(request):
     """Email verification page."""
     return render(request, "auth/email_verification.html")
 
-
+@login_required(login_url="login")
 def catalog(request):
     """Book catalog / browse: list all active books from DB with filters and pagination."""
     qs = Book.objects.filter(is_active=True).select_related("seller_user").prefetch_related("inventory").order_by("title").distinct()
@@ -263,7 +281,7 @@ def catalog(request):
         }
     )
 
-
+@login_required(login_url="login")
 def book_detail(request, pk=None):
     """Single book detail by pk."""
     book = get_object_or_404(Book.objects.filter(is_active=True ), pk=pk)
@@ -286,7 +304,7 @@ def book_detail(request, pk=None):
             "reviews": [],
         },
     )
-
+@login_required(login_url="login")
 def cart(request):
     """TEMP BUYER CART PAGE"""
     cart_items = []
@@ -300,7 +318,7 @@ def cart(request):
             "subtotal": subtotal,
         },
     )
-
+@login_required(login_url="login")
 def checkout(request):
     """TEMP CHECKOUT SUMMARY PAGE"""
     cart_items = []
@@ -321,13 +339,13 @@ def checkout(request):
         },
     )
 
-
+@login_required(login_url="login")
 def logout_view(request):
     """Log out, clear JWT cookies, and redirect to home."""
     logout(request)
-    response = redirect("general_home")
-    response.delete_cookie("access_token")
-    response.delete_cookie("refresh_token")
+    response = redirect("login")
+    response.delete_cookie("sessionid")
+    response.delete_cookie("csrftoken")
     return response
 
 

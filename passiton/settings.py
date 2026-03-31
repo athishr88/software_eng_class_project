@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'General.middleware.NoCacheMiddleware',  # Custom middleware to prevent caching of auth views
 ]
 
 ROOT_URLCONF = 'passiton.urls'
