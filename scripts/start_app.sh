@@ -5,6 +5,8 @@ sudo chown -R ubuntu:ubuntu "$APP_DIR"
 source /home/ubuntu/env/bin/activate
 cd /home/ubuntu/software_eng_class_project
 
+export SQLITE_DB_PATH=/home/ubuntu/passiton_data/db.sqlite3
+
 python manage.py migrate
 python manage.py collectstatic --noinput
 
