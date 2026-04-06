@@ -2,4 +2,4 @@
 
 virtualenv /home/ubuntu/env
 source /home/ubuntu/env/bin/activate
-pip install -r /home/ubuntu/blogprojectdrf/requirements.txt
+pip install -r /home/ubuntu/software_eng_class_project/requirements.txt
