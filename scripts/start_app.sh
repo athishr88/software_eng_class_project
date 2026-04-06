@@ -3,6 +3,7 @@
 sed -i 's/\[]/\["34.226.244.102"]/' /home/ubuntu/software_eng_class_project/passiton/settings.py
 
 cd /home/ubuntu/software_eng_class_project
+source /home/ubuntu/env/bin/activate
 python manage.py migrate 
 python manage.py makemigrations     
 python manage.py collectstatic
