@@ -154,3 +154,5 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
 }
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None if DEBUG else "same-origin"

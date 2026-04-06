@@ -1,8 +1,5 @@
 #!/usr/bin/bash
 APP_DIR=/home/ubuntu/software_eng_class_project
-
-sed -i 's/\[]/\["34.226.244.102"]/' /home/ubuntu/software_eng_class_project/passiton/settings.py
-
 # Ensure app files are writable by Gunicorn user (ubuntu); fixes root-owned artifacts from deploys.
 sudo chown -R ubuntu:ubuntu "$APP_DIR"
 source /home/ubuntu/env/bin/activate
