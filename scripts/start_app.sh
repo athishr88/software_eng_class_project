@@ -1,10 +1,12 @@
-#!/usr/bin/bash 
+#!/usr/bin/bash
+set -e
 
-sed -i 's/\[]/\["34.226.244.102"]/' /home/ubuntu/software_eng_class_project/passiton/settings.py
+cd /home/ubuntu/software_eng_class_project
 
-python manage.py migrate 
-python manage.py makemigrations     
-python manage.py collectstatic
+sed -i 's/\[]/\["34.226.244.102"]/' passiton/settings.py
+
+/home/ubuntu/env/bin/python manage.py migrate
+/home/ubuntu/env/bin/python manage.py collectstatic --noinput
 sudo service gunicorn restart
 sudo service nginx restart
 #sudo tail -f /var/log/nginx/error.log
