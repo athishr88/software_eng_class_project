@@ -1,15 +1,15 @@
 #!/usr/bin/bash
-set -e
-
 APP_DIR=/home/ubuntu/software_eng_class_project
-PYTHON=/home/ubuntu/env/bin/python
+# Ensure app files are writable by Gunicorn user (ubuntu); fixes root-owned artifacts from deploys.
+sudo chown -R ubuntu:ubuntu "$APP_DIR"
+source /home/ubuntu/env/bin/activate
+cd /home/ubuntu/software_eng_class_project
 
-cd "$APP_DIR"
+export SQLITE_DB_PATH=/home/ubuntu/passiton_data/db.sqlite3
 
-sed -i 's/\[]/\["34.226.244.102"]/' passiton/settings.py
+python manage.py migrate
+python manage.py collectstatic --noinput
 
-"$PYTHON" manage.py migrate
-"$PYTHON" manage.py collectstatic --noinput
 sudo service gunicorn restart
 sudo service nginx restart
 #sudo tail -f /var/log/nginx/error.log
