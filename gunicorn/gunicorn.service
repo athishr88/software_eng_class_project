@@ -6,6 +6,7 @@ After=network.target
 User=ubuntu
 Group=www-data
 WorkingDirectory=/home/ubuntu/software_eng_class_project
+Environment="SQLITE_DB_PATH=/home/ubuntu/passiton_data/db.sqlite3"
 ExecStart=/home/ubuntu/env/bin/gunicorn --access-logfile - --workers 3 --bind unix:/home/ubuntu/software_eng_class_project/passiton/passiton.sock passiton.wsgi:application
 
        
