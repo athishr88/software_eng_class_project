@@ -1,10 +1,15 @@
-#!/usr/bin/bash 
+#!/usr/bin/bash
+set -e
 
-sed -i 's/\[]/\["34.226.244.102"]/' /home/ubuntu/software_eng_class_project/passiton/settings.py
+APP_DIR=/home/ubuntu/software_eng_class_project
+PYTHON=/home/ubuntu/env/bin/python
 
-python manage.py migrate 
-python manage.py makemigrations     
-python manage.py collectstatic
+cd "$APP_DIR"
+
+sed -i 's/\[]/\["34.226.244.102"]/' passiton/settings.py
+
+"$PYTHON" manage.py migrate
+"$PYTHON" manage.py collectstatic --noinput
 sudo service gunicorn restart
 sudo service nginx restart
 #sudo tail -f /var/log/nginx/error.log
