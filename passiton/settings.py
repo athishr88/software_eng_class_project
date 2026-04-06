@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-_(yfacv_*j#smxy0oc(170na86pnsquh+0()&p69rv4umw3+d4
 DEBUG = True
 
 # Local dev: avoid DisallowedHost when using 127.0.0.1, localhost, or machine name.
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "34.226.244.102"]
 
 
 # Application definition
