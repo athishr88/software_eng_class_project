@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+
+echo "Running migrations"
+python3 mange.py migrate
+
+echo "Loading seed data"
+python3 manage.py loaddata sedd_data.json
+
+echo "Starting server"
+python3 manage.py runserver 0.0.0.0:8000
+# TODO replace line above with production command once in production
+
