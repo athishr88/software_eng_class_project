@@ -1,5 +1,5 @@
 # setup project
-FROM python:3.12-bookworm
+FROM python:3.12-slim
 WORKDIR /passiton/
 
 # install dependencies
