@@ -2,10 +2,10 @@
 set -e
 
 echo "Running migrations"
-python3 mange.py migrate
+python3 manage.py migrate
 
 echo "Loading seed data"
-python3 manage.py loaddata sedd_data.json
+python3 manage.py loaddata seed_data.json
 
 echo "Starting server"
 python3 manage.py runserver 0.0.0.0:8000
