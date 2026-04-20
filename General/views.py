@@ -1,8 +1,10 @@
 from pathlib import Path
 from urllib.parse import quote
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import FileResponse, Http404
 from django.contrib.auth import authenticate, login, logout
@@ -10,6 +12,7 @@ from django.contrib.auth import get_user_model
 from django.db.models import Q
 from django.core.paginator import Paginator
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.middleware.csrf import get_token
 
 from .models import Book, Inventory
 
@@ -19,6 +22,21 @@ User = get_user_model()
 _BOOK_IMAGES_DIR = Path(settings.BASE_DIR) / "book_images"
 if not _BOOK_IMAGES_DIR.exists():
     _BOOK_IMAGES_DIR = Path(settings.BASE_DIR).parent / "book_images"
+
+
+def _sanitize_book_title_for_filename(title: str) -> str:
+    """Make a safe filename stem from a book title (Windows-friendly)."""
+    if not title:
+        return "book"
+    invalid_chars = set('<>:"/\\|?*')
+    cleaned_chars = []
+    for ch in title:
+        if ch in invalid_chars or ord(ch) < 32:
+            cleaned_chars.append("_")
+        else:
+            cleaned_chars.append(ch)
+    cleaned = "".join(cleaned_chars).strip().strip(".")
+    return cleaned or "book"
 
 
 def _get_book_cover_static_path(book_title):
@@ -38,7 +56,16 @@ def _get_book_cover_filename(book_title):
             stem, name = f.stem, f.name
             title_to_name[stem] = name
             title_to_name[stem.lower()] = name
-    return title_to_name.get(book_title) or title_to_name.get(book_title.lower())
+
+    # Try direct title match first (for existing filenames), then fallback to
+    # sanitized-title match (for uploaded covers).
+    candidates = [book_title, book_title.lower()]
+    safe_title = _sanitize_book_title_for_filename(book_title)
+    candidates.extend([safe_title, safe_title.lower()])
+    for c in candidates:
+        if c in title_to_name:
+            return title_to_name[c]
+    return None
 
 
 def serve_book_cover(request, path):
@@ -61,7 +88,7 @@ def serve_book_cover(request, path):
 
 def home(request):
     """Landing: only Customer or Admin choice."""
-    return render(request, "home/index.html")
+    return render(request, "login/login_page.html")
 
 
 def _set_jwt_cookies(response, user):
@@ -85,22 +112,38 @@ def _set_jwt_cookies(response, user):
     )
     return response
 
-
+@never_cache
 def login_page(request):
     """Login: GET shows form; POST authenticates, session login, JWT cookies, redirect by role or next."""
     next_url = (request.POST.get("next") or request.GET.get("next") or "").strip()
+    if request.user.is_authenticated:
+        if request.user.role == "admin":
+            return redirect("admin_dashboard")
+        elif request.user.role == "seller":
+            return redirect("seller_home")
+        else:
+            return redirect("buyer_home")
+    
     if request.method == "POST":
-        email = (request.POST.get("username") or "").strip()
+        identifier = (request.POST.get("username") or "").strip()
         password = request.POST.get("password") or ""
-        user = authenticate(request, username=email, password=password)
+        user = authenticate(request, username=identifier, password=password)
+        
         if user is not None and user.is_active:
             login(request, user)
+            from Buyer.cart_helpers import merge_session_cart_into_db
+
+            merge_session_cart_into_db(user, request.session)
             if next_url and next_url.startswith("/"):
                 response = redirect(next_url)
             elif user.role == "admin":
                 response = redirect("admin_dashboard")
             elif user.role == "seller":
-                response = redirect("seller_home")
+                if user.seller_approved:
+                    response = redirect("seller_home")
+                else:
+                    messages.error(request, "Your seller account is pending approval.")
+                    response = redirect("buyer_home")
             else:
                 response = redirect("buyer_home")
             return _set_jwt_cookies(response, user)
@@ -109,6 +152,7 @@ def login_page(request):
             "login/login_page.html",
             {"error": "Invalid email or password.", "next": next_url},
         )
+    get_token(request)
     return render(request, "login/login_page.html", {"next": next_url})
 
 
@@ -124,6 +168,7 @@ def register(request):
         if role not in ("buyer", "seller"):
             role = "buyer"
         phone = (request.POST.get("phone") or "").strip() or None
+        store_name = (request.POST.get("store_name") or "").strip() or None
         errors = []
         if not email:
             errors.append("Email is required.")
@@ -151,7 +196,19 @@ def register(request):
             role=role,
             phone=phone,
         )
+        if role == "seller":
+            from Seller.models import SellerProfile
+            user.seller_approved = False
+            user.save(update_fields=["seller_approved"])
+
+            SellerProfile.objects.update_or_create(
+                user=user,
+                defaults={"store_name": store_name},
+            )
         login(request, user)
+        from Buyer.cart_helpers import merge_session_cart_into_db
+
+        merge_session_cart_into_db(user, request.session)
         if user.role == "seller":
             response = redirect("seller_home")
         else:
@@ -164,7 +221,7 @@ def email_verification(request):
     """Email verification page."""
     return render(request, "auth/email_verification.html")
 
-
+@login_required(login_url="login")
 def catalog(request):
     """Book catalog / browse: list all active books from DB with filters and pagination."""
     qs = Book.objects.filter(is_active=True).select_related("seller_user", "inventory").order_by("title").distinct()
@@ -277,7 +334,7 @@ def cart(request):
             "subtotal": subtotal,
         },
     )
-
+@login_required(login_url="login")
 def checkout(request):
     """TEMP CHECKOUT SUMMARY PAGE"""
     cart_items = []
@@ -298,11 +355,73 @@ def checkout(request):
         },
     )
 
-
+@login_required(login_url="login")
 def logout_view(request):
     """Log out, clear JWT cookies, and redirect to home."""
     logout(request)
-    response = redirect("general_home")
-    response.delete_cookie("access_token")
-    response.delete_cookie("refresh_token")
+    response = redirect("login")
+    response.delete_cookie("sessionid")
+    response.delete_cookie("csrftoken")
     return response
+
+
+@login_required(login_url="login")
+def steward_contribute(request):
+    """Record a steward contribution (General.StewardContribution)."""
+    if request.method == "POST":
+        name = (request.POST.get("contributor_name") or "").strip()
+        city = (request.POST.get("contributor_city") or "").strip()
+        amount_raw = (request.POST.get("amount_dollars") or "").strip()
+        message = (request.POST.get("message") or "").strip() or None
+        errs = []
+        if not name:
+            errs.append("Contributor name is required.")
+        if not city:
+            errs.append("City is required.")
+        try:
+            amt = Decimal(amount_raw or "0")
+            amount_cents = int((amt * 100).quantize(0, ROUND_HALF_UP))
+            if amount_cents <= 0:
+                errs.append("Enter a contribution amount greater than zero.")
+        except (InvalidOperation, TypeError):
+            errs.append("Enter a valid dollar amount.")
+        if errs:
+            for e in errs:
+                messages.error(request, e)
+            return render(
+                request,
+                "steward/steward_contribute.html",
+                {"post": request.POST},
+            )
+        StewardContribution.objects.create(
+            steward_user=request.user,
+            contributor_name=name[:120],
+            contributor_city=city[:120],
+            amount_cents=amount_cents,
+            message=message[:255] if message else None,
+        )
+        messages.success(request, "Thank you — your contribution was recorded.")
+        return redirect("steward_contribute")
+
+    return render(request, "steward/steward_contribute.html")
+
+
+@login_required(login_url="login")
+def flag_book(request, pk):
+    """Create Admin.FlagReport for a listing (POST)."""
+    if request.method != "POST":
+        return redirect("book_detail", pk=pk)
+
+    book = get_object_or_404(Book.objects.filter(is_active=True), pk=pk)
+    flag_type = (request.POST.get("flag_type") or "other").strip()[:80]
+    details = (request.POST.get("details") or "").strip() or None
+
+    FlagReport.objects.create(
+        reporter_user=request.user,
+        target_user=book.seller_user,
+        target_book=book,
+        flag_type=flag_type or "other",
+        details=details,
+    )
+    messages.success(request, "Thanks — your report was submitted for review.")
+    return redirect("book_detail", pk=pk)

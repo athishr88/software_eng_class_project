@@ -6,10 +6,10 @@
         <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
             <div>
                 <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
-                    Request a Return
+                    Request a return
                 </h1>
-                <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
-                    Order #{{ order.id }} - Choose an item and tell us why you're returning it.
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    Order #{{ order.id }} — you can submit one return request per order.
                 </p>
             </div>
             <a class="link" href="{% url 'order_detail' order.id %}">Back to Order</a>
@@ -22,7 +22,7 @@
         </div>
     {% endif %}
 
-    <form method="post" action="{% url 'return_request_submit' order.id %}" style="max-width:900px;">
+    <form method="post" action="{% url 'return_request' order.id %}" style="max-width:720px;">
         {% csrf_token %}
 
         <section style="display:grid; gap:12px; max-width:900px;">
@@ -169,22 +169,9 @@
     </form>
 
     <style>
-        button.btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        input:focus, select:focus, textarea:focus{
+        textarea:focus, select:focus {
             border-color: #60a5fa !important;
-            box-shadow:0 0 0 4px rgba(96,165,250,0.25) !important
-        }
-
-        @media (max-width:900px){
-            section[style*="grid-template-columns: 1fr 340px"]{
-                grid-template-columns: 1fr !important;
-            }
-            aside[style*="position:sticky"]{
-                position: static !important
-            }
+            box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
         }
     </style>
 {% endblock %}

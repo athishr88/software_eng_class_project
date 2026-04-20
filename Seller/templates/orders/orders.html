@@ -77,6 +77,39 @@
                 <button class="btn" type="submit">Apply</button>
             </div>
         </form>
+
+        {% if orders %}
+            <table style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left; padding:12px;">Order</th>
+                        <th style="text-align:left; padding:12px;">Buyer</th>
+                        <th style="text-align:left; padding:12px;">Status</th>
+                        <th style="text-align:left; padding:12px;">Your Items</th>
+                        <th style="text-align:left; padding:12px;">Total</th>
+                        <th style="text-align:left; padding:12px;">Placed</th>
+                        <th style="padding:12px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr>
+                        <td style="padding:12px;">{{ order.id }}</td>
+                        <td style="padding:12px;">{{ order.user_email }}</td>
+                        <td style="padding:12px;">{{ order.status }}</td>
+                        <td style="padding:12px;">{{ order.seller_line_items_count }}</td>
+                        <td style="padding:12px;">${{ order.seller_line_total_display }}</td>
+                        <td style="padding:12px;">{{ order.created_at }}</td>
+                        <td style="padding:12px; text-align:right;">
+                            <a class="link" href="{% url 'seller_order_details' order.id %}">View</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No orders found.</p>
+        {% endif %}
     </section>
 
     <div style="height:14px;"></div>
@@ -112,8 +145,7 @@
                             </td>
 
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                {{ order.status }}
-                                {% if order.payment_confirmed %}
+                                {% if order.status == "paid" %}
                                     <span style="margin-left:8px; font-size:12px; font-weight:900; color:#166534; border:1px solid #22c55e; background:#f0fdf4; padding:2px 8px; border-radius:999px;">
                                         PAID
                                     </span>
@@ -125,11 +157,11 @@
                             </td>
 
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                {{ order.buyer_email }}
+                                {{ order.user.email }}
                             </td>
 
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">
-                                ${{ order.total_amount }}
+                                ${{ order.seller_revenue }}
                             </td>
 
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">

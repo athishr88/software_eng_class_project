@@ -1,0 +1,97 @@
+{% extends "seller_base.html" %}
+{% block title %}Sales Overview | Seller{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+                    Sales overview
+                </h1>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    Total revenue from your sold line items (paid, shipped, or delivered) and your latest orders that include your books.
+                </p>
+            </div>
+            <a class="link" href="{% url 'seller_dashboard' %}">Back to Dashboard</a>
+        </div>
+    </header>
+
+    <section class="card" style="box-shadow:none; padding:18px; max-width:520px; margin-bottom:14px;">
+        <h2 style="margin:0 0 6px; font-size:14px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.04em;">
+            Total sales
+        </h2>
+        <p style="margin:0; font-size:28px; font-weight:900; color:var(--text);">
+            ${{ total_sales_display }}
+        </p>
+        <p style="margin:8px 0 0; font-size:13px; color:var(--muted); line-height:1.45;">
+            Sum of your line totals on completed payments (excludes pending, cancelled, and refunded orders).
+        </p>
+    </section>
+
+    <section style="margin-top:14px; max-width:900px;">
+        <h2 style="margin:0; font-size:16px; font-weight:900;">Most recent sales</h2>
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Orders containing your books, newest first. “Your total” is only your items in that order.
+        </p>
+
+        <div class="card" style="box-shadow:none; margin-top:12px; padding:0; overflow:hidden;">
+            {% if recent_sales_orders %}
+                <table style="width:100%; border-collapse:collapse;">
+                    <thead>
+                        <tr style="background:#f8fafc;">
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Order</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Status</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Buyer</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Your total</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Order total</th>
+                            <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Placed</th>
+                            <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_sales_orders %}
+                            <tr>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">#{{ order.id }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.get_status_display }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.user.email }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">${{ order.seller_revenue_display }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">${{ order.order_total_display }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.created_at }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; text-align:right;">
+                                    <a class="link" href="{% url 'seller_order_details' order.id %}">View</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div style="padding:18px;">
+                    <p style="margin:0; color:var(--muted); font-size:14px;">
+                        No orders include your books yet.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <style>
+        @media (max-width: 900px) {
+            section[style*="max-width:900px"] table { font-size:13px; }
+        }
+        @media (max-width: 640px) {
+            table, thead, tbody, th, td, tr { display: block; }
+            thead { display: none; }
+            tbody tr {
+                border-bottom: 1px solid var(--border);
+                padding: 12px 18px;
+            }
+            tbody td {
+                border: none !important;
+                padding: 6px 0 !important;
+            }
+            tbody td:last-child {
+                text-align: left !important;
+                padding-top: 10px !important;
+            }
+        }
+    </style>
+{% endblock %}

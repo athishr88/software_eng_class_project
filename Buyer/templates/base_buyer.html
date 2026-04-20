@@ -1,9 +1,12 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+<head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Pass It On Books | My Account{% endblock %}</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800;900&display=swap">
+  <link rel="stylesheet" href="{% static 'css/site_header.css' %}">
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
   <style>
@@ -21,57 +24,25 @@
 
     body {
         margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Roboto', sans-serif;
         color: var(--text);
         background: var(--bg);
         min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 24px;
+        display: block;
+        padding: 0;
     }
 
     .page{
-        width: 100%;
-        max-width: 900px;
-        min-height: 520px;
+        width: 100vw;
+        max-width: none;
+        min-height: 100vh;
         background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
-        border-radius: 18px;
+        border-radius: 0;
         padding: 32px 28px;
         display: grid;
         align-content: start;
         gap: 18px;
         position: relative;
-    }
-
-    .topbar{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        max-width: 820px;
-        margin: 0 auto;
-    }
-
-    .brand h1{
-        margin: 0;
-        font-size: 22px;
-        font-weight: 800;
-        letter-spacing: 0.2px;
-        line-height: 1.1;
-    }
-
-    .brand p{
-        margin: 4px 0 0;
-        color: var(--muted);
-        font-size: 14px;
-    }
-
-    .top-actions{
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
     }
 
     .link{
@@ -96,9 +67,9 @@
     .btn:hover{ background: var(--primaryHover); }
 
     .content{
-        max-width: 820px;
-        margin: 0 auto;
         width: 100%;
+        max-width: none;
+        margin: 0;
         display: grid;
         grid-template-columns: 260px 1fr;
         gap: 16px;
@@ -174,32 +145,12 @@
         }
     }
 
-    @media (min-width: 700px){
-        .topbar, .content { margin-left: 120px; margin-right: auto; }
-    }
   </style>
 </head>
 
 <body>
+    {% include "includes/site_header.html" with show_search=0 portal="buyer" %}
     <main class="page">
-        <header class="topbar" aria-label="Buyer Header">
-            <div class="brand">
-                <h1>Pass It On Books</h1>
-                <p>Buyer Portal</p>
-            </div>
-
-            <div class="top-actions">
-                <a class="link" href="{% url 'general_home' %}">Home</a>
-                <a class="link" href="{% url 'catalog' %}">Browse</a>
-                <a class="link" href="{% url 'cart' %}">Cart</a>
-
-                <form method="post" action="{% url 'logout' %}" style="margin:0;">
-                    {% csrf_token %}
-                    <button class="btn" type="submit">Logout</button>
-                </form>
-            </div>
-        </header>
-        
         <section class="content" aria-label="Buyer Content">
             <aside class="card sidebar">
                 <h2>My Account</h2>
@@ -216,15 +167,16 @@
                     <div><strong>Email:</strong> {{ user.email }}</div>
                     <div><strong>Credits:</strong> {{ credit_balance|default:"0"}}</div>
 
-                    {% if is_steward %}
-                        <div>
-                            <strong>Steward:</strong> Steward
-                            <span>-</span>
-                            <a class="link" href="{% url 'buyer_dashboard' %}">Steward Dashboard</a>
+                    {% if user.is_authenticated and user.is_steward %}
+                        <div style="display:grid; gap:6px;">
+                            <div><strong>Steward:</strong> verified</div>
+                            <a class="link" href="{% url 'buyer_dashboard' %}">Steward dashboard</a>
+                            <a class="link" href="{% url 'steward_contribute' %}">Record steward contribution</a>
                         </div>
                     {% else %}
-                        <div>
-                        <a class="link" href="{% url 'catalog' %}">Become a Steward</a>
+                        <div style="display:grid; gap:6px;">
+                            <a class="link" href="{% url 'catalog' %}">Become a Steward</a>
+                            <a class="link" href="{% url 'steward_contribute' %}">Record steward contribution</a>
                         </div>
                     {% endif %}
                 </div>

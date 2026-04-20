@@ -1,0 +1,72 @@
+{% extends "base_buyer.html" %}
+{% block title %}You’re a steward | Pass It On Books{% endblock %}
+{% block content %}
+    <div style="max-width:520px; margin:0 auto;">
+        <header style="margin-bottom:20px; text-align:center;">
+            <p style="margin:0 0 8px; font-size:13px; font-weight:800; letter-spacing:0.12em; text-transform:uppercase; color:var(--primary);">
+                Pass It On Books
+            </p>
+            <h1 style="margin:0; font-size:26px; font-weight:900; letter-spacing:-0.02em; line-height:1.2;">
+                You’re a steward now
+            </h1>
+            <p style="margin:12px 0 0; color:var(--muted); font-size:15px; line-height:1.55;">
+                Your steward progress reached 100. That stays with you—no need to earn it again.
+            </p>
+        </header>
+
+        <div class="card" style="box-shadow:none; padding:22px 20px;">
+            <h2 style="margin:0 0 10px; font-size:15px; font-weight:800;">What that means</h2>
+            <ul style="margin:0; padding-left:1.15rem; color:var(--text); font-size:14px; line-height:1.6;">
+                <li style="margin-bottom:8px;">
+                    You’re recognized as someone who actively helps keep affordable books circulating in the community.
+                </li>
+                <li style="margin-bottom:8px;">
+                    Steward perks (like wallet and community visibility) use your profile—starting with the city below.
+                </li>
+                <li>
+                    You can keep shopping and contributing anytime; your steward status doesn’t reset.
+                </li>
+            </ul>
+
+            <hr style="border:none; border-top:1px solid var(--border); margin:18px 0;">
+
+            <h2 style="margin:0 0 6px; font-size:15px; font-weight:800;">Your steward city</h2>
+            <p style="margin:0 0 14px; color:var(--muted); font-size:14px; line-height:1.5;">
+                We use this to connect you with local readers and sellers. It’s required to finish setup.
+            </p>
+
+            <form method="post" action="{% url 'steward_welcome' %}" style="display:grid; gap:12px;">
+                {% csrf_token %}
+                <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                    City
+                    <input
+                        type="text"
+                        name="steward_city"
+                        value="{{ steward_city_value }}"
+                        maxlength="120"
+                        required
+                        autocomplete="address-level2"
+                        placeholder="e.g. Austin"
+                        style="border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:15px; font-family:inherit;"
+                    />
+                </label>
+                {% if city_error %}
+                    <p style="margin:0; font-size:13px; color:#991b1b;">{{ city_error }}</p>
+                {% endif %}
+                <button type="submit" class="btn" style="margin-top:4px;">
+                    {% if pending_order_id %}
+                        Save and view my order
+                    {% else %}
+                        Save and continue
+                    {% endif %}
+                </button>
+            </form>
+        </div>
+
+        {% if pending_order_id %}
+            <p style="margin:14px 0 0; text-align:center; font-size:13px; color:var(--muted);">
+                Your order is saved. After you add your city, we’ll take you to the confirmation page.
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

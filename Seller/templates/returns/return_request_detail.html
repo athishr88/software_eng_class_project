@@ -1,0 +1,75 @@
+{% extends "seller_base.html" %}
+{% block title %}Return #{{ return_request.id }} | Seller{% endblock %}
+{% block content %}
+    <header style="margin-bottom:16px;">
+        <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
+            <div>
+                <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+                    Return #{{ return_request.id }}
+                </h1>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    Order #{{ order.id }} — buyer {{ order.user.email }}
+                </p>
+            </div>
+            <a class="link" href="{% url 'seller_return_requests' %}">All return requests</a>
+        </div>
+    </header>
+
+    <section class="card" style="box-shadow:none; max-width:720px;">
+        <h2 style="margin:0 0 8px; font-size:15px; font-weight:900;">Return reason</h2>
+        <div style="white-space:pre-wrap; color:var(--text); font-size:14px; line-height:1.5; border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
+            {{ return_request.reason }}
+        </div>
+    </section>
+
+    <section class="card" style="box-shadow:none; max-width:720px; margin-top:12px;">
+        <h2 style="margin:0 0 8px; font-size:15px; font-weight:900;">Your portion</h2>
+        <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
+            Line totals for <strong style="color:var(--text);">your</strong> books in this order: <strong style="color:var(--text);">${{ seller_lines_total_display }}</strong>.
+            When you confirm receipt, this amount is credited to the buyer as store credit and removed from your sales total. Inventory quantities for your books are increased.
+        </p>
+
+        {% if already_received %}
+            <p style="margin:12px 0 0; font-size:14px; color:#166534; font-weight:800;">
+                You already marked this return as received (${{ amount_credited_display }} credited to the buyer).
+            </p>
+        {% else %}
+            <form method="post" action="{% url 'seller_return_request_detail' return_request.id %}" style="margin-top:14px;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="book_received">
+                <button class="btn" type="submit">Book received</button>
+            </form>
+        {% endif %}
+
+        {% if return_request %}
+            <div class="card" style="margin-top:12px;">
+                <h3>Return Request</h3>
+                <p><strong>Status:</strong> {{ return_request.status }}</p>
+                <p><strong>Reason:</strong> {{ return_request.reason }}</p>
+
+                {% if return_request.status != 'rejected' and return_request.status != 'refunded' %}
+                    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="approve">
+                            <button class="btn" type="submit">Approve Return</button>
+                        </form>
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="reject">
+                            <button class="btn" type="submit" style="background:#b91c1c;">Deny Return</button>
+                        </form>
+                    </div>
+                {% endif %}
+
+                {% if return_request.status == 'approved' and not already_received %}
+                    <form method="post" style="margin-top:12px;">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="book_received">
+                        <button class="btn" type="submit">Mark as Received</button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

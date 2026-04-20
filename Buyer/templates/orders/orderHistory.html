@@ -6,15 +6,15 @@
         <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
             Order History
         </h1>
-        <p style="margin:6px 0 0; color:car(--muted); font-size:14px;">
-            View your past orders and check thier current status.
+        <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+            Your orders are loaded from the database (newest first).
         </p>
     </header>
 
     <section class="card" style="box-shadow:none; max-width:900px;">
         <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Filters</h2>
         <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
-            Narrow results by status and date range.
+            Narrow by status or placed date (YYYY-MM-DD).
         </p>
 
         <form method="get" action="{% url 'order_history' %}" style="display:grid; gap:12px;">
@@ -91,25 +91,18 @@
                     {% endif %}
                 </p>
             </div>
-            <a class="link" href="{% url 'catalog' %}">Browse Books</a>
+            <a class="link" href="{% url 'catalog' %}">Browse books</a>
         </div>
 
         {% if numbered_orders %}
             <table style="width:100%; border-collapse:collapse;">
                 <thead>
                     <tr style="background:#f8fafc;">
-                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                            Order
-                        </th>
-                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                            Status
-                        </th>
-                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                            Total
-                        </th>
-                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">
-                            Placed
-                        </th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Order</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Status</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Books</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Total</th>
+                        <th style="text-align:left; padding:12px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border);">Placed</th>
                         <th style="padding:12px; border-bottom:1px solid var(--border);"></th>
                     </tr>
                 </thead>
@@ -188,4 +181,3 @@
         }
     </style>
 {% endblock %}
-        

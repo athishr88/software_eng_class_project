@@ -12,12 +12,13 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 AUTH_USER_MODEL = "General.User"
-
+LOGIN_URL = "login"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -28,7 +29,8 @@ SECRET_KEY = 'django-insecure-_(yfacv_*j#smxy0oc(170na86pnsquh+0()&p69rv4umw3+d4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Local dev: avoid DisallowedHost when using 127.0.0.1, localhost, or machine name.
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "34.226.244.102", "passitonbooks.com", "www.passitonbooks.com"]
 
 
 # Application definition
@@ -59,6 +61,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'General.middleware.NoCacheMiddleware',  # Custom middleware to prevent caching of auth views
 ]
 
 ROOT_URLCONF = 'passiton.urls'
@@ -87,7 +90,7 @@ WSGI_APPLICATION = 'passiton.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.environ.get('SQLITE_DB_PATH', BASE_DIR / 'db.sqlite3'),
     }
 }
 
@@ -126,7 +129,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Serve book cover images from book_images/ (project root or parent directory)
 _BOOK_IMAGES_DIR = BASE_DIR / 'book_images'
@@ -135,6 +139,10 @@ if not _BOOK_IMAGES_DIR.exists():
 STATICFILES_DIRS = []
 if _BOOK_IMAGES_DIR.exists():
     STATICFILES_DIRS.append((str(_BOOK_IMAGES_DIR), 'book_images'))
+
+_ASSETS_DIR = BASE_DIR / "assets"
+if _ASSETS_DIR.exists():
+    STATICFILES_DIRS.append(_ASSETS_DIR)
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -148,3 +156,5 @@ SIMPLE_JWT = {
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ROTATE_REFRESH_TOKENS": False,
 }
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None if DEBUG else "same-origin"

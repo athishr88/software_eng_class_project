@@ -5,10 +5,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}PassItOn Books Admin{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'dashboard/admin_dashboard.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/site_header.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}" />
   </head>
 
   <body>
+    {% include "includes/site_header.html" with show_search=0 portal="admin_dashboard" %}
     <div class="app">
       <aside class="sidebar">
         <div class="sidebar-top">

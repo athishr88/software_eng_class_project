@@ -66,11 +66,29 @@
                     </form>
                 </div>
 
-                {% if user.is_authenticated and user.is_steward %}
-                    <div style="margin-top:8px;">
-                        <a class="link" href="{% url 'catalog' %}">
-                            Buy with Steward Discount
-                        </a>
+                {% if user.is_authenticated %}
+                    <div class="card" style="margin-top:14px; padding:14px; border:1px solid var(--border); border-radius:var(--radius);">
+                        <h4 style="margin:0 0 8px; font-size:14px; font-weight:800;">Report a problem</h4>
+                        <p style="margin:0 0 10px; color:var(--muted); font-size:13px; line-height:1.4;">
+                            Staff will review your report for this listing.
+                        </p>
+                        <form method="post" action="{% url 'flag_book' book.id %}" style="display:grid; gap:10px; max-width:400px;">
+                            {% csrf_token %}
+                            <label style="display:grid; gap:6px; font-size:13px; font-weight:700;">
+                                Type
+                                <select name="flag_type">
+                                    <option value="listing_inaccurate">Inaccurate listing</option>
+                                    <option value="inappropriate">Inappropriate content</option>
+                                    <option value="scam">Scam / fraud concern</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </label>
+                            <label style="display:grid; gap:6px; font-size:13px; font-weight:700;">
+                                Details (optional)
+                                <textarea name="details" rows="3" maxlength="2000" placeholder="What should staff review?"></textarea>
+                            </label>
+                            <button type="submit" class="btn" style="justify-self:start;">Submit report</button>
+                        </form>
                     </div>
                 {% endif %}
 

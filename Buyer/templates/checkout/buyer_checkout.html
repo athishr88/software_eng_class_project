@@ -6,7 +6,7 @@
             Checkout
         </h1>
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-            Choose shipping + payment, review your order, then place it.
+            Choose shipping, payment, and review your order.
         </p>
     </header>
 
@@ -139,7 +139,12 @@
                                     {% endif %}
                                     <div style="text-align:right;">
                                         <div style="color:var(--muted); font-size:13px;">Subtotal</div>
-                                        <div style="font-weight:900;">${{ item.subtotal }}</div>
+                                        {% if item.is_steward_free %}
+                                            <div style="font-weight:900; color:#166534;">FREE</div>
+                                            <div style="font-size:12px; color:var(--muted);">List ${{ item.book.price_dollars|floatformat:2 }}</div>
+                                        {% else %}
+                                            <div style="font-weight:900;">${{ item.subtotal|floatformat:2 }}</div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             {% endfor %}
@@ -149,20 +154,20 @@
                                     Your cart is empty.
                                 </p>
                                 <div style="margin-top:10px;">
-                                    <a class="link" href="{% url 'catalog' %}">Browse Books</a>
+                                    <a class="link" href="{% url 'catalog' %}">Browse books</a>
                                 </div>
                             </div>
                         {% endif %}
                     </div>
 
                     <div style="margin-top:10px; color:var(--muted); font-size:13px; line-height:1.4;">
-                        Stock is revalidated at checkout. If any item is unavailable, you'll be prompted to adjust your cart.
+                        Stock is checked when you place the order; inventory is decremented on success.
                     </div>
                 </div>
             </div>
 
             <aside class="card" style="box-shadow:none; position:sticky; top:18px;">
-                <h2 style="margin:0 0 10px;  font-size:16px; font-weight:800;">Order Summary</h2>
+                <h2 style="margin:0 0 10px;  font-size:16px; font-weight:800;">Order summary</h2>
 
                 <div style="display:grid; gap:8px; font-size:14px;">
                     <div style="display:flex; justify-content:space-between; gap:10px;">
@@ -170,18 +175,75 @@
                         <strong>${{ cart_subtotal|floatformat:2 }}</strong>
                     </div>
                     <div style="display:flex; justify-content:space-between; gap:10px;">
-                        <span style="color:var(--muted);">Fees</span>
-                        <strong>${{ fees|floatformat:2 }}</strong>
+                        <span style="color:var(--muted); display:inline-flex; align-items:center; gap:6px;">
+                            Fees
+                            <span class="tooltip-icon" tabindex="0" aria-label="Shipping and handeling info">
+                                i
+                                <span class="tooltip-text">
+                                    Order fees cover shipping, handling, and other operational costs. Fees are waived on orders with steward-free items.
+                                </span>
+                            </span>
+                         </span>
+                        <strong>${{ fees|floatformat:2 }}{% if cart_has_steward_free %} <span style="font-size:11px; font-weight:700; color:#166534;">(waived)</span>{% endif %}</strong>
                     </div>
+
                     <div style="display:flex; justify-content:space-between; gap:10px;">
-                        <span style="color:var(--muted);">Tax</span>
+                        <span style="color:var(--muted); display:inline-flex; align-items:center; gap:6px;">
+                            Tax
+                            <span class="tooltip-icon" tabindex="0" aria-label="Tax rate info">
+                                i
+                                <span class="tooltip-text">
+                                    Tax is calculated on the subtotal of paid items (not including steward contributions). Orders with steward-free items are only taxed on the paid lines.
+                                </span>
+                            </span>
+                        </span>
                         <strong>${{ tax|floatformat:2 }}</strong>
                     </div>
-                    <hr style="border:none, border-top:1px solid var(--border); margin:4px 0;">
+                    <div style="display:grid; gap:8px; margin-top:4px;">
+                        <span style="font-size:13px; font-weight:700; color:var(--text); margin:0;">
+                            Steward contribution
+                        </span>
+                        {% if cart_has_steward_free %}
+                            <input type="hidden" name="steward_contribution" value="0">
+                            <div style="border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:15px; background:#f8fafc; color:var(--muted);">
+                                $0.00 <span style="font-size:13px;">(free book checkout)</span>
+                            </div>
+                            <p id="steward-points-hint" style="margin:0; font-size:13px; color:var(--muted); line-height:1.45;">
+                                No steward contribution or order fees this checkout—only tax on paid lines. Default <strong>$2.00</strong> contribution and fees apply on other orders.
+                            </p>
+                        {% else %}
+                        <input
+                            type="number"
+                            name="steward_contribution"
+                            id="steward-contribution-input"
+                            min="0"
+                            max="100"
+                            step="0.01"
+                            value="{{ steward_contribution_value }}"
+                            inputmode="decimal"
+                            aria-describedby="steward-points-hint{% if steward_contribution_invalid %} steward-contribution-error{% endif %}"
+                            style="width:100%; border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:15px; font-family:inherit;{% if steward_contribution_invalid %} box-shadow:0 0 0 2px #ef4444;{% endif %}"
+                        />
+                        <p id="steward-points-hint" style="margin:0; font-size:13px; color:var(--muted); line-height:1.45;">
+                            You’ll earn <strong id="steward-points-preview" style="color:var(--text);">{{ steward_points_preview }}</strong> steward progress points
+                            <span style="white-space:nowrap;">($1 = 10 points).</span>
+                        </p>
+                        {% if steward_contribution_invalid %}
+                            <p id="steward-contribution-error" style="margin:0; font-size:13px; color:#991b1b;">
+                                Enter a dollar amount from 0 to 100.
+                            </p>
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    <div style="display:flex; justify-content:space-between; gap:10px; margin-top:4px;">
+                        <span style="color:var(--muted);">Steward (in total)</span>
+                        <strong>$<span id="steward-line-dollars">{{ steward_line_dollars_display }}</span></strong>
+                    </div>
+                    <hr style="border:none; border-top:1px solid var(--border); margin:4px 0;">
 
                     <div style="display:flex; justify-content:space-between; gap:10px;">
                         <span style="color:var(--muted)">Total</span>
-                        <strong>${{ final_total|floatformat:2 }}</strong>
+                        <strong>$<span id="checkout-total-display">{{ final_total|floatformat:2 }}</span></strong>
                     </div>
                 </div>
 
@@ -194,7 +256,7 @@
                     </button>
 
                     <a class="link" href="{% url 'cart' %}" style="text-align:center;">
-                        Back to Cart
+                        Back to cart
                     </a>
                 </div>
 
@@ -210,7 +272,7 @@
                     <p style="margin:12px 0 0; color:#991b1b; font-size:13px;">
                         Your cart is empty.
                     </p>
-                {% endif %}      
+                {% endif %}
             </aside>
         </section>
     </form>
@@ -232,7 +294,60 @@
                 position: static !important;
             }
         }
+
+        .tooltip-icon {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            background: #e5e7eb;
+            color: #374151;
+            border-radius: 50%;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            width: 220px;
+            background: #111827;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 8px 10px;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+            position: absolute;
+            z-index: 20
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+            bottom: 125%; /* Position above the icon */
+            left: 50%;
+            transform: translateX(-50%);
+            transition: opacity 0.2s ease;
+        }
+
+        .tooltip-text::after{
+            content: "";
+            position: absolute;
+            top: 100%; /* At the bottom of the tooltip */
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: #111827 transparent transparent transparent;
+        }
+
+        .tooltip-icon:hover .tooltip-text,
+        .tooltip-icon:focus .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 {% endblock %}
-                    
-               

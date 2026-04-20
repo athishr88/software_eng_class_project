@@ -4,11 +4,23 @@
 
     <header style="margin-bottom:16px;">
         <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
-            Order Confirmed
+            Thank you!
         </h1>
         <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
-            Thanks! Your order has been successfully placed.
+            Your order has been placed successfully.
         </p>
+        {% if steward_points_earned > 0 %}
+            <p style="margin:10px 0 0; font-size:14px; color:var(--text); line-height:1.5;">
+                Your steward contribution of <strong>${{ steward_contribution_display }}</strong> added
+                <strong>{{ steward_points_earned }}</strong> point{{ steward_points_earned|pluralize }} to your steward progress
+                (now up to 100).
+            </p>
+        {% endif %}
+        {% if free_book_attribution %}
+            <p style="margin:10px 0 0; font-size:14px; color:var(--text); line-height:1.5;">
+                Your book was made possible by <strong>{{ free_book_attribution.first_name }}</strong>{% if free_book_attribution.city %} from {{ free_book_attribution.city }}{% endif %}.
+            </p>
+        {% endif %}
     </header>
 
     <section class="card" style="box-shadow:none; max-width:900px;">
@@ -19,7 +31,7 @@
                 </h2>
                 <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
                     Status: <strong style="color:var(--text);">{{ order.status }}</strong><br>
-                    Total: <strong style="color:var(--text);">{{ order.total_amount }}</strong><br>
+                    Total: <strong style="color:var(--text);">${{ order_total_display }}</strong><br>
                     Placed: <strong style="color:var(--text);">{{ order.created_at }}</strong>
                 </p>
             </div>
@@ -54,12 +66,16 @@
             Shipping Address
         </h2>
 
+        {% if shipping %}
         <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; color:var(--muted); font-size:14px; line-height:1.45;">
-            <strong style="color:var(--text);">{{ order.shipping_name }}</strong>
-            {{ order.shipping_line1 }}{% if order.shipping_line2 %}, {{ order.shipping_line2 }}{% endif %}<br>
-            {{ order.shipping_city }}, {{ order.shipping_state }}{{ order.shipping_postal_code }}<br>
-            {{ order.shipping_country }}
+            {% if shipping.shipping_name %}<strong style="color:var(--text);">{{ shipping.shipping_name }}</strong><br>{% endif %}
+            {{ shipping.shipping_line1 }}{% if shipping.shipping_line2 %}, {{ shipping.shipping_line2 }}{% endif %}<br>
+            {{ shipping.shipping_city }}, {{ shipping.shipping_state }} {{ shipping.shipping_postal_code }}<br>
+            {{ shipping.shipping_country }}
         </div>
+        {% else %}
+        <p style="margin:0; color:var(--muted); font-size:14px;">No shipping snapshot on file.</p>
+        {% endif %}
     </section>
 
     <section class="card" style="box-shadow:none; max-width:900px; margin-top:12px; padding:0; overflow:hidden;">
@@ -76,15 +92,15 @@
                         <div>
                             <strong style="font-size:14px;">{{ item.title }}</strong>
                             <div style="margin-top:4px; color:var(--muted); font-size:13px;">
-                                Qty {{ item.quantity }}
-                                {% if item.deposit_required %}
-                                    Deposit ${{ item.deposit_amount }}
-                                {% endif %}
+                                {{ item.author }}
+                            </div>
+                            <div style="margin-top:4px; color:var(--muted); font-size:13px;">
+                                Qty {{ item.quantity }} · ${{ item.unit_price|floatformat:2 }} each
                             </div>
                         </div>
                         <div style="text-align:right;">
-                            <div style="color:var(--muted); font-size:13px;">Line Total</div>
-                            <div style="font-weight:900;">${{ item.line_total }}</div>
+                            <div style="color:var(--muted); font-size:13px;">Line total</div>
+                            <div style="font-weight:900;">${{ item.line_total|floatformat:2 }}</div>
                         </div>
                     </div>
                 {% endfor %}

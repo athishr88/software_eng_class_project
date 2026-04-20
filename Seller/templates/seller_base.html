@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}Seller | My Account{% endblock %}</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;800;900&display=swap">
+  <link rel="stylesheet" href="{% static 'css/site_header.css' %}">
 
   <style>
     :root{
@@ -21,57 +23,25 @@
 
     body {
         margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: 'Roboto', sans-serif;
         color: var(--text);
         background: var(--bg);
         min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 24px;
+        display: block;
+        padding: 0;
     }
 
     .page{
-        width: 100%;
-        max-width: 900px;
-        min-height: 520px;
+        width: 100vw;
+        max-width: none;
+        min-height: 100vh;
         background: linear-gradient(180deg, #ffffff 0%, #f6f7fb 100%);
-        border-radius: 18px;
+        border-radius: 0;
         padding: 32px 28px;
         display: grid;
         align-content: start;
         gap: 18px;
         position: relative;
-    }
-
-    .topbar{
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        max-width: 820px;
-        margin: 0 auto;
-    }
-
-    .brand h1{
-        margin: 0;
-        font-size: 22px;
-        font-weight: 800;
-        letter-spacing: 0.2px;
-        line-height: 1.1;
-    }
-
-    .brand p{
-        margin: 4px 0 0;
-        color: var(--muted);
-        font-size: 14px;
-    }
-
-    .top-actions{
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        justify-content: flex-end;
     }
 
     .link{
@@ -97,9 +67,9 @@
     .btn:hover{ background: var(--primaryHover); }
 
     .content{
-        max-width: 820px;
-        margin: 0 auto;
         width: 100%;
+        max-width: none;
+        margin: 0;
         display: grid;
         grid-template-columns: 260px 1fr;
         gap: 16px;
@@ -175,49 +145,36 @@
         color: #991b1b;
     }
 
+    .message.success{
+        border-color: #22c55e;
+        background: #f0fdf4;
+        color: #166534;
+    }
+
     @media (max-width: 820px) {
         .content{
             grid-template-columns: 1fr;
         }
     }
 
-    @media (min-width: 700px){
-        .topbar, .content { margin-left: 120px; margin-right: auto; }
-    }
   </style>
 </head>
 
 <body>
+    {% include "includes/site_header.html" with show_search=0 portal="seller" %}
     <main class="page">
-        <header class="topbar" aria-label="Seller Header">
-            <div class="brand">
-                <h1>Pass It On Books</h1>
-                <p>Seller Portal</p>
-            </div>
-
-            <div class="top-actions">
-                <a class="link" href="{% url 'general_home' %}">Home</a>
-                <a class="link" href="{% url 'catalog' %}">Browse</a>
-                <a class="link" href="{% url 'seller_dashboard' %}">Dashboard</a>
-                <a class="link" href="{% url 'seller_orders' %}">Orders</a>
-                <a class="link" href="{% url 'manage_inventory' %}">Inventory</a>
-                <a class="link" href="{% url 'add_books' %}">Add Book</a>
-                <form method="post" action="{% url 'logout' %}" style="margin:0;">
-                    {% csrf_token %}
-                    <button class="btn" type="submit">Logout</button>
-                </form>
-            </div>
-        </header>
-        
         <section class="content" aria-label="Seller Content">
             <aside class="card sidebar">
                 <h2>Seller Menu</h2>
 
                 <ul class="menu">
                     <li><a class="link" href="{% url 'seller_dashboard' %}">Dashboard</a></li>
+                    <li><a class="link" href="{% url 'seller_sales_overview' %}">Sales Overview</a></li>
+                    <li><a class="link" href="{% url 'seller_orders' %}">Orders</a></li>
+                    <li><a class="link" href="{% url 'seller_return_requests' %}">Return Requests</a></li>
                     <li><a class="link" href="{% url 'manage_inventory' %}">Manage Books</a></li>
                     <li><a class="link" href="{% url 'add_books' %}">Add Book</a></li>
-                    <li><a class="link" href="{% url 'seller_orders' %}">Orders</a></li>
+                    <li><a class="link" href="{% url 'seller_webhooks' %}">Webhooks</a></li>
                 </ul>
             
                 <div class="meta">

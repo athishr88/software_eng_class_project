@@ -1,4 +1,6 @@
+from django.conf import settings
 from django.db import models
+
 from General.models import User, Book, Address, StewardContribution
 
 
@@ -19,6 +21,9 @@ class CartItem(models.Model):
 
     quantity = models.PositiveIntegerField()
     unit_price_cents = models.PositiveIntegerField()
+    is_steward_free = models.BooleanField(default=False)
+    # List price at time of free redemption (pool deduction); 0 if not a steward-free line.
+    steward_free_list_price_cents = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -31,6 +36,34 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.book.title} x {self.quantity}"
     
+
+
+class PaymentMethod(models.Model):
+    """
+    Saved card display data for checkout. Only last4 + meta are stored — never full PAN or CVV.
+    """
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name="payment_methods",
+    )
+    cardholder_name = models.CharField(max_length=120)
+    brand = models.CharField(max_length=40)
+    last4 = models.CharField(max_length=4)
+    exp_month = models.PositiveSmallIntegerField()
+    exp_year = models.PositiveSmallIntegerField()
+    is_default = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-is_default", "-updated_at"]
+
+    def __str__(self):
+        return f"{self.brand} *{self.last4} ({self.user.email})"
+
 
 class Order(models.Model):
     STATUS_CHOICES = [
@@ -54,6 +87,17 @@ class Order(models.Model):
     discount_cents = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     
+    steward_contribution = models.ForeignKey(
+        StewardContribution,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True
+    
+   
+
+
+    # Optional checkout add-on; $1 contribution → 10 steward progress points (stored on User).
+    steward_contribution_cents = models.PositiveIntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -61,6 +105,30 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order {self.id} - {self.user.username}"
+
+    @property
+    def total_dollars(self):
+        return self.total_cents / 100.0
+
+    @property
+    def discount_dollars(self):
+        return self.discount_cents / 100.0
+
+    @property
+    def tax_dollars(self):
+        return self.tax_cents / 100.0
+
+    @property
+    def fees_dollars(self):
+        return self.fees_cents / 100.0
+
+    @property
+    def subtotal_dollars(self):
+        return self.subtotal_cents / 100.0
+
+    @property
+    def steward_contribution_dollars(self):
+        return self.steward_contribution_cents / 100.0
 
 
 class OrderItem(models.Model):
@@ -72,6 +140,11 @@ class OrderItem(models.Model):
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def deposit_amount(self) -> float:
+        """Deposit amount in dollars (for templates)."""
+        return self.deposit_amount_cents / 100.0
 
     def __str__(self):
         return f" {self.book} x {self.quantity})"
@@ -161,3 +234,37 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.book.title} for {self.rating} stars"
+ 
+
+class SellerReturnReceipt(models.Model):
+    """
+    Records that a seller received returned inventory for an order and triggered
+    buyer credit + removal of that seller's lines from their sales totals.
+    """
+
+    return_request = models.ForeignKey(
+        ReturnRequest,
+        on_delete=models.CASCADE,
+        related_name="seller_receipts",
+    )
+    seller = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="return_receipts_given",
+    )
+    amount_credited_cents = models.PositiveIntegerField(
+        help_text="Sum of this seller's line totals for the order (credited to buyer).",
+    )
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["return_request", "seller"],
+                name="unique_seller_return_receipt_per_return",
+            )
+        ]
+
+    def __str__(self):
+        return f"SellerReturnReceipt rr={self.return_request_id} seller={self.seller_id}"

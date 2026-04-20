@@ -10,6 +10,228 @@ import uuid
 from decimal import Decimal
 from datetime import datetime
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
+from django.db.models import Count, Prefetch
+from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
+from django.views.decorators.cache import never_cache
+
+from Buyer.cart_helpers import add_book_to_db_cart, clear_db_cart, db_cart_lines
+from Buyer.models import (
+    CartItem,
+    Order,
+    OrderItem,
+    OrderItemBookSnapshot,
+    OrderShippingAddress,
+    PaymentMethod,
+    ReturnRequest,
+)
+from General.models import Address, Book, Inventory, StewardPool, User
+from General.steward import (
+    get_steward_pool,
+    random_steward_attribution,
+    user_free_book_eligible,
+)
+from Seller.webhook_notify import schedule_order_placed_webhooks
+
+_STEWARD_CONTRIBUTION_DEFAULT = Decimal("2.00")
+_STEWARD_CONTRIBUTION_MAX = Decimal("100.00")
+
+def _parse_steward_contribution_dollars(raw):
+    """
+    Parse checkout steward contribution. Blank → default $2.00.
+    Returns (Decimal value in dollars, is_invalid).
+    """
+    if raw is None or (isinstance(raw, str) and not raw.strip()):
+        return _STEWARD_CONTRIBUTION_DEFAULT, False
+    try:
+        v = Decimal(str(raw).strip())
+    except InvalidOperation:
+        return None, True
+    if v < 0:
+        return None, True
+    if v > _STEWARD_CONTRIBUTION_MAX:
+        v = _STEWARD_CONTRIBUTION_MAX
+    return v.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP), False
+
+def _steward_cents_from_dollars(dollars: Decimal) -> int:
+    return int((dollars * 100).quantize(Decimal("1"), rounding=ROUND_HALF_UP))
+
+def _steward_points_from_contribution_cents(cents: int) -> int:
+    return cents // 10
+
+def _buyer_return_status_label(return_request):
+    if not return_request:
+        return None
+    if return_request.status == "refunded":
+        return "Return complete"
+    if return_request.status == "rejected":
+        return "Return declined"
+    return "Return requested"
+
+def _addresses_for_user(user):
+    return Address.objects.filter(user=user).order_by("-is_default", "-updated_at")
+
+def _payment_methods_for_user(user):
+    return PaymentMethod.objects.filter(user=user).order_by("-is_default", "-id")
+
+def _order_items_from_snapshots(order):
+    """
+    Line items for display using OrderItemBookSnapshot for title/author when present
+    (so seller edits to Book do not change past orders). Prices come from OrderItem.
+    """
+    items = []
+    for oi in order.orderitem.all().select_related("book", "book_snapshot"):
+        snap = getattr(oi, "book_snapshot", None)
+        book = oi.book
+        title = snap.title if snap else (oi.title or book.title)
+        author = snap.author if snap else (oi.author or book.author)
+        items.append(
+            {
+                "id": oi.id,
+                "book_id": book.id,
+                "title": title,
+                "author": author,
+                "deposit_required": getattr(oi, "deposit_required", False),
+                "deposit_amount": round(getattr(oi, "deposit_amount_cents", 0) / 100.0, 2),
+                "quantity": oi.quantity,
+                "unit_price_cents": oi.unit_price_cents,
+                "unit_price": oi.unit_price_cents / 100.0,
+                "line_total_cents": oi.line_total_cents,
+                "line_total": oi.line_total_cents / 100.0,
+            }
+        )
+    return items
+
+\
+def _checkout_page_context(
+    user,
+    cart_items,
+    subtotal_cents,
+    steward_raw,
+    *,
+    addresses=None,
+    selected_address=None,
+    payment_methods=None,
+    selected_payment=None,
+    checkout_error=None,
+):
+    if addresses is None:
+        addresses = list(_addresses_for_user(user))
+    if payment_methods is None:
+        payment_methods = list(_payment_methods_for_user(user))
+
+    tax_cents = int(round(subtotal_cents * 0.07))
+    cart_has_steward_free = any(line.get("is_steward_free") for line in cart_items)
+    fees_cents = 0 if cart_has_steward_free else (299 if cart_items else 0)
+    base_total_cents = subtotal_cents + tax_cents + fees_cents
+    cart_subtotal = subtotal_cents / 100.0
+    tax = round(tax_cents / 100.0, 2)
+    fees = round(fees_cents / 100.0, 2)
+    if cart_has_steward_free:
+        steward_display = "0.00"
+        steward_contribution_cents = 0
+        steward_points_preview = 0
+        steward_line_dollars_display = "0.00"
+        steward_invalid = False
+    else:
+        steward_d, steward_invalid = _parse_steward_contribution_dollars(steward_raw)
+        if steward_invalid:
+            steward_display = str(steward_raw).strip() if steward_raw is not None else ""
+            steward_contribution_cents = 0
+            steward_points_preview = 0
+            steward_line_dollars_display = "0.00"
+        else:
+            steward_display = str(steward_d)
+            steward_contribution_cents = _steward_cents_from_dollars(steward_d)
+            steward_points_preview = _steward_points_from_contribution_cents(steward_contribution_cents)
+            steward_line_dollars_display = f"{steward_contribution_cents / 100:.2f}"
+
+    total_cents = base_total_cents + steward_contribution_cents
+    final_total = round(total_cents / 100.0, 2)
+
+    return {
+        "cart_items": cart_items,
+        "cart_subtotal": cart_subtotal,
+        "tax": tax,
+        "fees": fees,
+        "final_total": final_total,
+        "addresses": addresses,
+        "selected_address": selected_address,
+        "payment_methods": payment_methods,
+        "selected_payment": selected_payment,
+        "checkout_error": checkout_error,
+        "steward_contribution_value": steward_display,
+        "steward_points_preview": steward_points_preview,
+        "steward_line_dollars_display": steward_line_dollars_display,
+        "base_total_cents": base_total_cents,
+        "steward_contribution_invalid": steward_invalid,
+        "cart_has_steward_free": cart_has_steward_free,
+    }
+
+
+def _cart_lines(session_cart):
+    """Build cart lines from session; returns (lines, subtotal_cents). Each line: book, quantity, line_subtotal_cents."""
+    lines = []
+    subtotal_cents = 0
+    for book_id, item_data in session_cart.items():
+        try:
+            book = Book.objects.select_related("inventory").get(
+                pk=int(book_id), is_active=True
+            )
+        except (Book.DoesNotExist, ValueError, TypeError):
+            continue
+        qty = max(1, int(item_data.get("quantity", 1)))
+        line_cents = book.base_price_cents * qty
+        subtotal_cents += line_cents
+        price = book.base_price_cents / 100.0
+        lines.append(
+            {
+                "id": book.id,
+                "book": book,
+                "quantity": qty,
+                "price": price,
+                "subtotal": line_cents / 100.0,
+                "line_subtotal_cents": line_cents,
+            }
+        )
+    return lines, subtotal_cents
+
+
+def _buyer_dashboard_context(user):
+    from General.steward import (
+        free_book_cooldown_progress_percent,
+        get_steward_pool,
+        next_free_book_eligible_at,
+        user_free_book_eligible,
+    )
+
+    ctx = {
+        "stats": {"total_orders": 0, "open_orders": 0},
+        "credit_balance": "0.00",
+    }
+    if not user.is_authenticated:
+        return ctx
+    ctx["credit_balance"] = f"{(user.store_credit_cents or 0) / 100:.2f}"
+    ctx["stats"] = {
+        "total_orders": Order.objects.filter(user=user).count(),
+        "open_orders": Order.objects.filter(user=user)
+        .exclude(status__in=["delivered", "cancelled", "refunded"])
+        .count(),
+    }
+    if user.is_steward:
+        pool = get_steward_pool()
+        ctx["steward_pool_dollars"] = f"{pool.pool_cents / 100:,.2f}"
+        ctx["steward_free_book_eligible"] = user_free_book_eligible(user)
+        ctx["steward_free_cooldown_progress"] = free_book_cooldown_progress_percent(user)
+        ctx["steward_next_free_at"] = next_free_book_eligible_at(user)
+    return ctx
+
+@login_required(login_url="login")
+@never_cache
 
 
 @login_required
@@ -105,6 +327,8 @@ def add_to_cart(request, book_id):
         messages.success(request, f"{book.title} added to cart.")
     return redirect("cart")
 
+@login_required(login_url="login")
+@never_cache
 
 def buyer_cart(request):
     cart = request.session.get("cart", {})
@@ -154,32 +378,148 @@ def buyer_cart(request):
     return render(request, "cart/buyer_cart.html", context)
 
 def buyer_checkout(request):
-    cart = request.session.get("cart", {})
-    cart_items = []
-    cart_subtotal = 0.00
+    cart_items, subtotal_cents = db_cart_lines(request.user)
+    steward_raw_get = request.GET.get("steward_contribution") if request.method != "POST" else None
 
-    for book_id, item_data in cart.items():
+    addresses = list(_addresses_for_user(request.user))
+    payment_methods = list(_payment_methods_for_user(request.user))
+
+    selected_address = None
+    if addresses:
+        sel = (request.POST.get("shipping_address_id") if request.method == "POST" else None) or request.GET.get(
+            "shipping_address_id"
+        )
+        if sel:
+            selected_address = next((a for a in addresses if str(a.id) == str(sel)), None)
+        if not selected_address:
+            selected_address = next((a for a in addresses if a.is_default), None) or addresses[0]
+
+    selected_payment = None
+    if payment_methods:
+        sel_pm = (request.POST.get("payment_method_id") if request.method == "POST" else None) or request.GET.get(
+            "payment_method_id"
+        )
+        if sel_pm:
+            selected_payment = next((p for p in payment_methods if str(p.id) == str(sel_pm)), None)
+        if not selected_payment:
+            selected_payment = next((p for p in payment_methods if p.is_default), None) or payment_methods[0]
+
+    pay_method = None
+
+    if request.method == "POST":
+        post_steward = request.POST.get("steward_contribution")
+        if not cart_items:
+            return render(
+                request,
+                "checkout/buyer_checkout.html",
+                _checkout_page_context(
+                    request.user,
+                    [],
+                    0,
+                    post_steward,
+                    addresses=addresses,
+                    selected_address=selected_address,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Your cart is empty.",
+                ),
+            )
+        addr_id = request.POST.get("shipping_address_id")
+        if not addr_id:
+            return render(
+                request,
+                "checkout/buyer_checkout.html",
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    subtotal_cents,
+                    post_steward,
+                    addresses=addresses,
+                    selected_address=selected_address,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Please select a shipping address.",
+                ),
+            )
         try:
-            book = Book.objects.get(pk=book_id, is_active=True)
-            quantity = item_data.get("quantity", 1)
-            price = float(book.base_price_cents) / 100
-            subtotal = price * quantity
+            ship_addr = Address.objects.get(pk=int(addr_id), user=request.user)
+        except (Address.DoesNotExist, ValueError, TypeError):
+            return render(
+                request,
+                "checkout/buyer_checkout.html",
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    subtotal_cents,
+                    post_steward,
+                    addresses=addresses,
+                    selected_address=selected_address,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Invalid shipping address.",
+                ),
+            )
 
-            cart_items.append({
-                "id": book.id,
-                "book": book,
-                "quantity": quantity,
-                "price": price,
-                "subtotal": subtotal,
-            })
+        pm_id = request.POST.get("payment_method_id")
+        if not pm_id:
+            return render(
+                request,
+                "checkout/buyer_checkout.html",
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    subtotal_cents,
+                    post_steward,
+                    addresses=addresses,
+                    selected_address=ship_addr,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Please select a payment method.",
+                ),
+            )
+        try:
+            pay_method = PaymentMethod.objects.get(pk=int(pm_id), user=request.user)
+        except (PaymentMethod.DoesNotExist, ValueError, TypeError):
+            return render(
+                request,
+                "checkout/buyer_checkout.html",
+                _checkout_page_context(
+                    request.user,
+                    cart_items,
+                    subtotal_cents,
+                    post_steward,
+                    addresses=addresses,
+                    selected_address=ship_addr,
+                    payment_methods=payment_methods,
+                    selected_payment=selected_payment,
+                    checkout_error="Invalid payment method.",
+                ),
+            )
 
-            cart_subtotal += subtotal
-        except Book.DoesNotExist:
-            continue
-    
-    tax = round(cart_subtotal * 0.07, 2)
-    fees = 2.99 if cart_items else 0.00
-    final_total = round(cart_subtotal + tax + fees, 2)
+        cart_has_free = any(line.get("is_steward_free") for line in cart_items)
+        if cart_has_free:
+            steward_d = Decimal("0")
+            steward_invalid = False
+            steward_contribution_cents = 0
+        else:
+            steward_d, steward_invalid = _parse_steward_contribution_dollars(post_steward)
+            if steward_invalid:
+                return render(
+                    request,
+                    "checkout/buyer_checkout.html",
+                    _checkout_page_context(
+                        request.user,
+                        cart_items,
+                        subtotal_cents,
+                        post_steward,
+                        addresses=addresses,
+                        selected_address=ship_addr,
+                        payment_methods=payment_methods,
+                        selected_payment=pay_method,
+                        checkout_error="Enter a valid steward contribution (0 to $100).",
+                    ),
+                )
+            steward_contribution_cents = _steward_cents_from_dollars(steward_d)
 
     addresses = ShippingAddress.objects.filter(user=request.user)
     payment_method = PaymentMethod.objects.filter(user=request.user)
@@ -203,8 +543,18 @@ def buyer_checkout(request):
 
 def remove_cart_item(request, item_id):
     if request.method == "POST":
-        cart = request.session.get("cart", {})
-        item_id_str = str(item_id)
+        if request.user.is_authenticated:
+            ci = CartItem.objects.filter(cart__user=request.user, book_id=item_id).first()
+            
+            if ci:
+                if ci.quantity > 1:
+                    ci.quantity -= 1
+                    ci.save(update_fields=["quantity", "updated_at"])
+                else:
+                    ci.delete()
+        else:
+            cart = request.session.get("cart", {})
+            item_id_str = str(item_id)
 
         if item_id_str in cart:
             current_quantity = cart[item_id_str].get("quantity", 1)
@@ -220,11 +570,11 @@ def remove_cart_item(request, item_id):
         request.session.modified = True
     return redirect("cart")
 
+@login_required(login_url="login")
+@never_cache
+
 def update_cart_item(request, item_id):
     if request.method == "POST":
-        cart = request.session.get("cart", {})
-        item_id_str = str(item_id)
-
         try:
             quantity = int(request.POST.get("quantity", 1))
             if quantity < 1:
@@ -232,11 +582,32 @@ def update_cart_item(request, item_id):
         except (TypeError, ValueError):
             quantity = 1
 
-        if item_id_str in cart:
-            cart[item_id_str]["quantity"] = quantity
-        
-        request.session["cart"] = cart
-        request.session.modified = True
+        if request.user.is_authenticated:
+            ci = CartItem.objects.filter(
+                cart__user=request.user, book_id=item_id
+            ).select_related("book").first()
+            
+            if ci:
+                if ci.is_steward_free:
+                    ci.quantity = 1
+
+                else:
+                    ci.quantity = quantity
+                    ci.unit_price_cents = ci.book.base_price_cents
+
+                ci.save(update_fields=["quantity", "unit_price_cents", "updated_at"])
+        else:
+            cart = request.session.get("cart", {})
+            item_id_str = str(item_id)
+
+            if item_id_str in cart:
+                if isinstance(cart[item_id_str], dict):
+                    cart[item_id_str]["quantity"] = quantity
+                else:
+                    cart[item_id_str] = quantity
+                    
+            request.session["cart"] = cart
+            request.session.modified = True
     return redirect("cart")
 
 @login_required
@@ -474,9 +845,19 @@ def buyer_orders(request):
     order = Order.objects.filter(user=request.user).order_by("-created_at")
     return render(request, "orders/orderHistory.html", {"order": order})
 
-def order_confirmation(request):
-    """Order confirmation after place order."""
-    return render(request, "orders/orderConfirmation.html")
+    user_orders = list(
+        Order.objects.filter(user=request.user).order_by("-created_at", "-id")
+    )
+    position = None
+    for index, user_order in enumerate(user_orders, start=1):
+        if user_order.id == order.id:
+            position = index
+            break
+    display_order_number = len(user_orders) - position + 1 if position is not None else None
+    return render(
+        request,
+        "orders/orderDetail.html",
+        {
 
 @login_required
 def order_detail(request, order_id=None):
@@ -503,6 +884,8 @@ def order_detail(request, order_id=None):
         "display_number": display_number,
         })
 
+@login_required(login_url="login")
+@never_cache
 
 def order_history(request):
     orders = Order.objects.filter(user=request.user)
@@ -666,8 +1049,45 @@ def save_inline_review(request, order_id):
    
 
 
+def return_request_view(request, order_id):
+    order = get_object_or_404(Order, pk=order_id, user=request.user)
+    if hasattr(order, "returnrequest"):
+        return render(
+            request,
+            "orders/ReturnRequest.html",
+            {
+                "order": order,
+                "return_error": "A return has already been submitted for this order.",
+            },
+        )
+
+    if request.method == "POST":
+        category = (request.POST.get("reason_category") or "").strip()
+        details = (request.POST.get("reason_details") or "").strip()
+        parts = []
+        if category:
+            parts.append(f"[{category}]")
+        if details:
+            parts.append(details)
+        reason = "\n".join(parts).strip()
+        if not reason:
+            return render(
+                request,
+                "orders/ReturnRequest.html",
+                {
+                    "order": order,
+                    "return_error": "Please describe your return reason.",
+                },
+            )
+        ReturnRequest.objects.create(order=order, reason=reason[:4000])
+        messages.success(request, "Return request submitted.")
+        return redirect("order_detail", order_id=order.id)
+
+    return render(request, "orders/ReturnRequest.html", {"order": order})
+
+@login_required(login_url="login")
+@never_cache
 
 def review_submission(request):
-    """Submit a review."""
+    """Submit a review (no Review model in project schema yet)."""
     return render(request, "reviews/reviewSubmission.html")
-
