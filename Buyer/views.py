@@ -27,6 +27,7 @@ from General.steward import (
     random_steward_attribution,
     user_free_book_eligible,
 )
+from Seller.webhook_notify import schedule_order_placed_webhooks
 
 _STEWARD_CONTRIBUTION_DEFAULT = Decimal("2.00")
 _STEWARD_CONTRIBUTION_MAX = Decimal("100.00")
@@ -617,6 +618,8 @@ def buyer_checkout(request):
                 became_steward = buyer_locked.steward_verified and not was_steward_verified
 
                 CartItem.objects.filter(cart__user=request.user).delete()
+
+                schedule_order_placed_webhooks(order.id)
 
         except ValueError as e:
             return render(

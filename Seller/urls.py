@@ -11,4 +11,5 @@ urlpatterns = [
     path("orders/<int:order_id>/", views.order_details, name="seller_order_details"),
     path("returns/", views.return_requests_list, name="seller_return_requests"),
     path("returns/<int:return_id>/", views.return_request_detail, name="seller_return_request_detail"),
+    path("webhooks/", views.seller_webhooks, name="seller_webhooks"),
 ]

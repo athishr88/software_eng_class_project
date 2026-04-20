@@ -7,6 +7,7 @@ cd /home/ubuntu/software_eng_class_project
 
 export SQLITE_DB_PATH=/home/ubuntu/passiton_data/db.sqlite3
 
+python manage.py makemigrations
 python manage.py migrate
 python manage.py collectstatic --noinput
 

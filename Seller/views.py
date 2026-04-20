@@ -13,6 +13,10 @@ from django.views.decorators.cache import never_cache
 from Buyer.models import Order, OrderItem, ReturnRequest, SellerReturnReceipt
 from General.models import Book, Inventory, User
 
+from .forms import SellerWebhookForm
+from .models import SellerProfile
+from .webhook_notify import build_test_webhook_payload, post_seller_webhook
+
 # Line revenue counted toward “total sales” for sellers.
 _SALE_RECOGNIZED_STATUSES = ("paid", "shipped", "delivered")
 
@@ -655,4 +659,53 @@ def return_request_detail(request, return_id):
             "already_received": already,
             "amount_credited_display": _format_cents_as_dollars(already.amount_credited_cents) if already else None,
         },
+    )
+
+
+@login_required(login_url="login")
+@never_cache
+def seller_webhooks(request):
+    if not _require_seller(request.user):
+        messages.error(request, "A seller account is required.")
+        return redirect("buyer_home")
+
+    profile, _ = SellerProfile.objects.get_or_create(user=request.user)
+
+    if request.method == "POST":
+        action = (request.POST.get("action") or "save").strip()
+        if action == "test":
+            form = SellerWebhookForm(request.POST, instance=profile)
+            url = (request.POST.get("webhook_url") or "").strip()
+            if not url:
+                messages.error(request, "Enter a webhook URL to test.")
+                return render(
+                    request,
+                    "dashboard/webhooks.html",
+                    {"form": form},
+                )
+            secret = (request.POST.get("webhook_secret") or "").strip()
+            payload = build_test_webhook_payload()
+            ok, err = post_seller_webhook(url, secret, payload)
+            if ok:
+                messages.success(request, "Test webhook delivered successfully (HTTP 2xx response).")
+            else:
+                messages.error(request, f"Test webhook failed: {err}")
+            return render(
+                request,
+                "dashboard/webhooks.html",
+                {"form": form},
+            )
+
+        form = SellerWebhookForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Webhook settings saved.")
+            return redirect("seller_webhooks")
+    else:
+        form = SellerWebhookForm(instance=profile)
+
+    return render(
+        request,
+        "dashboard/webhooks.html",
+        {"form": form},
     )

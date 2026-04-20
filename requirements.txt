@@ -9,6 +9,7 @@ packaging==24.2
 pydot==4.0.1
 PyJWT==2.11.0
 pyparsing==3.3.2
+requests==2.32.3
 setuptools==80.10.2
 sqlparse==0.5.5
 tzdata==2025.3
