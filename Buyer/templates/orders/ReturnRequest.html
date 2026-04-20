@@ -12,7 +12,11 @@
                     Order #{{ order.id }} — you can submit one return request per order.
                 </p>
             </div>
+<<<<<<< HEAD
             <a class="link" href="{% url 'order_detail' order.id %}">Back to order</a>
+=======
+            <a class="link" href="{% url 'order_detail' order.id %}">Back to Order</a>
+>>>>>>> recover-missing-work
         </div>
     </header>
 
@@ -25,6 +29,7 @@
     <form method="post" action="{% url 'return_request' order.id %}" style="max-width:720px;">
         {% csrf_token %}
 
+<<<<<<< HEAD
         <div class="card" style="box-shadow:none;">
             <h2 style="margin:0; font-size:16px; font-weight:800;">Return reason</h2>
             <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
@@ -54,6 +59,149 @@
                 <a class="link" href="{% url 'order_detail' order.id %}" style="align-self:center;">Cancel</a>
             </div>
         </div>
+=======
+        <section style="display:grid; gap:12px; max-width:900px;">
+            <div class="card" style="box-shadow:none;">
+                <h2 style="margin:0; font-size:16px; font-weight:800;">1) Select Item</h2>
+                <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                    Pick the item you want to return.
+                </p>
+
+                <div style="margin-top:12px; display:grid; gap:10px;">
+                    {% if order_items %}
+                        {% for item in order_items %}
+                            <div style="display:block; border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
+                                <div style="display:flex; gap:10px; align-items:flex-start;">
+
+                                    <div style="padding-top:2px;">
+                                        <input
+                                            type="radio"
+                                            name="order_item_id"
+                                            value="{{ item.id }}"
+                                            required
+                                            style="width:auto; margin-top:3px;"
+                                        >
+                                    </div>
+                                
+                                    <div style="display:grid; gap:4px; flex:1;">
+                                        <div>
+                                            <strong style="font-size:14px;">
+                                                {% if item.book %}
+                                                    {{ item.book.title }}
+                                                {% else %}
+                                                    Book unavailable
+                                                {% endif %}
+                                            </strong>
+                                        
+                                            <div style="margin-top:6px; display:grid; gap:4px; font-size:13px; color:var(--muted);">
+                                                <div>Purchased: {{ item.quantity}}</div>
+                                                <div>Price each: ${{ item.price }}</div>
+                                                <div>Item total: ${{ item.subtotal }}</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div style="margin-top:6px; display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                                            <label for="quantity_{{ item.id }}" style="font-size:14px; color:var(--text);">
+                                                Return quantity:
+                                            </label>
+
+                                            <input
+                                                id="quantity_{{ item.id }}"
+                                                type="number"
+                                                name="quantity_{{ item.id }}"
+                                                min="0"
+                                                max="{{ item.quantity }}"
+                                                value="0"
+                                                style="width:80px; padding:6px 8px; border:1px solid var(--border); border-radius:8px; font-size:14px;"
+                                            >
+
+                                            <span style="font-size:13px; color:var(--muted);">
+                                                of {{ item.quantity }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff;">
+                            <p style="margin:0; color:var(--muted); font-size:14px;">
+                                No items are available to return for this order.
+                            </p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="card" style="box-shadow:none;">
+                    <h2 style="margin:0; font-size:16px; font-weight:800;">2) Reason</h2>
+                    <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+                        Select a reason and provide optional details.
+                    </p>
+
+                    <div style="margin-top:12px; display:grid; gap:12px; max-width:640px;">
+                        <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                            Reason
+                            <select name="reason" required>
+                                <option value="">Select a reason</option>
+                                <option value="DAMAGED">Damaged</option>
+                                <option value="WRONG_ITEM">Wrong Item</option>
+                                <option value="NOT_AS_DESCRIBED">Not as described</option>
+                                <option value="OTHER">Other</option>
+                            </select>
+                        </label>
+
+                        <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+                            Additional details (optional)
+                            <textarea
+                                name="details"
+                                rows="4"
+                                placeholder="Share any extra details that could help the seller review your request..."
+                            ></textarea>
+                        </label>
+                    </div>
+
+                    <div style="margin-top:10px; color:var(--muted); font-size:13px; line-height:1.4;">
+                        Return requests are reviewed by the seller. Admin may override decisions in disputes.
+                    </div>
+                </div>
+
+                <div class="card" style="box-shadow:none;">
+                    <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Summary</h2>
+                    <div style="display:grid; gap:8px; font-size:14px; color:var(--muted);">
+                        <div>
+                            <strong style="color:var(--text);">Order:</strong> #{{ order.id }}
+                        </div>
+                        <div>
+                            <strong style="color:var(--text);">Status:</strong> {{ order.status }}
+                        </div>
+                        <div>
+                            <strong style="color:var(--text);">Placed:</strong> {{ order.created_at }}
+                        </div>
+                        <div>
+                            <strong style="color:var(--text);">Total:</strong> ${{ order.total }}
+                        </div>
+                    </div>
+
+                    <div style="margin-top:14px; display:grid; gap:10px;">
+                        <button
+                            class="btn"
+                            type="submit"
+                            {% if not order_items %}disabled{% endif %}>
+                            Submit Return Request
+                        </button>
+
+                        <a class="link" href="{% url 'order_detail' order.id %}" style="text-align:center;">
+                            Cancel
+                        </a>
+                    </div>
+                    
+                    <div style="margin-top:12px; color:var(--muted); font-size:13px; line-height:1.4;">
+                        Tip: Keep the item in its current condition until you receive next steps from the seller.
+                    </div>
+                </div>
+            </div>
+        </section>
+>>>>>>> recover-missing-work
     </form>
 
     <style>

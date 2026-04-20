@@ -53,6 +53,7 @@
 
         <section class="card results-panel">
 
+<<<<<<< HEAD
             {% if page_obj and page_obj.object_list %}
                 <div style="padding:18px;">
                     <div class="catalog-grid">
@@ -63,6 +64,54 @@
                                         <img src="{{ book.cover_image_url }}" alt="Cover: {{ book.title }}" class="book-card__cover" loading="lazy">
                                     {% elif book.cover_serve_url %}
                                         <img src="{{ book.cover_serve_url }}" alt="Cover: {{ book.title }}" class="book-card__cover" loading="lazy">
+=======
+        {% if page_obj and page_obj.object_list %}
+            <div style="padding:18px;">
+                <div class="catalog-grid">
+                    {% for book in page_obj.object_list %}
+                        <article class="book-card">
+                            <a href="{% url 'book_detail' book.pk %}" class="book-card__cover-link" aria-label="{{ book.title }}">
+                                {% if book.cover_image_url %}
+                                    <img src="{{ book.cover_image_url }}" alt="Cover: {{ book.title }}" class="book-card__cover" loading="lazy">
+                                {% elif book.cover_serve_url %}
+                                    <img src="{{ book.cover_serve_url }}" alt="Cover: {{ book.title }}" class="book-card__cover" loading="lazy">
+                                {% else %}
+                                    <div class="book-card__cover book-card__cover--placeholder">
+                                        <span class="book-card__cover-text">{{ book.title|slice:":2" }}</span>
+                                    </div>
+                                {% endif %}
+                            </a>
+                            <div class="book-card__body">
+                                <h4 class="book-card__title">
+                                    <a href="{% url 'book_detail' book.pk %}">{{ book.title }}</a>
+                                </h4>
+
+                                <p class="book-card__author">by {{ book.author }}</p>
+
+                                {% if book.description %}
+                                    <p class="book-card__description">{{ book.description|truncatewords:20 }}</p>
+                                {% endif %}
+                                <dl class="book-card__meta">
+                                    {% if book.publisher %}
+                                        <dt>Publisher</dt>
+                                        <dd>{{ book.publisher }}{% if book.publication_year %} ({{ book.publication_year }}){% endif %}</dd>
+                                    {% endif %}
+                                    {% if book.language %}
+                                        <dt>Language</dt>
+                                        <dd>{{ book.language }}</dd>
+                                    {% endif %}
+                                    {% if book.isbn %}
+                                        <dt>ISBN</dt>
+                                        <dd>{{ book.isbn }}</dd>
+                                    {% endif %}
+                                    <dt>Condition</dt>
+                                    <dd>{{ book.condition }}</dd>
+                                </dl>
+                                <p class="book-card__price">${{ book.price_dollars|floatformat:2 }}</p>
+                                <p class="book-card__stock">
+                                    {% if book.display_stock_quantity > 0 %}
+                                        <span class="book-card__stock--in">In Stock ({{ book.display_stock_quantity }})</span>
+>>>>>>> recover-missing-work
                                     {% else %}
                                         <div class="book-card__cover book-card__cover--placeholder">
                                             <span class="book-card__cover-text">{{ book.title|slice:":2" }}</span>

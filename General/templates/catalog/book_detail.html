@@ -31,13 +31,13 @@
                 </p>
 
                 <p style="margin:0; font-size:20px; font-weight:900;">
-                    ${{ book.price_dollars|floatformat:2 }}
+                    ${{ price_dollars|floatformat:2 }}
                 </p>
 
                 <p style="margin:0; font-size:14px;">
-                    {% if book.stock_quantity > 0 %}
+                    {% if stock_quantity > 0 %}
                         <span style="color:#166534; font-weight:800;">In Stock</span>
-                        <span style="color:var(--muted);">({{ book.stock_quantity }} available)</span>
+                        <span style="color:var(--muted);">({{ stock_quantity }} available)</span>
                     {% else %}
                         <span style="color:#991b1b; font-weight:800;">Out of Stock</span>
                     {% endif %}
@@ -54,13 +54,13 @@
                                 name="quantity"
                                 min="1"
                                 value="1"
-                                {% if book.stock_quantity <= 0 %}disabled{% endif %}>
+                                {% if stock_quantity <= 0 %}disabled{% endif %}>
                         </label>
 
                         <button 
                             class="btn"
                             type="submit"
-                            {% if book.stock_quantity <= 0 %}disabled{% endif %}>
+                            {% if stock_quantity <= 0 %}disabled{% endif %}>
                             Add to Cart
                         </button>
                     </form>

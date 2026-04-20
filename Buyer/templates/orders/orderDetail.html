@@ -1,12 +1,12 @@
 {% extends "base_buyer.html" %}
-{% block title %}Order #{{ order.id }} | Pass It On Books{% endblock %}
+{% block title %}Order #{{ display_number }} | Pass It On Books{% endblock %}
 {% block content %}
 
     <header style="margin-bottom:16px;">
         <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
             <div>
                 <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
-                    Order #{{ order.id }}
+                    Order #{{ display_number }}
                 </h1>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
                     View status, shipping details, items, and next actions.
@@ -55,7 +55,11 @@
 
                 <div style="color:var(--muted); font-size:14px; line-height:1.45;">
                     Placed: <strong style="color:var(--text);">{{ order.created_at }}</strong><br>
+<<<<<<< HEAD
                     Total: <strong style="color:var(--text);">${{ order_total_display }}</strong>
+=======
+                    Total: <strong style="color:var(--text);">{{ order.total }}</strong>
+>>>>>>> recover-missing-work
                 </div>
             </div>
 
@@ -78,6 +82,7 @@
     </section>
 
     <section class="card" style="box-shadow:none; max-width:900px; margin-top:12px;">
+<<<<<<< HEAD
         <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Shipping address (at checkout)</h2>
         <p style="margin:0 0 10px; color:var(--muted); font-size:13px;">This is the address captured when you placed the order; changing your saved addresses later does not change past orders.</p>
 
@@ -95,6 +100,17 @@
                 {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.postal_code }}<br>
                 {{ order.shipping_address.country }}
             </div>
+=======
+        <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Shipping Address</h2>
+        
+        {% if order.shipping_address %}
+            <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; color:var(--muted); font-size:14px; line-height:1.45;">
+                <strong style="color:var(--text);">{{ order.shipping_address.full_name }}</strong><br>
+            {{ order.shipping_address.address_line_1 }}{% if order.shipping_address.address_line_2 %},{{ order.shipping_address.address_line_2 }}{% endif %}<br>
+            {{ order.shipping_address.city }}, {{ order.shipping_address.state }} {{ order.shipping_address.zip_code }}
+            {{ order.shipping_address.country }}
+        </div>
+>>>>>>> recover-missing-work
         {% else %}
             <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; color:var(--muted); font-size:14px;">
                 No shipping address available
@@ -107,28 +123,50 @@
             <div>
                 <h2 style="margin:0; font-size:16px; font-weight:800;">Items</h2>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
+<<<<<<< HEAD
                     {% if order_items %}{{ order_items|length }} line(s). Titles and authors are from the book snapshot at purchase.{% endif %}
+=======
+                    {% if items %}{{ items|length }} item(s) in this order.{% endif %}
+>>>>>>> recover-missing-work
                 </p>
             </div>
         </div>
 
-        {% if order_items %}
+        {% if items %}
             <div style="padding:18px; display:grid; gap:10px;">
-                {% for item in order_items %}
+                {% for item in items %}
                     <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
                         <div>
-                            <strong style="font-size:14px;">{{ item.title }}</strong>
+                            <strong style="font-size:14px;">
+                                {% if item.book %}
+                                    {{ item.book.title }}
+                                {% else %}
+                                    Book unavailable
+                                {% endif %}
+                            </strong>
                             <div style="margin-top:4px; color:var(--muted); font-size:13px;">
+<<<<<<< HEAD
                                 {{ item.author }}
                             </div>
                             <div style="margin-top:4px; color:var(--muted); font-size:13px;">
                                 Qty {{ item.quantity }} · ${{ item.unit_price|floatformat:2 }} each
+=======
+                                Qty {{ item.quantity }}
+                            </div>
+                            <div style="margin-top:4pxl color:var(--muted); font-size:13;">
+                                Price each: ${{ item.price }}
+>>>>>>> recover-missing-work
                             </div>
                         </div>
 
                         <div style="text-align:right;">
+<<<<<<< HEAD
                             <div style="color:var(--muted); font-size:13px;">Line total</div>
                             <div style="font-weight:900;">${{ item.line_total|floatformat:2 }}</div>
+=======
+                            <div style="color:var(--muted); font-size:13px;">Line Total</div>
+                            <div style="font-weight:900;">${{ item.subtotal }}</div>
+>>>>>>> recover-missing-work
                         </div>
                     </div>
                 {% endfor %}
@@ -146,11 +184,18 @@
         <div class="card" style="box-shadow:none;">
             <h3 style="margin:0 0 6px; font-size:14px; font-weight:900;">Order Summary</h3>
             <p style="margin:0; color:var(--muted); font-size:14px; line-height:1.45;">
+<<<<<<< HEAD
                 Subtotal (items): ${{ order_subtotal_display }}<br>
                 Fees: ${{ order.fees_dollars|floatformat:2 }}<br>
                 Tax: ${{ order.tax_dollars|floatformat:2 }}<br>
                 Discount: ${{ order.discount_dollars|floatformat:2 }}<br>
                 <strong style="color:var(--text);">Total charged: ${{ order_total_display }}</strong>
+=======
+                Subtotal: ${{ order.subtotal }}<br>
+                Tax: ${{ order.tax }}<br>
+                Fees: ${{ order.fees }}<br>
+                <strong style="color:var(--text);">Total: ${{ order.total }}</strong>
+>>>>>>> recover-missing-work
             </p>
         </div>
 
@@ -167,6 +212,7 @@
                 {% endif %}
             </p>
             <div style="margin-top:10px; display:flex; gap:12px; flex-wrap:wrap;">
+<<<<<<< HEAD
                 {% if can_request_return %}
                     <a class="link" href="{% url 'return_request' order.id %}">Request Return</a>
                 {% endif %}
@@ -215,9 +261,97 @@
                         {% endfor %}
                     </div>
                 </section>
+=======
+                {% if existing_return_request %}
+                    <p style="margin:8px 0 0; color:var(--muted); font-size:14px;">
+                        Return request status: <strong>{{ existing_return_request.status }}</strong>
+                    </p>
+                {% else %}
+                    <a class="btn" href="{% url 'return_request' order.id %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
+                        Request Return
+                    </a>
+>>>>>>> recover-missing-work
                 {% endif %}
             </div>
         </div>
+    </section>
+    <section class="card" style="box-shadow:none; max-width:900px; margin-top:12px;">
+        <h2 style="margin:0 0 10px; font-size:16px; font-weight:800;">Rate Your Items</h2>
+        <p style="margin:0; color:var(--muted); font-size:14px;">
+            Leave a 1-5 star review for items in this order.
+        </p>
+        {% if items %}
+            <div style="display:grid; gap:12px;">
+                {% for item in items %}
+                    <div style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
+                        <div style="display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                            <div>
+                                <strong style="font-size:14px;">
+                                    {% if item.book %}
+                                        {{ item.book.title }}
+                                    {% else %}
+                                        Book unavailable
+                                    {% endif %}
+                                </strong>
+                                <div style="margin-top:4px; color:var(--muted); font-size:13px;">
+                                    Qty {{ item.quantity }}
+                                </div>
+                            </div>
+
+                            {% if item.user_review %}
+                                <div style="font-size:14px; color:var(--muted);">
+                                    Current rating: 
+                                    <span style=color:#f59e0b; font-size:18px;>
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= item.user_review.rating %}★{% else %}☆{% endif %}
+                                        {% endfor %}
+                                    </span>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <form method="post" action="{% url 'save_inline_review' order.id %}" style="margin-top:12px; display:grid; gap:12px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_item_id" value="{{ item.id }}">
+                                <div>
+                                    <div style="font-size:12px; font-weight:800; margin-bottom:6px;">Rating</div>
+                                    <div class="star-rating">
+                                        <input 
+                                            type="hidden" 
+                                            name="rating" 
+                                            value="{% if item.user_review %}{{item.user_review.rating }}{% endif %}" 
+                                            class="rating-value"
+                                        >
+                             
+                                        <span class="star {% if item.user_review and item.user_review.rating >= 1 %}active{% endif %}" data-value="1">★</span>
+                                        <span class="star {% if item.user_review and item.user_review.rating >= 2 %}active{% endif %}" data-value="2">★</span>
+                                        <span class="star {% if item.user_review and item.user_review.rating >= 3 %}active{% endif %}" data-value="3">★</span>
+                                        <span class="star {% if item.user_review and item.user_review.rating >= 4 %}active{% endif %}" data-value="4">★</span>
+                                        <span class="star {% if item.user_review and item.user_review.rating >= 5 %}active{% endif %}" data-value="5">★</span>
+                                    </div>
+
+                                    <div style="margin-top:6px; font-size:14px; color:var(--muted);">
+                                        Click a star to rate from 1 to 5.
+                                    </div>
+                                </div>
+
+                                <div style="display:flex; justify-content:flex-end;">
+                                    <button class="btn" type="submit">
+                                        {% if item.user_review %}
+                                            Update Review
+                                        {% else %}
+                                            Submit Review
+                                        {% endif %}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    {% endfor %}
+                </div>
+        {% else %}
+            <p style="margin:8px 0 0; color:var(--muted); font-size:14px;">
+                No items available to review in this order.
+            </p>
+        {% endif %}
     </section>
 
     <style>
@@ -251,4 +385,72 @@
             color: #f5b301;
         }
     </style>
+    
+    <style>
+        .star-rating {
+            display: inline-flex;
+            gap: 6px;
+            font-size: 28px;
+            line-height: 1;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .star-rating .star {
+            color: #d1d5db;
+            transition: color 0.15s ease;
+        }
+
+        .star-rating .star.active,
+        .star-rating .star:hover {
+            color: #f59e0b;
+        }
+    </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll(".star-rating").forEach(function(ratingBlock) {
+                const stars = ratingBlock.querySelectorAll(".star");
+                const hiddenInput = ratingBlock.querySelector(".rating-value");
+
+                function paintStars(value) {
+                    stars.forEach(function (star){
+                        const starValue = parseInt(star.dataset.value);
+                        if (starValue <= value) {
+                            star.classList.add("active");
+                        } else {
+                            star.classList.remove("active");
+                        }
+                        star.classList.remove("hovered");
+                    });
+                }
+                stars.forEach(function(star) {
+                    star.addEventListener("mouseenter", function() {
+                        const hoverValue = parseInt(star.dataset.value);
+                        stars.forEach(function (s) {
+                            const sValue = parseInt(s.dataset.value);
+                            s.classList.toggle("hovered", sValue <= hoverValue);
+                        });
+                    });
+                    star.addEventListener("mouseleave", function() {
+                        stars.forEach(function(s) {
+                            s.classList.remove("hovered");
+                        });
+                    });
+
+                    star.addEventListener("click", function() {
+                        const selectedValue = parseInt(star.dataset.value);
+                        hiddenInput.value = selectedValue;
+                        paintStars(selectedValue);
+                        console.log("Selected rating:", hiddenInput.value);
+                    });
+                });
+                const existingValue = parseInt(hiddenInput.value || "0");
+                if (existingValue > 0) {
+                    paintStars(existingValue);
+                }
+            });
+        });
+    </script>
+             
 {% endblock %}
