@@ -70,12 +70,6 @@
                     </a>
                 {% endif %}
 
-                {% if can_leave_review %}
-                    <a class="btn" href="{% url 'review_submit' order.id %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
-                        Leave Review
-                    </a>
-                {% endif %}
-
                 <a class="link" href="{% url 'catalog' %}">Continue Shopping</a>
             </div>
         </div>
@@ -226,38 +220,85 @@
 
                     <div style="display:grid; gap:14px;">
                         {% for item in order_items %}
-                            <form method="POST" action="{% url 'review_submission' order.id %}" style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
-                                {% csrf_token %}
-                                <input type="hidden" name="order_item_id" value="{{ item.id }}">
-
-                                <div style="margin-top:10px;">
+                            <div styl"border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
+                                <div style="margin-bottom:10px;">
                                     <strong style="font-size:14px;">{{ item.title }}</strong>
                                     <div style="margin-top:4px; color:var(--muted); font-size:13px;">
                                         {{ item.author }}
                                     </div>
                                 </div>
 
-                                <div class="star-rating" style="margin-bottom:12px;">
-                                    <input type="radio" id="star5-{{ item.id }}" name="rating" value="5">
-                                    <label for="star5-{{ item.id }}" title="5 stars">★</label>
+                                {% if item.existing_review %}
+                                    <div style="margin-bottom:10px; font-size:14px;">
+                                        <strong>Your rating:</strong> {{ item.existing_review.rating }}/5
+                                    </div>
 
-                                    <input type="radio" id="star4-{{ item.id }}" name="rating" value="4">
-                                    <label for="star4-{{ item.id }}" title="4 stars">★</label>
+                                    <div style="margin-bottom:10px; color:var(--muted); font-size:14px;">
+                                        {% if item.existing_review.review_text %}
+                                            {{ item.existing_review.review_text }}
+                                        {% else %}
+                                            No written review.
+                                        {% endif %}
+                                    </div>
 
-                                    <input type="radio" id="star3-{{ item.id }}" name="rating" value="3">
-                                    <label for="star3-{{ item.id }}" title="3 stars">★</label>
+                                    <details style="margin-top:10px;">
+                                        <summary style="curson:pointer; font-weight:700;">Edit review</summary>
+                                        <form method="POST" action="{% url 'review_submission' order.id%}" style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="order_id" value="{{ order.id }}">
+                                            <input type="hidden" name="order_item_id" value="{{ item.id }}">
 
-                                    <input type="radio" id="star2-{{ item.id }}" name="rating" value="2">
-                                    <label for="star2-{{ item.id }}" title="2 stars">★</label>
+                                            <div class="star-rating" style="margin-bottom:12px;">
+                                                <input type="radio" id="star5-{{ item.id }}" name="rating" value="5">
+                                                <label for="star5-{{ item.id }}" title="5 stars">★</label>
+
+                                                <input type="radio" id="star4-{{ item.id }}" name="rating" value="4">
+                                                <label for="star4-{{ item.id }}" title="4 stars">★</label>
+
+                                                <input type="radio" id="star3-{{ item.id }}" name="rating" value="3">
+                                                <label for="star3-{{ item.id }}" title="3 stars">★</label>
+
+                                                <input type="radio" id="star2-{{ item.id }}" name="rating" value="2">
+                                                <label for="star2-{{ item.id }}" title="2 stars">★</label>
                                     
-                                    <input type="radio" id="star1-{{ item.id }}" name="rating" value="1">
-                                    <label for="star1-{{ item.id }}" title="1 star">★</label>
-                                </div>
+                                                <input type="radio" id="star1-{{ item.id }}" name="rating" value="1">
+                                                <label for="star1-{{ item.id }}" title="1 star">★</label>
+                                            </div>
+                                            <textarea name="review_text" rows="3" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:8px; resize:vertical;">{{ item.existing_review.review_text }}</textarea>
+                                            <button type="submit" class="btn" style="margin-top:10px;">
+                                                Update Rating
+                                            </button>
+                                        </form>
+                                    </details>
+                                {% else %}
+                                    <form method="POST" action="{% url 'review_submission' order.id %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                                        <input type="hidden" name="order_item_id" value="{{ item.id }}">
 
-                                <button type="submit" class="btn" style="margin-top:10px;">
-                                    Submit Rating
-                                </button>
-                            </form>
+                                        <div class="star-rating" style="margin-bottom:12px;">
+                                            <input type="radio" id="star5-{{ item.id }}" name="rating" value="5">
+                                            <label for="star5-{{ item.id }}" title="5 stars">★</label>
+
+                                            <input type="radio" id="star4-{{ item.id }}" name="rating" value="4">
+                                            <label for="star4-{{ item.id }}" title="4 stars">★</label>
+
+                                            <input type="radio" id="star3-{{ item.id }}" name="rating" value="3">
+                                            <label for="star3-{{ item.id }}" title="3 stars">★</label>
+
+                                            <input type="radio" id="star2-{{ item.id }}" name="rating" value="2">
+                                            <label for="star2-{{ item.id }}" title="2 stars">★</label>
+                                    
+                                            <input type="radio" id="star1-{{ item.id }}" name="rating" value="1">
+                                            <label for="star1-{{ item.id }}" title="1 star">★</label>
+                                        </div>
+                                        <textarea name="review_text" rows="3" style="width:100%; padding:10px; border:1px solid var(--border); border-radius:8px; resize:vertical;">{{ item.existing_review.review_text }}</textarea>
+                                        <button type="submit" class="btn" style="margin-top:10px;">
+                                            Submit Rating
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
                         {% endfor %}
                     </div>
                 </section>

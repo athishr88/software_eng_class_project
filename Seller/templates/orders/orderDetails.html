@@ -84,6 +84,18 @@
                         </span>
                     {% endif %}
                 </div>
+                <form method="post" action="{% url 'update_order_status' order.id %}" style="display:grid; gap:10px; justify-items:end; min-width:300px;">
+                {% csrf_token %}
+                <label for="status"><strong>Overide Package Status:</strong></label>
+                <select name="status" id="status">
+                    <option value="PENDING" {% if order.status == "PENDING" %}selected{% endif %}>Pending</option>
+                    <option value="SHIPPED" {% if order.status == "SHIPPED" %}selected{% endif %}>Shipped</option>
+                    <option value="DELIVERED" {% if order.status == "DELIVERED" %}selected{% endif %}>Delivered</option>
+                    <option value="CANCELLED" {% if order.status == "CANCELLED" %}selected{% endif %}>Cancelled</option>
+                    <option value="REFUNDED" {% if order.status == "REFUNDED" %}selected{% endif %}>Refunded</option>
+                </select>
+                <button type="submit">Update Status</button>
+                </form>
 
                 <div style="color:var(--muted); font-size:14px; line-height:1.45;">
                     Buyer: <strong style="color:var(--text);">{{ order.user.email }}</strong><br>

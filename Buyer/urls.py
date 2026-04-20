@@ -77,6 +77,7 @@ urlpatterns = [
         views.return_request_view,
         name="return_request",
     ),
+<<<<<<< Updated upstream
     path("reviews/submit/", views.review_submission, name="review_submission"),
 =======
     path("orders/<int:order_id>/return-request/", views.return_request, name="return_request"),
@@ -84,4 +85,7 @@ urlpatterns = [
     path("orders/<int:order_id>/review/save/", views.save_inline_review, name="save_inline_review"),
 
 >>>>>>> recover-missing-work
+=======
+    path("reviews/submit/<int:order_id>/", views.review_submission, name="review_submission"),
+>>>>>>> Stashed changes
 ]

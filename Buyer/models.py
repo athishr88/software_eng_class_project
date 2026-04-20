@@ -238,6 +238,7 @@ class SellerReturnReceipt(models.Model):
 
     def __str__(self):
         return f"SellerReturnReceipt rr={self.return_request_id} seller={self.seller_id}"
+<<<<<<< Updated upstream
 =======
     
 class ShippingAddress(models.Model):
@@ -297,12 +298,29 @@ class Review(models.Model):
     rating = models.PositiveIntegerField()
     comment = models.TextField(blank=True, null=True)
 
+=======
+
+class Review(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reviews_written")
+    seller = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="reviews_received")
+    order = models.ForeignKey("Order", on_delete=models.CASCADE, related_name="reviews")
+    order_item = models.ForeignKey("OrderItem", on_delete=models.CASCADE, related_name="reviews")
+
+    rating = models.PositiveSmallIntegerField()
+    review_text = models.TextField(blank=True)
+>>>>>>> Stashed changes
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ("user", "order_item")
+<<<<<<< Updated upstream
 
     def __str__(self):
         return f"{self.book.title} for {self.rating} stars"
 >>>>>>> recover-missing-work
+=======
+    
+    def __str__(self):
+        return f"Review {self.rating}/5 by {self.user_id} for seller {self.seller_id}"
+>>>>>>> Stashed changes

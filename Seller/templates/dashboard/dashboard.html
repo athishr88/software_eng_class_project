@@ -54,6 +54,48 @@
             </div>
         </div>
 
+        <div class="card">
+            <div class="card-label">Seller Rating</div>
+            <div class="card-value">
+                {% if review_count %}
+                    {{ average_rating }}/5
+                {% else %}
+                    No reviews yet
+                {% endif %}
+            </div>
+            <div class="card-foot">
+                {% if review_count %}
+                    Based on {{ review_count }} review{{ review_count|pluralize }}.
+                {% else %}
+                    Once you have reviews, your average rating will appear here.
+                {% endif %}
+            </div>
+       
+            {% if recent_reviews %}
+            <details style="margin-top:14px;">
+                <summary style="cursor:pointer; font-weight:700; color:var(--text);">
+                    View recent reviews 
+                </summary>
+                <div style="margin-top:12px; display:grid; gap:10px;">
+                    {% for review in recent_reviews %}
+                        <div style="border:1px solid var(--border); border-radius:10px; padding:10px 12px; background:#fff;">
+                            <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+                                <strong>{{ review.order_item.book.title }}</strong>
+                                <span>{{ review.rating }}/5</span>
+                            </div>
+
+                            <div style="margin-top:4px; color:var(--muted); font-size:13px;">
+                                {{ review.user.email }} · {{ review.created_at|date:"M d, Y" }}
+                            </div>
+
+                            <div style="margin-top:8px; font-size:14px; color:var(--text);">
+                                {{ review.review_text|default:"no written review." }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </details>
+        {% endif %}
     </section>
 
     <section style="margin-top:14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; max-width:900px;">

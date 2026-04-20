@@ -34,6 +34,7 @@ from Buyer.models import (
     OrderShippingAddress,
     PaymentMethod,
     ReturnRequest,
+    Review,
 )
 from General.models import Address, Book, Inventory, StewardPool, User
 from General.steward import (
@@ -1675,6 +1676,13 @@ def order_detail(request, order_id):
     )
     shipping = getattr(order, "shipping_snapshot", None)
     items = _order_items_from_snapshots(order)
+    review_by_item_id = {
+        review.order_item_id: review
+        for review in Review.objects.filter(order=order, user=request.user)
+    }
+    for item in items:
+        item_review = review_by_item_id.get(item["id"])
+        item["existing_review"] = item_review
     try:
         return_request = order.returnrequest
     except ObjectDoesNotExist:
@@ -1950,7 +1958,50 @@ def return_request_view(request, order_id):
 
 @login_required(login_url="login")
 @never_cache
-
-def review_submission(request):
+def review_submission(request, order_id):
     """Submit a review (no Review model in project schema yet)."""
-    return render(request, "reviews/reviewSubmission.html")
+    order = get_object_or_404(Order, pk=order_id, user=request.user)
+
+    if request.method == "POST":
+        order_item_id = request.POST.get("order_item_id")
+        rating_raw = request.POST.get("rating")
+        review_text = request.POST.get("review_text", "").strip()
+
+        if not order_item_id:
+            messages.error(request, "Invalid order item.")
+            return redirect("order_detail", order_id=order.id)
+        
+        try:
+            rating = int(rating_raw)
+        except (TypeError, ValueError):
+            messages.error(request, "Please select a rating from 1 to 5.")
+            return redirect("order_detail", order_id=order.id)
+        
+        if rating < 1 or rating > 5:
+            messages.error(request, "Please select a rating from 1 to 5.")
+            return redirect("order_detail", order_id=order.id)
+        
+        order_item = get_object_or_404(OrderItem.objects.select_related("book"), pk=order_item_id, order=order)
+
+        if not order_item.book or not order_item.book.seller_user:
+            messages.error(request, "Cannot review this item.")
+            return redirect("order_detail", order_id=order.id)
+        
+        review, created = Review.objects.update_or_create(
+            user=request.user,
+            order=order,
+            order_item=order_item,
+            defaults={
+                "rating": rating,
+                "review_text": review_text,
+                "seller": order_item.book.seller_user,
+            },
+        )
+
+        if created:
+            messages.success(request, "Review submitted.")
+        else:
+            messages.success(request, "Review updated.")
+
+        return redirect("order_detail", order_id=order.id)
+    return redirect(request, "order_detail", order_id=order.id)

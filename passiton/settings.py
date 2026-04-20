@@ -158,3 +158,17 @@ SIMPLE_JWT = {
 }
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None if DEBUG else "same-origin"
+
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+DEFAULT_FROM_EMAIL = "noreply@passitonbooks.com"
+
+"""
+SETUP FOR REAL EMAILS (ABOVE IS FOR LOCAL TESTING)
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "passiton@email.com"
+EMAIL_HOST_PASSWORD = "password"
+DEFAULT_FROM_EMAIL = "Pass It On Books <passiton@email.com>"
+"""

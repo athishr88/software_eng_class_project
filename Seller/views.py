@@ -6,11 +6,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Exists, OuterRef, Q, Subquery, Sum
+from django.db.models import Exists, OuterRef, Q, Subquery, Sum, Avg, Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_POST
 
-from Buyer.models import Order, OrderItem, ReturnRequest, SellerReturnReceipt
+from Buyer.models import Order, OrderItem, ReturnRequest, SellerReturnReceipt, Review
 from General.models import Book, Inventory, User
 
 from .forms import SellerWebhookForm
@@ -136,6 +137,12 @@ def home(request):
         .select_related("user")
         .order_by("-created_at")[:25]
     )
+    review_stats = Review.objects.filter(seller=request.user).aggregate(
+        average_rating=Avg("rating"),
+        review_count=Count("id"),
+    )
+    average_rating = review_stats["average_rating"] or 0
+    review_count = review_stats["review_count"] or 0
     return render(
         request,
         "dashboard/dashboard.html",
@@ -143,7 +150,9 @@ def home(request):
             "stats": stats,
             "recent_orders": recent_orders,
             "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
-            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user))
+            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user)),
+            "average_rating": round(average_rating, 1),
+            "review_count": review_count,
         },
     )
 
@@ -169,6 +178,16 @@ def dashboard(request):
         .select_related("user")
         .order_by("-created_at")[:25]
     )
+    review_stats = Review.objects.filter(seller=request.user).aggregate(
+        average_rating=Avg("rating"),
+        review_count=Count("id"),
+    )
+    average_rating = review_stats["average_rating"] or 0
+    review_count = review_stats["review_count"] or 0
+
+    recent_reviews = Review.objects.filter(seller=request.user).select_related(
+        "user", "order", "order_item__book", "order_item"
+    ).order_by("-created_at")[:10]
     
     return render(
         request,
@@ -177,7 +196,10 @@ def dashboard(request):
             "stats": stats,
             "recent_orders": recent_orders,
             "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
-            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user))
+            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user)),
+            "average_rating": round(average_rating, 1),
+            "review_count": review_count,
+            "recent_reviews": recent_reviews,
         },
     )
 
@@ -476,6 +498,8 @@ def sales_overview(request):
         },
     )
 
+
+
 @login_required(login_url="login")
 @never_cache
 
@@ -542,6 +566,30 @@ def order_details(request, order_id=None):
         seller_receipt = rr.seller_receipts.filter(seller=request.user).first()
     return render(request, "orders/orderDetails.html", {"order": order, "seller_items": seller_items, "seller_total_display": f"{seller_total_cents / 100:.2f}", "return_request": rr, "seller_receipt": seller_receipt})
 
+@login_required(login_url="login")
+@require_POST
+def update_order_status(request, order_id):
+    """Update order status (e.g. mark as shipped)."""
+    if not _require_seller(request.user):
+        messages.error(request, "An approved seller account is required.")
+        return redirect("buyer_home")
+    
+    order = get_object_or_404(Order, pk=order_id)
+
+
+    new_status = (request.POST.get("status") or "").strip().lower()
+    allowed_statuses = {"pending", "shipped", "delivered", "cancelled", "refunded"}
+
+    if new_status not in allowed_statuses:
+        messages.error(request, "Invalid status transition.")
+        return redirect("seller_order_details", order_id=order.id)
+
+    order.status = new_status
+    order.save(update_fields=["status"])
+
+    messages.success(request, f"Order marked as {new_status.title()}.")
+    return redirect("seller_order_details", order_id=order.id)
+
 
 @login_required(login_url="login")
 @never_cache
@@ -557,6 +605,7 @@ def return_requests_list(request):
         "returns/return_requests_list.html",
         {"return_requests": pending},
     )
+
 
 
 @login_required(login_url="login")
