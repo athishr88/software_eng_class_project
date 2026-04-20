@@ -1,0 +1,94 @@
+{% extends "seller_base.html" %}
+{% block title %}Webhooks | Seller{% endblock %}
+{% block content %}
+
+<header style="margin-bottom:16px;">
+    <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
+        Webhooks
+    </h1>
+    <p style="margin:6px 0 0; color:var(--muted); font-size:14px; max-width:720px; line-height:1.5;">
+        When a buyer completes checkout, we can send a JSON <code style="font-size:13px;">POST</code> to your endpoint
+        (for example a Postman mock server) for each order that includes your books. Order placement is never blocked if delivery fails.
+    </p>
+</header>
+
+<section style="max-width:720px; display:grid; gap:16px;">
+    <form method="post" action="{% url 'seller_webhooks' %}" style="display:grid; gap:16px;">
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="message error" role="alert">
+                {{ form.non_field_errors }}
+            </div>
+        {% endif %}
+
+        <div style="display:grid; gap:6px;">
+            <label for="id_webhook_url" style="font-size:14px; font-weight:700;">{{ form.webhook_url.label }}</label>
+            {{ form.webhook_url }}
+            {% if form.webhook_url.help_text %}
+                <p style="margin:0; font-size:13px; color:var(--muted);">{{ form.webhook_url.help_text }}</p>
+            {% endif %}
+            {% for err in form.webhook_url.errors %}
+                <p style="margin:0; font-size:13px; color:#991b1b;">{{ err }}</p>
+            {% endfor %}
+        </div>
+
+        <div style="display:grid; gap:6px;">
+            <label for="id_webhook_secret" style="font-size:14px; font-weight:700;">{{ form.webhook_secret.label }}</label>
+            {{ form.webhook_secret }}
+            {% if form.webhook_secret.help_text %}
+                <p style="margin:0; font-size:13px; color:var(--muted);">{{ form.webhook_secret.help_text }}</p>
+            {% endif %}
+            {% for err in form.webhook_secret.errors %}
+                <p style="margin:0; font-size:13px; color:#991b1b;">{{ err }}</p>
+            {% endfor %}
+        </div>
+
+        <label style="display:flex; align-items:center; gap:10px; font-size:14px; font-weight:700; cursor:pointer;">
+            {{ form.webhook_enabled }}
+            <span>{{ form.webhook_enabled.label }}</span>
+        </label>
+        {% if form.webhook_enabled.help_text %}
+            <p style="margin:-8px 0 0; font-size:13px; color:var(--muted);">{{ form.webhook_enabled.help_text }}</p>
+        {% endif %}
+        {% for err in form.webhook_enabled.errors %}
+            <p style="margin:0; font-size:13px; color:#991b1b;">{{ err }}</p>
+        {% endfor %}
+
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+            <button class="btn" type="submit" name="action" value="save">Save webhook</button>
+            <button
+                class="btn"
+                type="submit"
+                name="action"
+                value="test"
+                formnovalidate
+                style="background:#fff; color:var(--primary); border:2px solid var(--primary);">
+                Test webhook
+            </button>
+            <a class="link" href="{% url 'seller_dashboard' %}" style="margin-left:auto;">Back to dashboard</a>
+        </div>
+    </form>
+
+    <div style="border-top:1px solid var(--border); padding-top:14px; font-size:13px; color:var(--muted); line-height:1.55;">
+        <p style="margin:0 0 8px;"><strong style="color:var(--text);">Live payload shape</strong> (<code>order.placed</code>):</p>
+        <pre style="margin:0; padding:12px; background:#f8fafc; border-radius:10px; border:1px solid var(--border); overflow:auto; font-size:12px;">{
+  "event": "order.placed",
+  "product_name": "…",
+  "order_placed_at": "…",
+  "ship_to_address": {
+    "name": "…",
+    "line1": "…",
+    "city": "…",
+    "state": "…",
+    "postal_code": "…",
+    "country": "…"
+  }
+}</pre>
+        <p style="margin:10px 0 0;">
+            Tests send <code>event: webhook.test</code> with the same fields so you can verify connectivity without placing an order.
+        </p>
+    </div>
+</section>
+
+{% endblock %}
