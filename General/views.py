@@ -132,6 +132,10 @@ def login_page(request):
         user = authenticate(request, username=identifier, password=password)
         
         if user is not None and user.is_active:
+            if user.role == "buyer" and not user.buyer_approved:
+                messages.error(request, "Your buyer account is pending admin approval.")
+                logout(request)
+                return redirect("login")
             login(request, user)
             from Buyer.cart_helpers import merge_session_cart_into_db
 
@@ -207,15 +211,19 @@ def register(request):
                 user=user,
                 defaults={"store_name": store_name},
             )
+        else:
+            user.buyer_approved = False
+            user.save(update_fields=["buyer_approved"])
         login(request, user)
         from Buyer.cart_helpers import merge_session_cart_into_db
 
         merge_session_cart_into_db(user, request.session)
         if user.role == "seller":
             response = redirect("seller_home")
-        else:
-            response = redirect("buyer_home")
-        return _set_jwt_cookies(response, user)
+            return _set_jwt_cookies(response, user)
+        messages.info(request, "Your buyer account is pending admin approval.")
+        logout(request)
+        return redirect("login")
     return render(request, "auth/register.html")
 
 
