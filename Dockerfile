@@ -1,6 +1,10 @@
 # setup project
-FROM python:3.12-bookworm
+FROM python:3.12-slim
 WORKDIR /passiton/
+
+# Set python binaries
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 # install dependencies
 COPY requirements.txt /passiton/
@@ -15,6 +19,6 @@ COPY . /passiton/
 EXPOSE 8000
 
 # run on entrance
-RUN python3 manage.py migrate
-RUN python3 manage.py loaddata seed_data.json
-CMD ["python3", "manage.py", "runserver", "0.0.0.0:8000"]
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
