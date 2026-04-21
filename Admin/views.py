@@ -283,10 +283,44 @@ def admin_users(request):
 
 
 @staff_required
+def toggle_user_freeze(request, user_id):
+    if request.method != "POST":
+        return redirect("admin_users")
+
+    user = get_object_or_404(User, id=user_id)
+    if user.id == request.user.id:
+        messages.error(request, "You cannot freeze your own admin account.")
+        return redirect("admin_users")
+
+    user.is_active = not user.is_active
+    user.save(update_fields=["is_active", "updated_at"])
+    if user.is_active:
+        messages.success(request, f"User {user.email} has been unfrozen.")
+    else:
+        messages.success(request, f"User {user.email} has been frozen.")
+    return redirect("admin_users")
+
+
+@staff_required
 def admin_books(request):
     books = Book.objects.all().select_related("seller_user").order_by("-created_at")[:200]
     ctx = {**_admin_context(request), "nav_active": "books", "books": books}
     return render(request, "books/books.html", ctx)
+
+
+@staff_required
+def toggle_book_freeze(request, book_id):
+    if request.method != "POST":
+        return redirect("admin_books")
+
+    book = get_object_or_404(Book, id=book_id)
+    book.is_active = not book.is_active
+    book.save(update_fields=["is_active", "updated_at"])
+    if book.is_active:
+        messages.success(request, f"Book '{book.title}' is now unfrozen and visible.")
+    else:
+        messages.success(request, f"Book '{book.title}' has been frozen.")
+    return redirect("admin_books")
 
 
 @staff_required
