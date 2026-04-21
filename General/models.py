@@ -40,6 +40,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
     seller_approved = models.BooleanField(default=False)
     seller_approved_at = models.DateTimeField(blank=True, null=True)
+    buyer_approved = models.BooleanField(default=False)
+    buyer_approved_at = models.DateTimeField(blank=True, null=True)
 
     steward_verified = models.BooleanField(default=False)
     steward_city = models.CharField(max_length=120, blank=True, null=True)

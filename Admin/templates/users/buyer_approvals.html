@@ -1,0 +1,24 @@
+{% extends "admin_base.html" %}
+
+{% block content %}
+<h1 style="margin-bottom:20px;">Buyer Approvals</h1>
+
+<h2 style="margin-bottom:10px;">Pending Buyers</h2>
+{% if pending_buyers %}
+    {% for user in pending_buyers %}
+        <div style="border:1px solid #ddd; padding:16px; margin-botttom:12px; border-radius:10px;">
+            <strong>{{ user.first_name }} {{ user.last_name }}</strong> ({{ user.email }})<br>
+            Joined: {{ user.created_at|date:"M d, Y" }}<br>
+
+            <form method="post" action="{% url 'approve_buyer' user.id %}" style="margin-top:10px;">
+                {% csrf_token %}
+                <button type="submit" style="background:#16a34a; color:white; border:none; padding:8px 12px; border-radius:6px; cursor:pointer;">
+                    Approve Buyer
+                </button>
+            </form>
+        </div>
+    {% endfor %}
+{% else %}
+    <p>No pending buyer approvals at this time.</p>
+{% endif %}
+{% endblock %}
