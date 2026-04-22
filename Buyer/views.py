@@ -1181,7 +1181,7 @@ def order_confirmation(request, order_id):
     order = get_object_or_404(
         Order.objects.select_related("shipping_snapshot").prefetch_related(
             Prefetch(
-                "orderitem",
+                "order_items",
                 queryset=OrderItem.objects.select_related("book", "book_snapshot"),
             )
         ),
