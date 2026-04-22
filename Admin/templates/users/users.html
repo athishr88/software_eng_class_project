@@ -20,6 +20,7 @@
           <th>Steward</th>
           <th>Active</th>
           <th>Joined</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -32,9 +33,21 @@
           <td>{% if u.steward_verified %}Yes{% else %}—{% endif %}</td>
           <td>{% if u.is_active %}Yes{% else %}No{% endif %}</td>
           <td>{{ u.created_at|date:"M d, Y" }}</td>
+          <td>
+            {% if u.id == request.user.id %}
+              <span class="pill resolved">Current Admin</span>
+            {% else %}
+              <form method="post" action="{% url 'toggle_user_freeze' u.id %}">
+                {% csrf_token %}
+                <button type="submit" class="pill {% if u.is_active %}review{% else %}open{% endif %}">
+                  {% if u.is_active %}Freeze{% else %}Unfreeze{% endif %}
+                </button>
+              </form>
+            {% endif %}
+          </td>
         </tr>
         {% empty %}
-        <tr><td colspan="7" class="empty-row">No users found</td></tr>
+        <tr><td colspan="8" class="empty-row">No users found</td></tr>
         {% endfor %}
       </tbody>
     </table>

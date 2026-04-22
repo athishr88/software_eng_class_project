@@ -154,7 +154,9 @@ def admin_dashboard(request):
         for b in recent_books
     ]
     pending_seller_approvals = User.objects.filter(role="seller", seller_approved=False).count()
+    pending_buyer_approvals = User.objects.filter(role="buyer", buyer_approved=False).count()
     pending_sellers_preview = User.objects.filter(role="seller", seller_approved=False).order_by("created_at")[:5]
+    pending_buyers_preview = User.objects.filter(role="buyer", buyer_approved=False).order_by("created_at")[:5]
 
     admin_name = "Admin"
     if request.user.is_authenticated:
@@ -167,6 +169,7 @@ def admin_dashboard(request):
         "payment_flags": payment_flags,
         "recent_listings": recent_listings,
         "pending_sellers_preview": pending_sellers_preview,
+        "pending_buyers_preview": pending_buyers_preview,
         "metrics": {
             "total_users": f"{total_users:,}",
             "active_users_30d": f"{active_users_30d:,}",
@@ -177,6 +180,7 @@ def admin_dashboard(request):
             "open_flags": f"{open_flags_count}",
             "revenue_month": revenue_month,
             "pending_seller_approvals": f"{pending_seller_approvals:,}",
+            "pending_buyer_approvals": f"{pending_buyer_approvals:,}",
             "total_users_note": f"+{users_this_week} this week",
             "active_users_note": f"{active_pct:.0f}% of total",
             "books_listed_note": f"+{books_today} today",
@@ -202,7 +206,26 @@ def _admin_context(request):
 def seller_approvals(request):
     pending_sellers = User.objects.filter(role="seller", seller_approved=False).order_by("created_at")
     approved_sellers = User.objects.filter(role="seller", seller_approved=True).order_by("-seller_approved_at", "-created_at")
-    return render(request, "users/seller_approvals.html", {"pending_sellers": pending_sellers, "approved_sellers": approved_sellers,})
+    return render(
+        request,
+        "users/seller_approvals.html",
+        {
+            "pending_sellers": pending_sellers,
+            "approved_sellers": approved_sellers,
+        },
+    )
+
+@staff_required
+def buyer_approvals(request):
+    pending_buyers = User.objects.filter(role="buyer", buyer_approved=False).order_by("created_at")
+    return render(
+        request,
+        "users/buyer_approvals.html",
+        {
+            "pending_buyers": pending_buyers,
+        },
+    )
+
 
 @staff_required
 def approve_seller(request, user_id):
@@ -217,6 +240,21 @@ def approve_seller(request, user_id):
 
     messages.success(request, f"Seller account for {user.email} has been approved.")
     return redirect("seller_approvals")
+
+
+@staff_required
+def approve_buyer(request, user_id):
+    if request.method != "POST":
+        return redirect("buyer_approvals")
+
+    user = get_object_or_404(User, id=user_id, role="buyer")
+    if user:
+        user.buyer_approved = True
+        user.buyer_approved_at = timezone.now()
+        user.save(update_fields=["buyer_approved", "buyer_approved_at"])
+
+    messages.success(request, f"Buyer account for {user.email} has been approved.")
+    return redirect("buyer_approvals")
 
 @staff_required
 def reports_flags(request):
@@ -247,10 +285,44 @@ def admin_users(request):
 
 
 @staff_required
+def toggle_user_freeze(request, user_id):
+    if request.method != "POST":
+        return redirect("admin_users")
+
+    user = get_object_or_404(User, id=user_id)
+    if user.id == request.user.id:
+        messages.error(request, "You cannot freeze your own admin account.")
+        return redirect("admin_users")
+
+    user.is_active = not user.is_active
+    user.save(update_fields=["is_active", "updated_at"])
+    if user.is_active:
+        messages.success(request, f"User {user.email} has been unfrozen.")
+    else:
+        messages.success(request, f"User {user.email} has been frozen.")
+    return redirect("admin_users")
+
+
+@staff_required
 def admin_books(request):
     books = Book.objects.all().select_related("seller_user").order_by("-created_at")[:200]
     ctx = {**_admin_context(request), "nav_active": "books", "books": books}
     return render(request, "books/books.html", ctx)
+
+
+@staff_required
+def toggle_book_freeze(request, book_id):
+    if request.method != "POST":
+        return redirect("admin_books")
+
+    book = get_object_or_404(Book, id=book_id)
+    book.is_active = not book.is_active
+    book.save(update_fields=["is_active", "updated_at"])
+    if book.is_active:
+        messages.success(request, f"Book '{book.title}' is now unfrozen and visible.")
+    else:
+        messages.success(request, f"Book '{book.title}' has been frozen.")
+    return redirect("admin_books")
 
 
 @staff_required

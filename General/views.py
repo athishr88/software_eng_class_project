@@ -141,6 +141,10 @@ def login_page(request):
         user = authenticate(request, username=identifier, password=password)
         
         if user is not None and user.is_active:
+            if user.role == "buyer" and not user.buyer_approved:
+                messages.error(request, "Your buyer account is pending admin approval.")
+                logout(request)
+                return redirect("login")
             login(request, user)
 
             from Buyer.cart_helpers import merge_session_cart_into_db
