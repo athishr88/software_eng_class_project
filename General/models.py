@@ -62,6 +62,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
 
+    security_question = models.CharField(max_length=255, blank=True, null=True)
+    security_answer_hash = models.CharField(max_length=255, blank=True, null=True)
+
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]

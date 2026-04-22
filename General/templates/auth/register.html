@@ -159,6 +159,19 @@
                         <input type="password" name="confirm_password" autocomplete="new-password" required>
                     </label>
 
+                    <label>
+                        Security Question
+                        <select name="security_question" required>
+                            <option value="" disabled {% if not post.security_question %}selected{% endif %}>Select a security question</option>
+                            <option value="pet" {% if post.security_question == 'pet' %}selected{% endif %}>What was the name of your first pet?</option>
+                            <option value="city" {% if post.security_question == 'city' %}selected{% endif %}>In what city were you born?</option>
+                            <option value="mother_maiden" {% if post.security_question == 'mother_maiden' %}selected{% endif %}>What is your mother's maiden name?</option>
+                        </select>
+                    </label>
+                    <label>
+                        Security Answer
+                        <input type="text" name="security_answer" required value="{{ post.security_answer|default:'' }}">
+                    </label>
                     <div class="actions">
                         <button type="submit">Create Account</button>
                         <div class="links">

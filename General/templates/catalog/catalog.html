@@ -43,6 +43,18 @@
                     <input type="checkbox" name="in_stock" value="1" {% if request.GET.in_stock %}checked{% endif %} style="width:auto; margin:0;">
                     In Stock Only
                 </label>
+                {% if compare_count > 0 %}
+                        <div class="compare-bar">
+                            <span class="compare-bar__text">
+                                {{ compare_count }} item{{ compare_count|pluralize }} selected for comparison.
+                            </span>
+
+                            <div class="compare-bar__actions">
+                                <a href="{% url 'compare_products' %}" class="btn compare=bar__btn">View Compare</a>
+                                <a href="{% url 'clear_compare' %}" class="btn compare-bar__clear">Clear</a>
+                            </div>
+                        </div>
+                    {% endif %}
 
                 <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap;">
                     <a class="link" href="{% url 'catalog' %}" style="align-self:center;">Clear</a>
@@ -52,9 +64,9 @@
         </aside>
 
         <section class="card results-panel">
-
             {% if page_obj and page_obj.object_list %}
                 <div style="padding:18px;">
+
                     <div class="catalog-grid">
                         {% for book in page_obj.object_list %}
                             <article class="book-card">
@@ -112,6 +124,9 @@
                                             {% csrf_token %}
                                             <button class="btn book-card__cta" type="submit">Add to Cart</button>
                                         </form>
+                                        <a href="{% url 'add_to_compare' book.id %}" class="btn book-card__cta compare-btn">
+                                            Add to Compare
+                                        </a>
                                     </div>
                                 </div>
                             </article>
@@ -333,6 +348,27 @@
         .book-card__actions .book-card__cta {
             padding: 10px 12px;
         }
+        .compare-btn{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+        }
+        .compare-bar {
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            gap:12px;
+        }
+        .compare-bar__actions {
+            display:flex;
+            gap:10px;
+        }
+
+        .btn {
+            text-decoration: none;
+        }
+
         @media (max-width: 960px) {
             .catalog-shell {
                 grid-template-columns: 1fr;

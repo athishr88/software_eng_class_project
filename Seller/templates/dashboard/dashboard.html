@@ -54,6 +54,35 @@
             </div>
         </div>
 
+        <div class="card">
+            <h3>Seller Rating</h3>
+            <p style="font-size:24px; font-weight:800; margin:0;">
+                {{ seller_avg_rating }}/5
+            </p>
+            <p style="color:var(--muted); margin-top:6px;">
+                Based on {{ seller_review_count }} review{{ seller_review_count|pluralize }}.
+            </p>
+                    
+            {% if recent_reviews %}
+                <details style="margin-top:14px;">
+                    <summary style="cursor:pointer; font-weight:700;">View recent reviews</summary>
+                    <div style="margin-top:12px; display:grid; gap:10px">
+                        {% for review in recent_reviews %}
+                            <div style="border:1px solid var(--border); border-radius:10px; padding:10px 12px;">
+                                <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+                                    <strong>{{ review.order_item.book.title }}</strong>
+                                    <span>{{ review.rating }}/5</span>
+                                </div>
+                                <div style="margin-top:4px; color:var(--muted); font-size:13px;">
+                                    {{ review.user.email }} · {{ review.created_at|date:"M d, Y" }}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </details>
+            {% endif %}
+        </div>
+
     </section>
 
     <section style="margin-top:14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px; max-width:900px;">
@@ -167,7 +196,7 @@
                     <tbody>
                         {% for order in recent_orders %}
                             <tr>
-                                <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">#{{ order.id }}</td>
+                                <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">#{{ order.display_order_number|default:order.id }}</td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.status }}</td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.user.email }}</td>
                                 <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">{{ order.order_total_display }}</td>

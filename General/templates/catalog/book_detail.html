@@ -102,6 +102,9 @@
                     {{ book.description }}
                 </p>
             </div>
+            <a href="{% url 'add_to_compare' book.id %}" class="btn btn-outline-secondary">
+                    Compare
+                </a>
     
         </div>
     </div>
@@ -118,9 +121,24 @@
         {% if reviews %}
             <div style="padding:18px; display:grid; gap:14px;">
                 {% for review in reviews %}
-                    <div style="border-bottom:1px solid #eee; padding-bottom:10px;">
-                        <p style="margin:0; font-weight:800; font-size:14px;">
-                            {{ review.comment }}
+                    <div style="border-bottom:1px solid #eee; padding-bottom:14px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:6px; flex-wrap:wrap;">
+                            <p style="margin:0; font-weight:800; font-size:14px; color:var(--text)">
+                                {{ review.user.first_name }} {{ review.user.last_name|slice:"1" }}.
+                            </p>
+
+                            <p style="margin:0; font-size:13px; color:#f59e0b; font-weight:800;">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        ★
+                                    {% else %}
+                                        ☆
+                                    {% endif %}
+                                {% endfor %}
+                            </p>
+                        </div>
+                        <p style="margin:0; font-size:12px; color:var(--muted);">
+                            {{ review.created_at|date:"M d, Y" }}
                         </p>
                     </div>
                 {% endfor %}

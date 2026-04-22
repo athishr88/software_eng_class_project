@@ -10,6 +10,8 @@ from django.urls import reverse
 from urllib.parse import quote
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import update_session_auth_hash
 
 from Admin.models import FlagReport
 from Buyer.models import Order, ReturnRequest
@@ -291,7 +293,71 @@ def admin_audit_logs(request):
 
 @staff_required
 def admin_settings(request):
+    user = request.user
     ctx = {**_admin_context(request), "nav_active": "settings"}
+
+    if request.method == "POST":
+        action = (request.POST.get("action") or "").strip()
+
+        if action == "password":
+            current = request.POST.get("current_password") or ""
+            new_pw = request.POST.get("new_password") or ""
+            confirm = request.POST.get("confirm_password") or ""
+
+            errs = []
+
+            if not user.check_password(current):
+                errs.append("Current password is incorrect.")
+            
+            if len(new_pw) < 8:
+                errs.append("New password must be at least 8 characters.")
+            
+            if new_pw != confirm:
+                errs.append("New passwords do not match.")
+            
+            if errs:
+                ctx["passwrod_error"] - " ".join(errs)
+            
+            else:
+                user.set_password(new_pw)
+                user.save()
+
+                update_session_auth_hash(request, user)
+
+                messages.success(request, "Password updated successfully.")
+                return redirect("admin_settings")
+
+        elif action == "security":
+            question = (request.POST.get("security_question") or "").strip()
+            answer = (request.POST.get("security_answer") or "").strip()
+
+            errs = []
+
+            if not question:
+                errs.append("Please chose a security question.")
+            
+            if not answer:
+                errs.append("Please enter a security answer.")
+            
+            if errs:
+                ctx["security_error"] = " ".join(errs)
+
+            else:
+                user.security_question = question
+                user.security_answer_hash = make_password(answer.lower())
+                user.save(update_fields=["security_question", "security_answer_hash"])
+
+                messages.success(request, "Security question updated.")
+                return redirect("admin_settings")
+        
+    ctx["security_question_choices"] = [
+        ("city", "What city were you born in?"),
+        ("pet", "What was the name of your first pet?"),
+        ("mother_maiden", "What was your mothers maiden name?"),
+    ]
+
+    ctx["selected_security_question"] = user.security_question or ""
+
     return render(request, "settings/settings.html", ctx)
 
 

@@ -1,12 +1,12 @@
 {% extends "seller_base.html" %}
-{% block title %}Order #{{ order.id }} | Seller | Pass It On Books{% endblock %}
+{% block title %}Order #{{ display_order_number }} | Seller | Pass It On Books{% endblock %}
 {% block content %}
 
     <header style="margin-bottom:16px;">
         <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
             <div>
                 <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
-                    Order #{{ order.id }}
+                    Order #{{ display_order_number }}
                 </h1>
                 <p><strong>Buyer:</strong> {{ order.user.email }}</p>
                 <p><strong>Status:</strong> {{ order.status }}</p>
@@ -17,16 +17,33 @@
             <a class="link" href="{% url 'seller_orders' %}">Back to Orders</a>
         </div>
     </header>
-    <h2>Your items in this order</h2>
-    {% if seller_items %}
-        <div style="display:grid; gap:12px;">
-            {% for item in seller_items %}
-                <div class="card">
-                    <strong>{{ item.book.title }}<strong><br>
-                    Qty: {{ item.quantity }}<br>
-                    Line total: ${{ item.line_total_display|floatformat:2 }}
-                </div>
-            {% endfor %}
+
+    <form method="post" action="{% url 'update_order_status' order.id %}">
+        {% csrf_token %}
+        <label for="status"><strong>Override Package Status:</strong></label>
+        <select name="status" id="status">
+            <option value="pending" {% if order.status == "pending" %}selected{% endif %}>Pending</option>
+            <option value="paid" {% if order.status == "paid" %}selected{% endif %}>Paid</option>
+            <option value="shipped" {% if order.status == "shipped" %}selected{% endif %}>Shipped</option>
+            <option value="delivered" {% if order.status == "delivered" %}selected{% endif %}>Delivered</option>
+            <option value="cancelled" {% if order.status == "cancelled" %}selected{% endif %}>Cancelled</option>
+            <option value="refunded" {% if order.status == "refunded" %}selected{% endif %}>Refunded</option>
+        </select>
+        <button type="submit" class="btn" style="margin-left:20px;">Update Status</button>
+    </form>
+    {% for item in items %}
+        <div class="card">
+            <strong>{{ item.book.title }}<strong><br>
+                Qty: {{ item.quantity }}<br>
+                Line total: ${{ seller_line_total_display|floatformat:2 }}<br>
+                {% if item.deposit_required %}
+                    Deposit: ${{ item.deposit_amount|floatformat:2 }}
+                {% endif %}
+        </div>
+    {% endfor %}
+    {% if items %}
+        <div style="margin-top:10px; color:var(--muted); font-size:14px;">
+            Total for this seller: <strong style="color:var(--text);">${{ order.seller_line_total_display }}</strong>
         </div>
     {% else %}
         <p>No items found for this seller in this order.</p>
@@ -163,12 +180,12 @@
             <h2 style="margin:0; font-size:16px; font-weight:800;">Items</h2>
         </div>
 
-        {% if seller_items %}
+        {% if items %}
             <div style="padding:18px; display:grid; gap:10px;">
-                {% for item in seller_items %}
+                {% for item in items %}
                     <div style="border:1px solid var(--border); border-radius:var(--radius); padding:12px; background:#fff; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap;">
                         <div>
-                            <strong style="font-size:14px;">{{ item.title }}</strong>
+                            <strong style="font-size:14px;">{{ item.book.title }}</strong>
                             <div style="margin-top:4px; color:var(--muted); font-size:12px;">
                                 Qty {{ item.quantity }}
                                 {% if item.deposit_required %}
@@ -178,8 +195,28 @@
                         </div>
                         <div style="text-align:right;">
                             <div style="color:var(--muted); font-size:13px;">Line Total</div>
-                            <div style="font-weight:900;">${{ item.line_total_display }}</div>
+                            <div style="font-weight:900;">${{ seller_line_total_display|floatformat:2  }}</div>
                         </div>
+                        {% if item.existing_review %}
+                            <div style="margin-top:10px; padding:10px; border:1px solid var(--border); border-radius:var(--radius); background:#fafafa;">
+                                <div style="font-size:14px; font-weight:700;">
+                                    Buyer Rating: {{ item.existing_review.rating }} / 5
+                                </div>
+
+                                <div style="font-size:22px; color:gold; letter-spacing:2px; margin-top:4px;">
+                                    {% if item.existing_review.rating >= 1 %}★{% else %}☆{% endif %}
+                                    {% if item.existing_review.rating >= 2 %}★{% else %}☆{% endif %}
+                                    {% if item.existing_review.rating >= 3 %}★{% else %}☆{% endif %}
+                                    {% if item.existing_review.rating >= 4 %}★{% else %}☆{% endif %}
+                                    {% if item.existing_review.rating >= 5 %}★{% else %}☆{% endif %}
+                                </div>
+
+                            </div>
+                        {% else %}
+                            <div style="margin-top:10px; padding:10px; border:1px solid var(--border); border-radius:var(--radius); background:#fafafa; color:var(--muted); font-size:14px;">
+                                No review from buyer yet.
+                            </div>
+                        {% endif %}
                     </div>
                 {% endfor %}
             </div>
@@ -191,6 +228,16 @@
             </div>
         {% endif %}
     </section>
+
+    <section style="margin-top:12px; display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-width:900px;">
+        <div class="card" style="box-shadow:none;">
+            <h3 style="margin:0 0 6px; font-size:14px; font-weight:900;">Returns & Refunds</h3>
+            <p style="margin:0; color:var(--muted); font-size:14px;">
+                No items found for this order.
+            </p>
+        </div>
+    </section>
+
 
     <section style="margin-top:12px; display:grid; grid-template-columns: 1fr 1fr; gap:12px; max-width:900px;">
         <div class="card" style="box-shadow:none;">

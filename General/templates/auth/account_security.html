@@ -1,0 +1,35 @@
+{% extends "public/public_base.html" %}
+{% block content %}
+    <div class="card" style="max-width: 400px; margin: 40px auto; padding: 20px;">
+        <h2>Account Security</h2>
+        <p style="margin: 0 0 16px; color: var(--muted);">Set up a security question to help recover your account if you forget your password.</p>
+
+        {% if messages %}
+=           {% for message in messages %}
+                <div style="margin-bottom:16px; padding:12px; border-radius:8px; background:#f4f4f4;">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <div style="margin-bottom: 16px;">
+                <label for="{{ form.security_question.id_for_label }}" style="display: block; margin-bottom: 4px;">Security Question</label>
+                {{ form.security_question }}
+                {% for error in form.security_question.errors %}
+                    <p style="margin:6px 0 0; color:#8a1f1f; font-size:14px;">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label for="{{ form.security_answer.id_for_label }}" style="display: block; margin-bottom: 4px;">Answer</label>
+                {{ form.security_answer }}
+                {% for error in form.security_answer.errors %}
+                    <p style="margin:6px 0 0; color:#8a1f1f; font-size:14px;">{{ error }}</p>
+                {% endfor %}
+            </div>
+            <button type="submit">Save Security Question</button>
+        </form>
+    </div>
+{% endblock %}

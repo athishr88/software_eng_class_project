@@ -7,15 +7,18 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import FileResponse, Http404
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth import get_user_model
-from django.db.models import Q
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib.auth.password_validation import validate_password
+from django import forms
+from django.db.models import Q, Avg, Count
 from django.core.paginator import Paginator
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.middleware.csrf import get_token
-
+from .forms import ForgotPasswordEmailForm, RegisterForm, SecurityQuestionResetForm, SecurityQuestionForm
 from Admin.models import FlagReport
 from .models import Book, StewardContribution
+from Buyer.models import Order, OrderItem, Review
 from django.views.decorators.cache import never_cache
 
 User = get_user_model()
@@ -23,9 +26,13 @@ User = get_user_model()
 # Directory for local book cover images (name = book title + extension)
 _BOOK_IMAGES_DIR = Path(settings.BASE_DIR) / "book_images"
 if not _BOOK_IMAGES_DIR.exists():
-    _BOOK_IMAGES_DIR = Path(settings.BASE_DIR).parent / "book_images"
+    _BOOK_IMAGES_DIR = Path(settings.BASE_dsDIR).parent / "book_images"
 
-
+SECURITY_QUESTION_CHOICES = {
+    "city": "In what city were you born?",
+    "mother_maiden": "What is your mother's maiden name?",
+    "first_pet": "What was the name of your first pet?",
+}
 def _sanitize_book_title_for_filename(title: str) -> str:
     """Make a safe filename stem from a book title (Windows-friendly)."""
     if not title:
@@ -122,9 +129,11 @@ def login_page(request):
         if request.user.role == "admin":
             return redirect("admin_dashboard")
         elif request.user.role == "seller":
-            return redirect("seller_home")
-        else:
+            if getattr(request.user, "seller_approved", False):
+                return redirect("seller_home")
+            messages.error(request, "Your account is pending approval.")
             return redirect("buyer_home")
+        return redirect("buyer_home")
     
     if request.method == "POST":
         identifier = (request.POST.get("username") or "").strip()
@@ -133,6 +142,7 @@ def login_page(request):
         
         if user is not None and user.is_active:
             login(request, user)
+
             from Buyer.cart_helpers import merge_session_cart_into_db
 
             merge_session_cart_into_db(user, request.session)
@@ -141,7 +151,7 @@ def login_page(request):
             elif user.role == "admin":
                 response = redirect("admin_dashboard")
             elif user.role == "seller":
-                if user.seller_approved:
+                if getattr(user, "seller_approved", False):
                     response = redirect("seller_home")
                 else:
                     messages.error(request, "Your seller account is pending approval.")
@@ -154,6 +164,7 @@ def login_page(request):
             "login/login_page.html",
             {"error": "Invalid email or password.", "next": next_url},
         )
+
     get_token(request)
     return render(request, "login/login_page.html", {"next": next_url})
 
@@ -167,11 +178,16 @@ def register(request):
         password = request.POST.get("password") or ""
         confirm = request.POST.get("confirm_password") or ""
         role = (request.POST.get("role") or "buyer").strip().lower()
+        security_question = (request.POST.get("security_question") or "").strip()
+        security_answer = (request.POST.get("security_answer") or "").strip()
+
         if role not in ("buyer", "seller"):
             role = "buyer"
         phone = (request.POST.get("phone") or "").strip() or None
         store_name = (request.POST.get("store_name") or "").strip() or None
+
         errors = []
+
         if not email:
             errors.append("Email is required.")
         if not first_name:
@@ -182,8 +198,13 @@ def register(request):
             errors.append("Password must be at least 8 characters.")
         if password != confirm:
             errors.append("Passwords do not match.")
+        if not security_question:
+            errors.append("Security question is required.")
+        if not security_answer:
+            errors.append("Security answer is required.")
         if User.objects.filter(email__iexact=email).exists():
             errors.append("An account with this email already exists.")
+
         if errors:
             return render(
                 request,
@@ -198,6 +219,10 @@ def register(request):
             role=role,
             phone=phone,
         )
+        user.security_question = security_question
+        user.security_answer_hash = make_password(security_answer.strip().lower())
+        user.save(update_fields=["security_question", "security_answer_hash"])
+
         if role == "seller":
             from Seller.models import SellerProfile
             user.seller_approved = False
@@ -207,14 +232,17 @@ def register(request):
                 user=user,
                 defaults={"store_name": store_name},
             )
+    
         login(request, user)
-        from Buyer.cart_helpers import merge_session_cart_into_db
 
+        from Buyer.cart_helpers import merge_session_cart_into_db
         merge_session_cart_into_db(user, request.session)
+
         if user.role == "seller":
             response = redirect("seller_home")
         else:
             response = redirect("buyer_home")
+
         return _set_jwt_cookies(response, user)
     return render(request, "auth/register.html")
 
@@ -222,6 +250,34 @@ def register(request):
 def email_verification(request):
     """Email verification page."""
     return render(request, "auth/email_verification.html")
+
+@login_required(login_url="login")
+def profile_settings(request):
+    user = request.user
+
+    if user.role == "admin":
+        template_name = "auth/admin_profile.html"
+    elif user.role == "seller":
+        template_name = "auth/seller_profile.html"
+    else:
+        template_name = "auth/buyer_profile.html"
+    
+    if request.method == "POST":
+        form = SecurityQuestionForm(request.POST)
+        if form.is_valid():
+            user.security_question = form.cleaned_data["security_question"]
+            user.security_answer_hash = make_password(form.cleaned_data["security_answer"].strip().lower())
+            user.save(update_fields=["security_question", "security_answer_hash"])
+
+            messages.success(request, "Your security question has been updated.")
+            return redirect("profile_settings")
+        
+    else:
+        form = SecurityQuestionForm(initial={
+            "security_question": user.security_question or "",
+        })
+
+    return render(request, template_name, {"form": form})
 
 @login_required(login_url="login")
 def catalog(request):
@@ -271,13 +327,16 @@ def catalog(request):
         book.cover_serve_url = request.build_absolute_uri(f"/book_covers/{quote(fn, safe='')}")
 
         ##book.cover_serve_url = f"/book_images/{quote(fn, safe='')}"
-        
+    
+    compare_list = request.session.get("compare_list", [])
+    compare_count = len(compare_list)
 
     return render(
         request, 
         "catalog/catalog.html", 
         {
             "page_obj": page_obj,
+            "compare_count": len(request.session.get("compare_list", [])),
         }
     )
 
@@ -292,6 +351,11 @@ def book_detail(request, pk=None):
     cover_static_path = _get_book_cover_static_path(book.title)
     cover_serve_filename = _get_book_cover_filename(book.title) or "default.jpg"
     cover_serve_url = request.build_absolute_uri(f"/book_covers/{quote(cover_serve_filename, safe='')}")
+    
+    reviews = Review.objects.filter(
+        order_item__book=book
+    ).select_related("user").order_by("created_at")
+    
     return render(
         request,
         "catalog/book_detail.html",
@@ -301,9 +365,80 @@ def book_detail(request, pk=None):
             "cover_static_path": cover_static_path,
             "cover_serve_filename": cover_serve_filename,
             "cover_serve_url": cover_serve_url,
-            "reviews": [],
+            "reviews": reviews,
         },
     )
+
+def add_to_compare(request, book_id):
+    compare_list = request.session.get("compare_list", [])
+
+    compare_list = [int(x) for x in compare_list]
+
+    if book_id not in compare_list:
+        compare_list.append(book_id)
+    
+    if len(compare_list) > 4:
+        compare_list = compare_list[:4]
+
+    request.session["compare_list"] = compare_list
+    request.session.mofified = True
+    return redirect(request.META.get("HTTP_REFERER", "catalog"))
+
+def remove_from_compare(request, book_id):
+    compare_list = request.session.get("compare_list", [])
+    compare_list = [int(x) for x in compare_list]
+
+    if book_id in compare_list:
+        compare_list.remove(book_id)
+    
+    request.session["compare_list"] = compare_list
+    request.session.modified = True
+
+    return redirect("compare_products")
+
+def clear_compare(request):
+    request.session["compare_list"] = []
+    request.session.modified = True
+    return redirect("compare_products")
+
+def compare_products(request):
+    compare_list = request.session.get("compare_list", [])
+    compare_list = [int(x) for x in compare_list]
+    books = Book.objects.filter(id__in=compare_list, is_active=True)
+
+    books_by_id = {book.id: book for book in books}
+    
+    compared_books = []
+    for book_id in compare_list:
+        book = books_by_id.get(book_id)
+        if not book:
+            continue
+
+        reviews = Review.objects.filter(order_item__book=book)
+        avg_rating = reviews.aggregate(avg=Avg("rating"))["avg"]
+
+        if avg_rating:
+            rating_display = f"{round(avg_rating,1)} / 5"
+        else:
+            rating_display = "No Ratings"
+        cover_serve_filename = _get_book_cover_filename(book.title) or "default.jpg"
+        cover_serve_url = request.build_absolute_uri(
+            f"/book_covers/{quote(cover_serve_filename, safe='')}"
+        )
+
+        compared_books.append({
+            "book": book,
+            "rating_display": rating_display,
+            "price_dollars": book.base_price_cents / 100,
+            "stock_quantity": book.stock_quantity,
+            "cover_serve_url": cover_serve_url
+        })
+    
+    context = {
+        "compared_books": compared_books,
+    }
+    return render(request, "compare/compare_products.html", {"compared_books": compared_books,})
+
 @login_required(login_url="login")
 def cart(request):
     """TEMP BUYER CART PAGE"""
@@ -346,6 +481,8 @@ def logout_view(request):
     response = redirect("login")
     response.delete_cookie("sessionid")
     response.delete_cookie("csrftoken")
+    response.delete_cookie("access_token")
+    response.delete_cookie("refresh_token")
     return response
 
 
@@ -409,3 +546,96 @@ def flag_book(request, pk):
     )
     messages.success(request, "Thanks — your report was submitted for review.")
     return redirect("book_detail", pk=pk)
+
+class ForgotPasswordEmailForm(forms.Form):
+    email = forms.EmailField(label="Email")
+
+class SecurityQuestionResetForm(forms.Form):
+    answer = forms.CharField(label="Security Question Answer", max_length=255)
+    new_password1 = forms.CharField(label="New Password", widget=forms.PasswordInput)
+    new_password2 = forms.CharField(label="Confirm New Password", widget=forms.PasswordInput)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        pw1 = cleaned_data.get("new_password1")
+        pw2 = cleaned_data.get("new_password2")
+
+        if pw1 and pw2 and pw1 != pw2:
+            self.add_error("new_password2", "Passwords do not match.")
+        
+        if pw1:
+            validate_password(pw1)
+        
+        return cleaned_data
+
+def forgot_password_email(request):
+    if request.method == "POST":
+        form = ForgotPasswordEmailForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data["email"].strip().lower()
+            try:
+                user = User.objects.get(email__iexact=email, is_active=True)
+                request.session["password_reset_user_id"] = user.id
+                return redirect("forgot_password_question")
+            except User.DoesNotExist:
+                form.add_error("email", "No account found with that email.")
+    else:
+        form = ForgotPasswordEmailForm()
+    return render(request, "auth/forgot_password_email.html", {"form": form})
+
+def forgot_password_question(request):
+    user_id = request.session.get("password_reset_user_id")
+    if not user_id:
+        return redirect("forgot_password_email")
+    try:
+        user = get_object_or_404(User, id=user_id, is_active=True)
+    except User.DoesNotExist:
+        request.session.pop("password_reset_user_id", None)
+        return redirect("forgot_password_email")
+    
+    if not user.security_question or not user.security_answer_hash:
+        return render(request, "auth/forgot_password_question.html", {"form": SecurityQuestionResetForm(), "security_question": "", "no_question_set": True})
+    
+
+    if request.method == "POST":
+        form = SecurityQuestionResetForm(request.POST)
+        if form.is_valid():
+            answer = form.cleaned_data["answer"].strip().lower()
+
+            if check_password(answer, user.security_answer_hash):
+                user.set_password(form.cleaned_data["new_password1"])
+                user.save()
+                request.session.pop("password_reset_user_id", None)
+                return redirect("forgot_password_done")
+            else:
+                form.add_error("answer", "Incorrect security answer.")
+    else:
+        form = SecurityQuestionResetForm()
+    return render(request, "auth/forgot_password_question.html", {"form": form, "security_question": SECURITY_QUESTION_CHOICES.get(user.security_question, user.security_question), "no_question_set": False})
+
+def forgot_password_done(request):
+    return render(request, "auth/forgot_password_done.html")
+
+def _save_security_question(user, form):
+    user.security_question = form.cleaned_data["security_question"]
+    user.security_answer_hash = make_password(form.cleaned_data["security_answer"].strip().lower())
+    user.save(update_fields=["security_question", "security_answer_hash"])
+    
+def account_security(request):
+    user = request.user
+    if request.method == "POST":
+        form = SecurityQuestionForm(request.POST)
+        if form.is_valid():
+            user.security_question = form.cleaned_data["security_question"]
+            user.security_answer_hash = make_password(form.cleaned_data["security_answer"].strip().lower())
+            user.save()
+            messages.success(request, "Security question updated.")
+            return redirect("account_security")
+        
+    else:
+        initial_data = {}
+        if user.security_question:
+            initial_data["security_question"] = user.security_question
+        form = SecurityQuestionForm(initial=initial_data)
+
+    return render(request, "auth/account_security.html", {"form": form})

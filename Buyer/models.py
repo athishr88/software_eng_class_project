@@ -134,7 +134,7 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="orderitem")
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="order_items")
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
 
     # Denormalized at checkout (same moment as OrderItemBookSnapshot). default="" is for migration backfill only.
@@ -273,3 +273,16 @@ class SellerReturnReceipt(models.Model):
 
     def __str__(self):
         return f"SellerReturnReceipt rr={self.return_request_id} seller={self.seller_id}"
+    
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    order_item = models.OneToOneField(OrderItem, on_delete=models.CASCADE, null=True, blank=True)
+    
+    rating = models.PositiveSmallIntegerField()
+    review_text = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = ("user", "order_item")  # One review per user per order item

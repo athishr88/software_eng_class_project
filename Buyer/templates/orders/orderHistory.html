@@ -83,7 +83,7 @@
                 <tbody>
                     {% for order in orders %}
                         <tr>
-                            <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;" data-label="Order">#{{ order.id }}</td>
+                            <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;" data-label="Order">#{{ forloop.revcounter }}</td>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;" data-label="Status">{{ order.status }}</td>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;" data-label="Lines">{{ order.item_count }}</td>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;" data-label="Total">${{ order.total_dollars|floatformat:2 }}</td>
