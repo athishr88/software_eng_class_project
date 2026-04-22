@@ -10,6 +10,7 @@ from django.db.models import Count, Prefetch
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
+from django.contrib.auth.hashers import make_password
 
 from Buyer.cart_helpers import add_book_to_db_cart, clear_db_cart, db_cart_lines
 from Buyer.models import (
@@ -20,7 +21,9 @@ from Buyer.models import (
     OrderShippingAddress,
     PaymentMethod,
     ReturnRequest,
+    Review,
 )
+from General.forms import SecurityQuestionForm
 from General.models import Address, Book, Inventory, StewardPool, User
 from General.steward import (
     get_steward_pool,
@@ -76,7 +79,7 @@ def _order_items_from_snapshots(order):
     (so seller edits to Book do not change past orders). Prices come from OrderItem.
     """
     items = []
-    for oi in order.orderitem.all().select_related("book", "book_snapshot"):
+    for oi in order.order_items.all().select_related("book", "book_snapshot"):
         snap = getattr(oi, "book_snapshot", None)
         book = oi.book
         title = snap.title if snap else (oi.title or book.title)
@@ -204,6 +207,7 @@ def _buyer_dashboard_context(user):
     ctx = {
         "stats": {"total_orders": 0, "open_orders": 0},
         "credit_balance": "0.00",
+        "recent_orders": [],
     }
     if not user.is_authenticated:
         return ctx
@@ -214,6 +218,13 @@ def _buyer_dashboard_context(user):
         .exclude(status__in=["delivered", "cancelled", "refunded"])
         .count(),
     }
+    ctx["recent_orders"] = (
+        Order.objects.filter(user=user)
+        .order_by("-created_at", "-id")[:5]
+    )
+    for order in ctx["recent_orders"]:
+        order.total_display = f"{(order.total_cents or 0) / 100:.2f}"
+
     if user.is_steward:
         pool = get_steward_pool()
         ctx["steward_pool_dollars"] = f"{pool.pool_cents / 100:,.2f}"
@@ -224,7 +235,6 @@ def _buyer_dashboard_context(user):
 
 @login_required(login_url="login")
 @never_cache
-
 def home(request):
     """Buyer home / dashboard."""
     if request.user.is_authenticated:
@@ -234,7 +244,6 @@ def home(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def buyer_dashboard(request):
     """Buyer dashboard."""
     ctx = _buyer_dashboard_context(request.user)
@@ -242,7 +251,6 @@ def buyer_dashboard(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def add_to_cart(request, book_id):
     if request.method == "POST":
         book = get_object_or_404(Book, pk=book_id, is_active=True)
@@ -271,7 +279,6 @@ def add_to_cart(request, book_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def buyer_cart(request):
     from General.steward import cart_steward_privilege_row
 
@@ -325,7 +332,6 @@ def buyer_cart(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def buyer_checkout(request):
     cart_items, subtotal_cents = db_cart_lines(request.user)
     steward_raw_get = request.GET.get("steward_contribution") if request.method != "POST" else None
@@ -666,7 +672,6 @@ def buyer_checkout(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def cart_steward_free_select(request, book_id):
     if request.method != "POST":
         return redirect("cart")
@@ -736,7 +741,6 @@ def cart_steward_free_select(request, book_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def cart_steward_free_deselect(request, book_id):
     if request.method != "POST":
         return redirect("cart")
@@ -766,7 +770,6 @@ def cart_steward_free_deselect(request, book_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def steward_welcome(request):
     """
     One-time style welcome after `steward_progress` reaches 100 and `steward_verified` is set.
@@ -822,7 +825,6 @@ def steward_welcome(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def remove_cart_item(request, item_id):
     if request.method == "POST":
         if request.user.is_authenticated:
@@ -859,7 +861,6 @@ def remove_cart_item(request, item_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def update_cart_item(request, item_id):
     if request.method == "POST":
         try:
@@ -987,7 +988,6 @@ def buyer_add_payment_method(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def set_default_payment_method(request, payment_method_id):
     if request.method != "POST":
         return redirect("buyer_payments")
@@ -1001,7 +1001,6 @@ def set_default_payment_method(request, payment_method_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def delete_payment_method(request, payment_method_id):
     if request.method != "POST":
         return redirect("buyer_payments")
@@ -1013,7 +1012,6 @@ def delete_payment_method(request, payment_method_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def buyer_shipping(request):
     """List saved shipping Address rows for the logged-in user."""
     return render(
@@ -1025,7 +1023,6 @@ def buyer_shipping(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def buyer_add_shipping_address(request):
     """Form to add a shipping Address for the logged-in user."""
     next_url_param = (request.POST.get("next") or request.GET.get("next") or "").strip()
@@ -1082,7 +1079,6 @@ def buyer_add_shipping_address(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def set_default_shipping_address(request, address_id):
     if request.method != "POST":
         return redirect("buyer_shipping")
@@ -1096,7 +1092,6 @@ def set_default_shipping_address(request, address_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def delete_shipping_address(request, address_id):
     if request.method != "POST":
         return redirect("buyer_shipping")
@@ -1108,7 +1103,6 @@ def delete_shipping_address(request, address_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def buyer_profile(request):
     """Update User profile fields and password (schema: first_name, last_name, phone)."""
     user = request.user
@@ -1159,20 +1153,35 @@ def buyer_profile(request):
 
                 update_session_auth_hash(request, user)
                 return redirect("buyer_profile")
+            
+        elif action == "security":
+            security_form = SecurityQuestionForm(request.POST)
+            if security_form.is_valid():
+                user.security_question = security_form.cleaned_data["security_question"]
+                user.security_answer_hash = make_password(security_form.cleaned_data["security_answer"])
+                user.save(update_fields=["security_question", "security_answer_hash", "updated_at"])
+                messages.success(request, "Security question updated.")
+                return redirect("buyer_profile")
+            else:
+                ctx["security_form"] = security_form
+                ctx["security_error"] = "Please correct the errors below."
 
     ctx["profile_user"] = user
     ctx["store_credit_display"] = f"{(user.store_credit_cents or 0) / 100:.2f}"
+
+    if "security_form" not in ctx:
+        ctx["security_form"] = SecurityQuestionForm(initial={"security_question": user.security_question or ""})
+
     return render(request, "account/buyer_profile.html", ctx)
 
 
 @login_required(login_url="login")
 @never_cache
-
 def order_confirmation(request, order_id):
     order = get_object_or_404(
         Order.objects.select_related("shipping_snapshot").prefetch_related(
             Prefetch(
-                "orderitem",
+                "order_items",
                 queryset=OrderItem.objects.select_related("book", "book_snapshot"),
             )
         ),
@@ -1182,7 +1191,7 @@ def order_confirmation(request, order_id):
     shipping = getattr(order, "shipping_snapshot", None)
     order_items = _order_items_from_snapshots(order)
     steward_pts = order.steward_contribution_cents // 10
-    had_steward_free_book = order.orderitem.filter(is_steward_free=True).exists()
+    had_steward_free_book = order.order_items.filter(is_steward_free=True).exists()
     free_book_attribution = (
         random_steward_attribution(exclude_user_id=request.user.pk)
         if had_steward_free_book
@@ -1205,24 +1214,31 @@ def order_confirmation(request, order_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def order_detail(request, order_id):
     order = get_object_or_404(
-        Order.objects.select_related(
-            "shipping_address",
-            "shipping_snapshot",
-            "returnrequest",
-        ).prefetch_related(
+        Order.objects.select_related("shipping_snapshot").prefetch_related(
             Prefetch(
-                "orderitem",
+                "order_items",
                 queryset=OrderItem.objects.select_related("book", "book_snapshot"),
             )
         ),
         pk=order_id,
         user=request.user,
     )
+    
+
     shipping = getattr(order, "shipping_snapshot", None)
     items = _order_items_from_snapshots(order)
+    item_ids = [item["id"] for item in items]
+
+    reviews_by_item_id = {
+        review.order_item_id: review
+        for review in Review.objects.filter(order_item_id__in=item_ids, user=request.user)
+    }
+    for item in items:
+        item["existing_review"] = reviews_by_item_id.get(item["id"])
+        item["saved_rating"] = item["existing_review"].rating if item["existing_review"] else 0
+        
     try:
         return_request = order.returnrequest
     except ObjectDoesNotExist:
@@ -1261,11 +1277,10 @@ def order_detail(request, order_id):
 
 @login_required(login_url="login")
 @never_cache
-
 def order_history(request):
     qs = (
         Order.objects.filter(user=request.user)
-        .annotate(item_count=Count("orderitem"))
+        .prefetch_related("order_items", "order_items__book")
         .order_by("-created_at")
     )
 
@@ -1295,7 +1310,6 @@ def order_history(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def return_request_view(request, order_id):
     order = get_object_or_404(Order, pk=order_id, user=request.user)
     if hasattr(order, "returnrequest"):
@@ -1334,7 +1348,20 @@ def return_request_view(request, order_id):
 
 @login_required(login_url="login")
 @never_cache
+def review_submission(request, item_id):
+    item = get_object_or_404(OrderItem, pk=item_id, order__user=request.user)
 
-def review_submission(request):
-    """Submit a review (no Review model in project schema yet)."""
-    return render(request, "reviews/reviewSubmission.html")
+    rating = int(request.POST.get("rating", 0))
+
+    if rating < 1 or rating > 5:
+        return redirect("order_detail", order_id=item.order.id)
+    
+    Review.objects.update_or_create(
+        order_items = item,
+        defaults={
+            "user": request.user,
+            "book": item.book,
+            "rating": rating,
+        }
+    )
+    return redirect("order_detail", order_id=item.order.id)

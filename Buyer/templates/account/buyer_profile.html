@@ -101,6 +101,45 @@
         </form>
     </section>
 
+    <section class="card" style="box-shadow:none; max-width:900px; margin-top:14px;">
+        <h2 style="margin:0 0 6px; font-size:16px; font-weight:800;">Security question</h2>
+        <p style="margin:0 0 14px; color:var(--muted); font-size:14px;">
+            Set a security question and answer to help recover your account if you forget your password.
+        </p>
+
+        <form method="post" action="{% url 'buyer_profile' %}" style="display:grid; gap:12px; max-width:520px;">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="security">
+
+            <div style="margin-bottom: 16px;">
+                <label for="{{ security_form.security_question.id_for_label }}" style="display: block; margin-bottom: 4px; font-size:14px; font-weight:700;">
+                    Security question
+                </label>
+                {{ security_form.security_question }}
+                {% for error in security_form.security_question.errors %}
+                    <p style="margin:6px 0 0; color:#8a1f1f; font-size:14px;">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label for="{{ security_form.security_answer.id_for_label }}" style="display: block; margin-bottom: 4px; font-size:14px; font-weight:700;">
+                    Answer
+                </label>
+                {{ security_form.security_answer }}
+                {% for error in security_form.security_answer.errors %}
+                    <p style="margin:6px 0 0; color:#8a1f1f; font-size:14px;">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            {% if security_question_error %}
+                <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
+                    {{ security_question_error }}
+                </div>
+            {% endif %}
+
+            <div style="display:flex; justify-content:flex-end;">
+                <button class="btn" type="submit">Save security question</button>
+            </div>
     <style>
         input:focus{
             border-color: #60a5fa !important;

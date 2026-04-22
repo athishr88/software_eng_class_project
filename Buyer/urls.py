@@ -65,5 +65,5 @@ urlpatterns = [
         views.return_request_view,
         name="return_request",
     ),
-    path("reviews/submit/", views.review_submission, name="review_submission"),
+    path("reviews/submit/<int:item_id>/", views.review_submission, name="review_submission"),
 ]

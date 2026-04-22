@@ -94,7 +94,7 @@
                 <tbody>
                     {% for order in orders %}
                     <tr>
-                        <td style="padding:12px;">{{ order.id }}</td>
+                        <td style="padding:12px;">{{ order.display_order_number }}</td>
                         <td style="padding:12px;">{{ order.user_email }}</td>
                         <td style="padding:12px;">{{ order.status }}</td>
                         <td style="padding:12px;">{{ order.seller_line_items_count }}</td>
@@ -141,7 +141,7 @@
                     {% for order in page_obj.object_list %}
                         <tr>
                             <td style="padding:12px; border-bottom:1px solid #eee; font-weight:900;">
-                                #{{ order.id }}
+                                #{{ order.display_order_number }}
                             </td>
 
                             <td style="padding:12px; border-bottom:1px solid #eee; font-size:14px;">

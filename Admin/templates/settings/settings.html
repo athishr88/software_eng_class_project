@@ -10,7 +10,7 @@
     <h2>General Settings</h2>
   </div>
   <div style="padding: 18px;">
-    <p style="margin: 0 0 12px; color: var(--muted, #6b7280);">Configure site-wide and admin preferences here. (Settings form can be added later.)</p>
+    <p style="margin: 0 0 12px; color: var(--muted, #6b7280);">Configure site-wide and admin preferences here.</p>
     <ul style="margin: 0; padding-left: 20px;">
       <li>Theme / brand (e.g. primary color)</li>
       <li>Notification defaults</li>
@@ -19,4 +19,99 @@
     </ul>
   </div>
 </div>
+
+<div class="panel full" style="margin-top: 24px;">
+  <div class="panel-head">
+    <h2>Change Password</h2>
+  </div>
+  <div style="padding: 18px;">
+    <p style="margin: 0 0 12px; color: var(--muted, #6b7280);">Manage your account's password settings.</p>
+    <form method="POST" action="{% url 'admin_settings' %}" style="max-width: 520px; display:grid; gap: 12px;">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="password">
+
+      <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+        Current Password
+        <input type="password" name="current_password" required autocomplete="current-password" style="width:100%; border:1px solid var(--border, #d1d5db); border-radius:10px; padding:10px 12px; font-size:15px; outline:none">
+      </label>
+
+      <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+        New Password
+        <input type="password" name="new_password" required autocomplete="new-password" minlength="8"style="width:100%; border:1px solid var(--border, #d1d5db); border-radius:10px; padding:10px 12px; font-size:15px; outline:none">
+      </label>
+
+      <label style="display:grid; gap:6px; font-size:14px; font-weight:700;">
+        Confirm New Password
+        <input type="password" name="confirm_password" required autocomplete="new-password" minlength="8"style="width:100%; border:1px solid var(--border, #d1d5db); border-radius:10px; padding:10px 12px; font-size:15px; outline:none">
+      </label>
+      
+      {% if password_error %}
+        <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
+          {{ password_error }}
+        </div>
+      {% endif %}
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="submit" class="btn">Update Password</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="panel full" style="margin-top: 24px;">
+  <div class="panel-head">
+    <h2>Security Question</h2>
+  </div>
+  <div style="padding: 18px;">
+    <p style="margin: 0 0 12px; color: var(--muted, #6b7280);">Set or update your security question for password recovery.</p>
+    
+    <form method="POST" action="{% url 'admin_settings' %}" style="max-width: 520px; display:grid; gap: 12px;">
+      {% csrf_token %}
+      <input type="hidden" name="action" value="security">
+
+      <div style="display:grid; gap:6px;">
+        <label for="security_question" style="font-size:14px; font-weight:700;">Security Question</label>
+        <select name="security_question" id="security_question" required>
+          <option value="">Select a question</option>
+          {% for value, label in security_question_choices %}
+            <option value="{{ value }}"
+              {% if selected_security_question == value %}selected{% endif %}>
+              {{ label }}
+            </option>
+          {% endfor %}
+        </select>
+        {% for error in security_form.security_question.errors %}
+          <p style="margin:0; color:#991b1b; font-size:14px;">{{ error }}</p>
+        {% endfor %}
+      </div>
+
+      <div style="display:grid; gap:6px;">
+        <label for="security_answer" style="font-size:14px; font-weight:700;">Security Answer</label>
+        <input type="text" name="security_answer" id="security_answer" required style="width:100%; border:1px solid var(--border, #d1d5db); border-radius:10px; padding:10px 12px; font-size:15px; outline:none;">
+      
+        {% for error in security_form.security_answer.errors %}
+          <p style="margin:0; color:#991b1b; font-size:14px;">{{ error }}</p>
+        {% endfor %}
+      </div>
+      
+      {% if security_error %}
+        <div style="border:1px solid #ef4444; background:#fff5f5; color:#991b1b; border-radius:10px; padding:10px 12px; font-size:14px;">
+          {{ security_error }}
+        </div>
+      {% endif %}
+
+      <div style="display:flex; justify-content:flex-end;">
+        <button type="submit" class="btn">Save Security Question</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<style>
+  input:focus, select:focus {
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 4px rgba(96,165,250,0.25) !important;
+  }
+</style>
 {% endblock %}

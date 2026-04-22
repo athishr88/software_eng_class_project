@@ -3,16 +3,19 @@ from pathlib import Path
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 from django.core.paginator import Paginator
 from django.db import transaction
-from django.db.models import Exists, OuterRef, Q, Subquery, Sum
+from django.db.models import Exists, OuterRef, Q, Subquery, Sum, Avg, Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_POST
 
-from Buyer.models import Order, OrderItem, ReturnRequest, SellerReturnReceipt
+from Buyer.models import Order, OrderItem, ReturnRequest, SellerReturnReceipt, Review
 from General.models import Book, Inventory, User
-
+from General.forms import SecurityQuestionForm
 from .forms import SellerWebhookForm
 from .models import SellerProfile
 from .webhook_notify import build_test_webhook_payload, post_seller_webhook
@@ -78,12 +81,12 @@ def _maybe_finalize_buyer_return(return_request):
 def _pending_return_requests_qs(seller_user):
     return (
         ReturnRequest.objects.filter(
-            order__orderitem__book__seller_user=seller_user,
+            order__order_items__book__seller_user=seller_user,
         )
         .exclude(status="rejected")
         .exclude(seller_receipts__seller=seller_user)
         .select_related("order", "order__user")
-        .prefetch_related("order__orderitem__book")
+        .prefetch_related("order__order_items__book")
         .distinct()
         .order_by("-created_at")
     )
@@ -126,16 +129,27 @@ def home(request):
 
     stats = _seller_dashboard_stats(request.user)
     recent_orders = (
-        Order.objects.filter(orderitem__book__seller_user=request.user)
+        Order.objects.filter(order_items__book__seller_user=request.user)
         .annotate(
             seller_revenue_cents=Sum(
-                "orderitem__line_total_cents",
-                filter=Q(orderitem__book__seller_user=request.user),
+                "order_items__line_total_cents",
+                filter=Q(order_items__book__seller_user=request.user),
             )
         )
         .select_related("user")
+        .distinct()
         .order_by("-created_at")[:25]
     )
+    seller_reviews = Review.objects.filter(order_item__book__seller_user=request.user)
+
+    review_stats = seller_reviews.aggregate(
+        avg_rating=Avg("rating"),
+        review_count=Count("id"),
+    )
+    seller_avg_rating = round(review_stats["avg_rating"] or 0, 1)
+    seller_review_count = review_stats["review_count"] or 0
+   
+    recent_reviews = Review.objects.filter(order_item__book__seller_user=request.user).select_related("user", "order_item", "order_item__book").order_by("-created_at")[:5]
     return render(
         request,
         "dashboard/dashboard.html",
@@ -143,7 +157,10 @@ def home(request):
             "stats": stats,
             "recent_orders": recent_orders,
             "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
-            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user))
+            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user)),
+            "recent_reviews": recent_reviews,
+            "seller_avg_rating": seller_avg_rating,
+            "seller_review_count": seller_review_count,
         },
     )
 
@@ -159,17 +176,43 @@ def dashboard(request):
     stats = _seller_dashboard_stats(request.user)
 
     recent_orders = (
-        Order.objects.filter(orderitem__book__seller_user=request.user)
+        Order.objects.filter(order_items__book__seller_user=request.user)
         .annotate(
             seller_revenue_cents=Sum(
-                "orderitem__line_total_cents",
-                filter=Q(orderitem__book__seller_user=request.user),
+                "order_items__line_total_cents",
+                filter=Q(order_items__book__seller_user=request.user),
             )
         )
         .select_related("user")
+        .distinct()
         .order_by("-created_at")[:25]
     )
+    total_orders = len(recent_orders)
+
+    for index, order in enumerate(recent_orders, start=1):
+        order.display_order_number = total_orders - index + 1
+        order.order_total_display = _format_cents_as_dollars(order.total_cents or 0)
+        
+    seller_reviews = Review.objects.filter(order_item__book__seller_user=request.user)
+
+    review_stats = seller_reviews.aggregate(
+        avg_rating=Avg("rating"),
+        review_count=Count("id"),
+    )
+   
+    seller_avg_rating = round(review_stats["avg_rating"] or 0, 1)
+    seller_review_count = review_stats["review_count"] or 0
+
+    orders = list(
+        Order.objects.filter(order_items__book__seller_user=request.user)
+        .select_related("user")
+        .prefetch_related("order_items__book")
+        .order_by("-created_at", "-id")
+        .distinct()[:200]
+    )
     
+
+    recent_reviews = Review.objects.filter(order_item__book__seller_user=request.user).select_related("user", "order_item", "order_item__book").order_by("-created_at")[:5]
     return render(
         request,
         "dashboard/dashboard.html",
@@ -177,14 +220,110 @@ def dashboard(request):
             "stats": stats,
             "recent_orders": recent_orders,
             "return_requests_preview": _pending_return_requests_qs(request.user)[:8],
-            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user))
+            "total_sales": _format_cents_as_dollars(_seller_sales_total_cents(request.user)),
+            "recent_reviews": recent_reviews,
+            "seller_avg_rating": seller_avg_rating,
+            "seller_review_count": seller_review_count,
         },
     )
 
+@login_required(login_url="login")
+@never_cache
+def seller_profile(request):
+    user = request.user
+
+    if getattr(user, "role", "") != "seller":
+        messages.error(request, "Seller acces is required.")
+        return redirect("general_home")
+    
+    seller_profile_obj, _ = SellerProfile.objects.get_or_create(
+        user=user,
+        defaults={"store_name": ""},
+    )
+    ctx = {}
+
+    if request.method == "POST":
+        action = (request.POST.get("action") or "").strip()
+
+        if action == "profile":
+            fn = (request.POST.get("first_name") or "").strip()
+            ln = (request.POST.get("last_name") or "").strip()
+            phone = (request.POST.get("phone") or "").strip() or None
+            store_name = (request.POST.get("store_name") or "").strip()
+
+            errs = []
+            if not fn:
+                errs.append("First name is required.")
+            
+            if not ln:
+                errs.append("Last name is rewquired.")
+            
+            if errs:
+                ctx["profile_error"] = " ".join(errs)
+            
+            else:
+                user.first_name = fn[:100]
+                user.last_name = ln[:100]
+                user.phone = phone[:50]
+                user.save(update_fields=["first_name", "last_name", "phone"])
+
+                seller_profile_obj.store_name = store_name[:120]
+                seller_profile_obj.save(update_fields=["store_name"])
+
+                messages.sucess(request, "Seller profile updated.")
+                return redirect("seller_profile")
+
+        elif action == "password":
+            current = request.POST.get("current_password") or ""
+            new_pw = request.POST.get("new_password") or ""
+            confirm = request.POST.get("confirm_password") or ""
+
+            errs = []
+            if not user.check_password(current):
+                errs.append("Current password is incorrect.")
+            
+            if len(new_pw) < 8:
+                errs.append("New password must be at least 8 characters.")
+            
+            if new_pw != confirm:
+                errs.append("New passwords do not match.")
+            
+            if errs:
+                ctx["password_error"] = " ".join(errs)
+            
+            else:
+                user.set_password(new_pw)
+                user.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, "Password updated.")
+                return redirect("seller_profile")
+
+        elif action == "security":
+            security_form = SecurityQuestionForm(request.POST)
+            if security_form.is_valid():
+                user.security_question = security_form.cleaned_data["security_question"]
+                user.security_answer_hash = make_password(
+                    security_form.cleaned_data["security_answer"].strip().lower()
+                )
+                user.save(update_fields=["security_question", "security_answer_hash"])
+                messages.success(request, "Security question updated.")
+                return redirect("seller_profile")
+            
+            else:
+                ctx["security_form"] = security_form
+                ctx["security_error"] = "Please correct the security question form."
+    
+    ctx["profile_user"] = user
+    ctx["seller_profile_obj"] = seller_profile_obj
+    
+    if "security_form" not in ctx:
+        ctx["security_form"] = SecurityQuestionForm(
+            initial={"security_question": user.security_question or ""}
+        )
+    return render(request, "dashboard/seller_profile.html", ctx)
 
 @login_required(login_url="login")
 @never_cache
-
 def add_books(request):
     """Create a Book + Inventory for the logged-in seller."""
     if not _require_seller(request.user):
@@ -322,7 +461,6 @@ def add_books(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def manage_inventory(request):
     """List seller books and update price, stock, and active flag."""
     if not _require_seller(request.user):
@@ -404,16 +542,12 @@ def manage_inventory(request):
 
 
 def _seller_sales_total_cents(seller_user) -> int:
-    seller_returned_order = SellerReturnReceipt.objects.filter(
-        seller=seller_user,
-        return_request__order_id=OuterRef("order_id"),
-    )
+    
     total = (
         OrderItem.objects.filter(
             book__seller_user=seller_user,
-            order__status__in=_SALE_RECOGNIZED_STATUSES,
+            order__status__in=["paid", "shipped", "delivered"],
         )
-        .exclude(Exists(seller_returned_order))
         .aggregate(s=Sum("line_total_cents"))
         .get("s")
     )
@@ -426,7 +560,6 @@ def _format_cents_as_dollars(cents: int) -> str:
 
 @login_required(login_url="login")
 @never_cache
-
 def sales_overview(request):
     """Total sales and recent orders that include this seller's books."""
     if not _require_seller(request.user):
@@ -441,7 +574,7 @@ def sales_overview(request):
             _returned=Exists(
                 SellerReturnReceipt.objects.filter(
                     seller=request.user,
-                    return_request__order_id=OuterRef("order_id"),
+                    return_request__order_id=OuterRef("id"),
                 )
             )
         )
@@ -450,12 +583,12 @@ def sales_overview(request):
     )
 
     recent_sales_orders = (
-        Order.objects.filter(orderitem__book__seller_user=request.user)
+        Order.objects.filter(order_items__book__seller_user=request.user)
         .annotate(
             seller_revenue_cents=Sum(
-                "orderitem__line_total_cents",
-                filter=Q(orderitem__book__seller_user=request.user)
-                & ~Q(orderitem__id__in=Subquery(excluded_item_ids)),
+                "order_items__line_total_cents",
+                filter=Q(order_items__book__seller_user=request.user)
+                & ~Q(order_items__id__in=Subquery(excluded_item_ids)),
             )
         )
         .select_related("user")
@@ -467,28 +600,43 @@ def sales_overview(request):
         o.seller_revenue_display = _format_cents_as_dollars(int(rev))
         o.order_total_display = _format_cents_as_dollars(int(o.total_cents))
 
+    book_sales = (
+        OrderItem.objects.filter(book__seller_user=request.user)
+        .exclude(id__in=Subquery(excluded_item_ids))
+        .values("book_id", "book__title", "book__author")
+        .annotate(
+            units_sold=Sum("quantity"),
+            revenue_cents=Sum("line_total_cents"),
+        )
+        .order_by("-revenue_cents", "book__title")
+    )
+
+    book_sales = list(book_sales)
+    for item in book_sales:
+        item["revenue_display"]=_format_cents_as_dollars(int(item["revenue_cents"] or 0))
+    
     return render(
         request,
         "dashboard/sales_overview.html",
         {
             "total_sales_display": _format_cents_as_dollars(total_cents),
             "recent_sales_orders": recent_sales_orders,
+            "book_sales": book_sales,
         },
     )
 
 @login_required(login_url="login")
 @never_cache
-
 def orders(request):
     """Orders list."""
     if not _require_seller(request.user):
-        messages.error(request, "A seller account is required.")
+        messages.error(request, "An approved seller account is required.")
         return redirect("buyer_home")   
     
     qs = (
-        Order.objects.filter(orderitem__book__seller_user=request.user)
+        Order.objects.filter(order_items__book__seller_user=request.user)
         .select_related("user")
-        .prefetch_related("orderitem__book")
+        .prefetch_related("order_items__book")
         .order_by("-created_at")
         .distinct()
     )
@@ -499,9 +647,21 @@ def orders(request):
 
     orders = list(qs[:200])
 
+    orders = list(
+        Order.objects.filter(order_items__book__seller_user=request.user)
+        .select_related("user")
+        .prefetch_related("order_items__book")
+        .order_by("-created_at")
+        .distinct()[:200]
+    )
+
+    total_orders = len(orders)
+    for index, order in enumerate(orders, start=1):
+        order.display_order_number = total_orders - index + 1
+
     for order in orders:
         seller_items = [
-            oi for oi in order.orderitem.all()
+            oi for oi in order.order_items.all()
             if oi.book and oi.book.seller_user_id == request.user.id
         ]
 
@@ -519,33 +679,42 @@ def order_details(request, order_id=None):
         return redirect("buyer_home")
     
     order = get_object_or_404(
-        Order.objects.select_related("user", "shipping_snapshot", "shipping_address")
-        .prefetch_related("orderitem__book"),
-        pk=order_id,
-        orderitem__book__seller_user=request.user,
+        Order.objects.filter(
+            pk=order_id,
+            order_items__book__seller_user=request.user,
+        ).distinct()
     )
+    seller_orders = list(
+        Order.objects.filter(order_items__book__seller_user=request.user).distinct().order_by("-created_at", "-id")
+    )
+    display_order_number = None
+    for index, seller_order in enumerate(seller_orders, start=1):
+        if seller_order.id == order.id:
+            display_order_number = index
+            break
+    display_order_number = len(seller_orders) - display_order_number + 1 if display_order_number is not None else None
 
 
-    seller_items = [
-        oi for oi in order.orderitem.all()
-        if oi.book and oi.book.seller_user_id == request.user.id
-    ]
+    items = order.order_items.filter(book__seller_user=request.user).select_related("book")
 
-    for item in seller_items:
-        item.line_total_display = f"{item.line_total_cents / 100:.2f}"
+    seller_line_total_cents = 0
+    for item in items:
+        seller_line_total_cents += item.line_total_cents
+        item.existing_review = Review.objects.filter(order_item=item).first()  # Placeholder for review info added later
 
-    seller_total_cents = sum(oi.line_total_cents for oi in seller_items)
 
-    rr = ReturnRequest.objects.filter(order=order).first()
-    seller_receipt = None
-    if rr:
-        seller_receipt = rr.seller_receipts.filter(seller=request.user).first()
-    return render(request, "orders/orderDetails.html", {"order": order, "seller_items": seller_items, "seller_total_display": f"{seller_total_cents / 100:.2f}", "return_request": rr, "seller_receipt": seller_receipt})
+    context = {
+        "order": order,
+        "items": items,
+        "display_order_number": display_order_number,
+        "order_total_display": f"{order.total_cents / 100:.2f}",
+        "seller_line_total_display": f"{seller_line_total_cents / 100:.2f}",
+    }
+    return render(request, "orders/orderDetails.html", context)
 
 
 @login_required(login_url="login")
 @never_cache
-
 def return_requests_list(request):
     if not _require_seller(request.user):
         messages.error(request, "A seller account is required.")
@@ -561,7 +730,6 @@ def return_requests_list(request):
 
 @login_required(login_url="login")
 @never_cache
-
 def return_request_detail(request, return_id):
     if not _require_seller(request.user):
         messages.error(request, "A seller account is required.")
@@ -569,7 +737,7 @@ def return_request_detail(request, return_id):
 
     rr = get_object_or_404(
         ReturnRequest.objects.select_related("order", "order__user").prefetch_related(
-            "order__orderitem__book", "seller_receipts"
+            "order__order_items__book", "seller_receipts"
         ),
         pk=return_id,
     )
@@ -594,7 +762,7 @@ def return_request_detail(request, return_id):
             return redirect("seller_return_request_detail", return_id=rr.id)
         
         if action == "deny":
-            if rr.status == "rejected":
+            if rr.status == "refunded":
                 messages.error(request, "This return was already complete.")
                 return redirect("seller_return_request_detail", return_id=rr.id)
             
@@ -661,6 +829,32 @@ def return_request_detail(request, return_id):
         },
     )
 
+@login_required(login_url="login")
+@require_POST
+def update_order_status(request, order_id):
+    if not _require_seller(request.user):
+        messages.error(request, "A seller account is required.")
+        return redirect("buyer_home")
+
+    order = get_object_or_404(Order, pk=order_id)
+
+    seller_has_items = order.orderitem.filter(book__seller_user=request.user).exists()
+    if not seller_has_items:
+        messages.error(request, "You cannot update the status of an order that does not include your listings.")
+        return redirect("seller_orders")
+    
+    new_status = (request.POST.get("status") or "").strip().lower()
+    allowed_statuses = ["pending", "paid", "shipped", "delivered", "cancelled"]
+
+    if new_status not in allowed_statuses:
+        messages.error(request, "Invalid status selected.")
+        return redirect(" seller_order_details", order_id=order.id)
+    
+    order.status = new_status
+    order.save(update_fields=["status", "updated_at"])
+
+    messages.success(request, f"Order status updated to {new_status.title()}.")
+    return redirect("seller_order_details", order_id=order.id)
 
 @login_required(login_url="login")
 @never_cache

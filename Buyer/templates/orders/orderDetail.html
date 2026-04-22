@@ -1,12 +1,12 @@
 {% extends "base_buyer.html" %}
-{% block title %}Order #{{ order.id }} | Pass It On Books{% endblock %}
+{% block title %}Order #{{ display_order_number|default:order.id }} | Pass It On Books{% endblock %}
 {% block content %}
 
     <header style="margin-bottom:16px;">
         <div style="display:flex; justify-content:space-between; gap:12px; align-items:end; flex-wrap:wrap;">
             <div>
                 <h1 style="margin:0; font-size:22px; font-weight:800; letter-spacing:0.2px;">
-                    Order #{{ order.id }}
+                    Order #{{ display_order_number|default:order.id }}
                 </h1>
                 <p style="margin:6px 0 0; color:var(--muted); font-size:14px;">
                     View status, shipping details, items, and next actions.
@@ -66,12 +66,15 @@
                     </a>
                 {% endif %}
 
-                {% if can_leave_review %}
-                    <a class="btn" href="{% url 'review_submit' order.id %}" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
-                        Leave Review
-                    </a>
-                {% endif %}
+                {% if item.existing_review %}
+                    <p><strong>Your rating:</strong> {{ item.existing_review.rating }}/5</p>
+                {% else %}
+                    <form method="POST" action="{% url 'review_submission' order.id %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="order_item_id" value="{{ item.id }}">
 
+                    </form>
+                {% endif %}
                 <a class="link" href="{% url 'catalog' %}">Continue Shopping</a>
             </div>
         </div>
@@ -180,31 +183,38 @@
 
                     <div style="display:grid; gap:14px;">
                         {% for item in order_items %}
-                            <form method="POST" action="{% url 'review_submission' order.id %}" style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
+                        <div class="review-box">
+                            <h4>{{ item.book.title }}</h4>
+                            <form method="POST" action="{% url 'review_submission' item.id %}" style="border:1px solid var(--border); border-radius:var(--radius); padding:14px; background:#fff;">
                                 {% csrf_token %}
                                 <input type="hidden" name="order_item_id" value="{{ item.id }}">
 
                                 <div style="margin-top:10px;">
-                                    <strong style="font-size:14px;">{{ item.title }}</strong>
+                                    <strong style="font-size:14px;">{{ item.book.title }}</strong>
                                     <div style="margin-top:4px; color:var(--muted); font-size:13px;">
-                                        {{ item.author }}
+                                        {{ item.book.author }}
                                     </div>
                                 </div>
 
                                 <div class="star-rating" style="margin-bottom:12px;">
-                                    <input type="radio" id="star5-{{ item.id }}" name="rating" value="5">
+                                    <input type="radio" id="star5-{{ item.id }}" name="rating" value="5"
+                                        {% if item.saved_rating == 5 %} checked {% endif %}>
                                     <label for="star5-{{ item.id }}" title="5 stars">★</label>
 
-                                    <input type="radio" id="star4-{{ item.id }}" name="rating" value="4">
+                                    <input type="radio" id="star4-{{ item.id }}" name="rating" value="4"
+                                        {% if item.saved_rating == 4 %} checked {% endif %}>
                                     <label for="star4-{{ item.id }}" title="4 stars">★</label>
 
-                                    <input type="radio" id="star3-{{ item.id }}" name="rating" value="3">
+                                    <input type="radio" id="star3-{{ item.id }}" name="rating" value="3"
+                                        {% if item.saved_rating == 3 %} checked {% endif %}>
                                     <label for="star3-{{ item.id }}" title="3 stars">★</label>
 
-                                    <input type="radio" id="star2-{{ item.id }}" name="rating" value="2">
+                                    <input type="radio" id="star2-{{ item.id }}" name="rating" value="2"
+                                        {% if item.saved_rating == 2 %} checked {% endif %}>
                                     <label for="star2-{{ item.id }}" title="2 stars">★</label>
-                                    
-                                    <input type="radio" id="star1-{{ item.id }}" name="rating" value="1">
+
+                                    <input type="radio" id="star1-{{ item.id }}" name="rating" value="1"
+                                        {% if item.saved_rating == 1 %} checked {% endif %}>
                                     <label for="star1-{{ item.id }}" title="1 star">★</label>
                                 </div>
 
@@ -228,27 +238,31 @@
         }
 
         .star-rating {
-            display: inline-flex;
+            display: flex;
             flex-direction: row-reverse;
             justify-content: flex-end;
             gap: 2px;
         }
 
-        .star-rating input {
-            display: none;
+        .star-rating input[type="radio"]{
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
         }
 
         .star-rating label {
             font-size: 28px;
             color: #d1d5db;
             cursor: pointer;
-            transition: color 0.2s ease;
+            user-select: none;
         }
 
         .star-rating label:hover,
         .star-rating label:hover ~ label,
-        .star-rating input:checked ~ label{
-            color: #f5b301;
+        .star-rating input[type="radio"]:checked + label,
+        .star-rating input[type="radio"]:checked + label ~ label {
+            color: gold;
         }
+
     </style>
 {% endblock %}
