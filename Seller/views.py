@@ -838,7 +838,7 @@ def update_order_status(request, order_id):
 
     order = get_object_or_404(Order, pk=order_id)
 
-    seller_has_items = order.orderitem.filter(book__seller_user=request.user).exists()
+    seller_has_items = order.order_items.filter(book__seller_user=request.user).exists()
     if not seller_has_items:
         messages.error(request, "You cannot update the status of an order that does not include your listings.")
         return redirect("seller_orders")

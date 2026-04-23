@@ -1357,7 +1357,7 @@ def review_submission(request, item_id):
         return redirect("order_detail", order_id=item.order.id)
     
     Review.objects.update_or_create(
-        order_items = item,
+        order_item = item,
         defaults={
             "user": request.user,
             "book": item.book,
