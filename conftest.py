@@ -9,6 +9,7 @@ def example_buyer():
         password='testpassword',
         first_name='Buyer',
         last_name='Test',
+        buyer_approved=True,
     )
 
 @pytest.fixture
@@ -19,6 +20,8 @@ def example_seller():
         password='testpassword',
         first_name='Buyer',
         last_name='Test',
+        buyer_approved=True,
+        seller_approved=True,
     )
 
 @pytest.fixture
